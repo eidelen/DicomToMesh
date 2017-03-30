@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <string>
 
 #include <vtkCallbackCommand.h>
@@ -26,18 +27,24 @@ struct Dicom2MeshSettings
 {
     string pathToDicomDirectory;
     bool pathToDicomSet = false;
-    string outputFilePath;
+    string outputFilePath = "mesh.stl";
     bool pathToOutputSet = false;
     int isoValue = 400; // Hard Tissue
+    bool setOriginToCenterOfMass = false;
+    bool enableMeshReduction = false;
+    float reductionRate = 0.5;
+    bool extracOnlyBigObjects = false;
+    float nbrVerticesRatio = 0.1;
+    bool enableSmoothing = false;
 };
 
 
-void vtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
+void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
 {
     vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
     char* task = static_cast<char*>(clientData);
-    cout << '\r';
-    cout << task << ": " << filter->GetProgress() * 100 << "%";
+    cout << task << ": " << std::fixed << std::setprecision( 1 )  << filter->GetProgress() * 100 << "%" << endl;
+    cout << flush;
 }
 
 /**
@@ -69,6 +76,7 @@ void moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
 
     // Free memory
     transformFilter->Delete();
+    cout << endl << "Done" << endl << endl;
 }
 
 /**
@@ -79,6 +87,9 @@ void moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
  */
 void meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction, vtkSmartPointer<vtkCallbackCommand> progressCallback )
 {
+    string progressData = "Reduce mesh";
+    progressCallback->SetClientData( (void*) (progressData.c_str()) );
+
     unsigned int numberOfCellsBefore = mesh->GetNumberOfCells();
     cout << "Mesh reduction by " << reduction << endl;
 
@@ -97,6 +108,7 @@ void meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction, v
 
     unsigned int numberOfCellsAfter = mesh->GetNumberOfCells();
     cout << endl << "Mesh reduced from " << numberOfCellsBefore << " to " <<  numberOfCellsAfter << " faces" << endl;
+    cout << "Done" << endl << endl;
 }
 
 /**
@@ -108,6 +120,8 @@ void meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction, v
  */
 void removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio )
 {
+    cout << "Remove small connected objects: Size ratio = " << ratio << endl;
+
     vtkPolyDataConnectivityFilter* connectivityFilter = vtkPolyDataConnectivityFilter::New();
     connectivityFilter->SetInputData( mesh );
     connectivityFilter->SetExtractionModeToAllRegions();
@@ -135,6 +149,8 @@ void removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio )
 
     // Free memory
     connectivityFilter->Delete();
+
+    cout << "Done" << endl << endl;
 }
 
 /**
@@ -146,6 +162,10 @@ void removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio )
 //Todo: Understand FeatureAngle and RelaxationFactor. Then add it as argument.
 void smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingIterations, vtkSmartPointer<vtkCallbackCommand> progressCallback )
 {
+    string progressData = "Smooth mesh";
+    progressCallback->SetClientData( (void*) (progressData.c_str()) );
+    cout << "Mesh smoothing with " << nbrOfSmoothingIterations << " iterations." << endl;
+
     vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
     smoother->SetInputData( mesh );
     smoother->SetNumberOfIterations( nbrOfSmoothingIterations );
@@ -158,6 +178,8 @@ void smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingI
 
     // Free memory
     smoother->Delete();
+
+    cout << endl << "Done" << endl << endl;
 }
 
 /**
@@ -167,11 +189,41 @@ void smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingI
  */
 void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const string& path )
 {
+    cout << "Mesh export as stl file: " << path << endl;
     vtkSmartPointer<vtkSTLWriter> writer = vtkSTLWriter::New();
     writer->SetFileName( path.c_str() );
     writer->SetInputData( mesh );
     writer->SetFileTypeToASCII();
     writer->Write();
+    cout << "Done" << endl << endl;
+}
+
+void showUsage()
+{
+    cout << "How to use dicom2Mesh:" << endl << endl;
+
+    cout << "Minimum example. This creates a mesh file called mesh.stl by using a iso value of 400 (makes bone visible)" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory " << endl << endl;
+
+    cout << "This creates a mesh file called abc.stl by using a iso value of 700" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.stl  -t 700 " << endl << endl;
+
+    cout << "This creates a mesh with a reduced number of polygons by half" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -r" << endl << endl;
+
+    cout << "This creates a mesh with a reduced number of polygons by 80%" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -r 0.8" << endl << endl;
+
+    cout << "This creates a mesh where small connected objects are removed. In particular, only connected objects with a minimum number of vertices of 20% of the object with the most vertices are part of the result." << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -e  0.2" << endl << endl;
+
+    cout << "This creates a mesh which is shifted to the coordinate system origin." << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -c" << endl << endl;
+
+    cout << "This creates a mesh which is smoothed." << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -s" << endl << endl;
+
+    cout << "Arguments can be combined." << endl << endl;
 }
 
 int main(int argc, char *argv[])
@@ -191,6 +243,11 @@ int main(int argc, char *argv[])
                 settings.pathToDicomDirectory = argv[a];
                 settings.pathToDicomSet = true;
             }
+            else
+            {
+                showUsage();
+                return -1;
+            }
         }
         else if( cArg.compare("-o") == 0 )
         {
@@ -201,7 +258,56 @@ int main(int argc, char *argv[])
                 settings.outputFilePath = argv[a];
                 settings.pathToOutputSet = true;
             }
+            else
+            {
+                showUsage();
+                return -1;
+            }
         }
+        else if( cArg.compare("-t") == 0 )
+        {
+            // next argument is iso value (int)
+            a++;
+            if( a < argc )
+            {
+                settings.isoValue = stoi( string(argv[a]) );
+            }
+            else
+            {
+                showUsage();
+                return -1;
+            }
+        }
+        else if( cArg.compare("-h") == 0 )
+        {
+            showUsage();
+            return 0;
+        }
+        else if( cArg.compare("-r") == 0 )
+        {
+            settings.enableMeshReduction = true;
+            // next argument is reduction (float)
+            a++;
+            if( a < argc ) // default value is 0.5
+                settings.reductionRate = stof( string(argv[a]) );
+        }
+        else if( cArg.compare("-e") == 0 )
+        {
+            settings.extracOnlyBigObjects = true;
+            // next argument is size ratio (float)
+            a++;
+            if( a < argc ) // default value is 0.1
+                settings.nbrVerticesRatio = stof( string(argv[a]) );
+        }
+        else if( cArg.compare("-c") == 0 )
+        {
+            settings.setOriginToCenterOfMass = true;
+        }
+        else if( cArg.compare("-s") == 0 )
+        {
+            settings.enableSmoothing = true;
+        }
+
     }
 
     if( !settings.pathToDicomSet )
@@ -210,13 +316,11 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if( !settings.pathToOutputSet )
-        settings.outputFilePath = "mesh.stl";
     //******************************//
 
 
     vtkSmartPointer<vtkCallbackCommand> progressCallback = vtkSmartPointer<vtkCallbackCommand>::New();
-    progressCallback->SetCallback(vtkProgressCallback);
+    progressCallback->SetCallback(myVtkProgressCallback);
 
 
     //******** Read DICOM *********//
@@ -268,16 +372,34 @@ int main(int argc, char *argv[])
 
 
     //***** Mesh post-processing *****//
+    if( settings.setOriginToCenterOfMass )
+        moveMeshToCOSCenter( mesh );
 
+    if( settings.enableMeshReduction )
+    {
+        // check reduction rate
+        if( settings.reductionRate < 0.0 || settings.reductionRate > 1.0 )
+            cout << "Reduction skipped due to invalid reductionRate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
+        else
+            meshReduction( mesh, settings.reductionRate, progressCallback );
+    }
+
+    if( settings.extracOnlyBigObjects )
+    {
+        if( settings.nbrVerticesRatio < 0.0 || settings.nbrVerticesRatio > 1.0 )
+            cout << "Smoothing skipped due to invalid reductionRate " << settings.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
+        else
+            removeSmallObjects( mesh, settings.nbrVerticesRatio );
+    }
+
+    if( settings.enableSmoothing )
+    {
+        smoothMesh( mesh, 20, progressCallback );
+    }
 
     //********************************//
 
-
-
-
-
-
-
+    exportAsStlFile( mesh, settings.outputFilePath );
 
     return 0;
 }
