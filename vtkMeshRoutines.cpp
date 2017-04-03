@@ -197,7 +197,9 @@ void VTKMeshRoutines::computeVertexNormalsTrivial(const vtkSmartPointer<vtkPolyD
     }
 }
 
-// implementation partly from Mathias Griessen -> www.diffuse.ch
+// Assembling the whole obj content first in memory and write at once to the file.
+// (Observed file handles closing suddenly during obj export)
+// Implementation partly from Mathias Griessen -> www.diffuse.ch
 void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path )
 {
     cout << "Mesh export as obj file: " << path << endl;
@@ -224,7 +226,7 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
         objContent.append(buffer);
     }
 
-    // compute normals and write normals
+    // compute normals and write
     vector<vtkVector3d> normals;
     VTKMeshRoutines::computeVertexNormalsTrivial( mesh, normals );
     for(  long long i = 0; i < numberOfVertices; i++ )
