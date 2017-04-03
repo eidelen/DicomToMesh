@@ -29,9 +29,11 @@
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkSTLWriter.h>
 #include <vtkCallbackCommand.h>
+#include <vtkMath.h>
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "vtkMeshRoutines.h"
 
@@ -156,5 +158,109 @@ void VTKMeshRoutines::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh,
     writer->SetInputData( mesh );
     writer->SetFileTypeToASCII();
     writer->Write();
+    cout << "Done" << endl << endl;
+}
+
+void VTKMeshRoutines::computeVertexNormalsTrivial(const vtkSmartPointer<vtkPolyData>& mesh , std::vector<vtkVector3d> &normals)
+{
+    vtkSmartPointer<vtkPoints> vertices = mesh->GetPoints();
+    vtkSmartPointer<vtkDataArray> verticesArray = vertices->GetData();
+
+    long long numberOfVertices = vertices->GetNumberOfPoints();
+    long long numberOfFaces = mesh->GetNumberOfCells();
+
+    for( long long i = 0; i < numberOfVertices; i++ )
+        normals.push_back( vtkVector3d(1,0,0) );
+
+    // Go through all faces, compute face normal fn and set fn to all participating vertices.
+    // The last computed fn of a vertex overwrites those before... that's why it is 'trivial' :)
+    for( long long i = 0; i < numberOfFaces; i++ )
+    {
+        vtkSmartPointer<vtkIdList> face = vtkSmartPointer<vtkIdList>::New();
+        mesh->GetCellPoints(i,face);
+        long long v0Idx = face->GetId(0); long long v1Idx = face->GetId(1); long long v2Idx = face->GetId(2);
+
+        vtkVector3d v0( verticesArray->GetComponent(v0Idx, 0), verticesArray->GetComponent(v0Idx, 1), verticesArray->GetComponent(v0Idx, 2) );
+        vtkVector3d v1( verticesArray->GetComponent(v1Idx, 0), verticesArray->GetComponent(v1Idx, 1), verticesArray->GetComponent(v1Idx, 2) );
+        vtkVector3d v2( verticesArray->GetComponent(v2Idx, 0), verticesArray->GetComponent(v2Idx, 1), verticesArray->GetComponent(v2Idx, 2) );
+
+        // compute normal
+        vtkVector3d v0v1; vtkMath::Subtract( v0.GetData(), v1.GetData(), v0v1.GetData() );
+        vtkVector3d v0v2; vtkMath::Subtract( v0.GetData(), v2.GetData(), v0v2.GetData() );
+
+        vtkVector3d fn = v0v1.Cross( v0v2 );
+        fn.Normalize();
+
+        normals.at(v0Idx) = fn;
+        normals.at(v1Idx) = fn;
+        normals.at(v2Idx) = fn;
+    }
+}
+
+// implementation partly from Mathias Griessen -> www.diffuse.ch
+void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path )
+{
+    cout << "Mesh export as obj file: " << path << endl;
+
+    string objContent("");
+    char buffer[256];
+
+    objContent.append( "#dicom2mesh obj exporter \n");
+
+    vtkSmartPointer<vtkPoints> vertices = mesh->GetPoints();
+    vtkSmartPointer<vtkDataArray> verticesArray = vertices->GetData();
+
+    long long numberOfVertices = vertices->GetNumberOfPoints();
+    long long  numberOfFaces = mesh->GetNumberOfCells();
+
+    objContent.append("g default \n");
+
+    // wrote vertices
+    for( long long i = 0; i < numberOfVertices; i++ )
+    {
+        sprintf( buffer, "v %f %f %f \n",
+                 verticesArray->GetComponent(i, 0), verticesArray->GetComponent(i, 1),
+                 verticesArray->GetComponent(i, 2) );
+        objContent.append(buffer);
+    }
+
+    // compute normals and write normals
+    vector<vtkVector3d> normals;
+    VTKMeshRoutines::computeVertexNormalsTrivial( mesh, normals );
+    for(  long long i = 0; i < numberOfVertices; i++ )
+    {
+        vtkVector3d n = normals.at(i);
+        sprintf( buffer, "vn %f %f %f \n", n.GetX(), n.GetY(), n.GetZ() );
+        objContent.append(buffer);
+    }
+
+    objContent.append("\n");
+
+    //faces
+    objContent.append("g polyDefault \n");
+    objContent.append("s off \n");
+
+    for(unsigned int i = 0; i < numberOfFaces; i++)
+    {
+        vtkSmartPointer<vtkIdList> face = vtkSmartPointer<vtkIdList>::New();
+        mesh->GetCellPoints(i,face);
+        long long v0Idx = face->GetId(0); long long v1Idx = face->GetId(1); long long v2Idx = face->GetId(2);
+
+        sprintf(buffer,"f %lld/%lld/%lld %lld/%lld/%lld %lld/%lld/%lld \n",
+                                                          v0Idx+1, v0Idx+1, v0Idx+1,
+                                                          v1Idx+1, v1Idx+1, v1Idx+1,
+                                                          v2Idx+1, v2Idx+1, v2Idx+1);
+
+        objContent.append(buffer);
+    }
+
+    objContent.append("\n\n#end of obj file\n");
+
+    // write the whole buffer to the file
+    ofstream objFile;
+    objFile.open(path, ios::out);
+    objFile.write( objContent.c_str(), objContent.length() );
+    objFile.flush();
+
     cout << "Done" << endl << endl;
 }

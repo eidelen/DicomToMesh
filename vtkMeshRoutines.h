@@ -26,11 +26,13 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkVector.h>
 #include <string>
-
+#include <vector>
 
 class VTKMeshRoutines
 {
+
 public:
 
     /**
@@ -72,6 +74,17 @@ public:
      * @param path Path to the exported stl file.
      */
     static void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
+
+    /**
+     * Export the mesh in OBJ format.
+     * @param mesh Mesh to export.
+     * @param path Path to the exported obj file.
+     */
+    static void exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
+
+
+    static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
+
 };
 
 #endif // _vtkMeshRoutines_H_

@@ -267,7 +267,24 @@ int main(int argc, char *argv[])
 
     //********************************//
 
-    VTKMeshRoutines::exportAsStlFile( mesh, settings.outputFilePath );
+
+    // check if obj or stl
+    string::size_type idx = settings.outputFilePath.rfind('.');
+    if( idx != string::npos )
+    {
+        string extension = settings.outputFilePath.substr(idx+1);
+
+        if( extension == "obj" )
+            VTKMeshRoutines::exportAsObjFile( mesh, settings.outputFilePath );
+        else if( extension == "stl" )
+            VTKMeshRoutines::exportAsStlFile( mesh, settings.outputFilePath );
+        else
+            cerr << "Unknown file ending" << endl;
+    }
+    else
+    {
+        cerr << "No Filename." << endl;
+    }
 
     return 0;
 }
