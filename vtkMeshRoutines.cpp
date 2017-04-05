@@ -89,7 +89,7 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const fl
 
     unsigned int numberOfCellsAfter = mesh->GetNumberOfCells();
     cout << endl << "Mesh reduced from " << numberOfCellsBefore << " to " <<  numberOfCellsAfter << " faces" << endl;
-    cout << "Done" << endl << endl;
+    cout << endl << endl;
 }
 
 void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio )
@@ -147,7 +147,7 @@ void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned in
     // Free memory
     smoother->Delete();
 
-    cout << endl << "Done" << endl << endl;
+    cout << endl << endl;
 }
 
 void VTKMeshRoutines::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const string& path )

@@ -60,9 +60,15 @@ struct Dicom2MeshSettings
 
 void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
 {
+    // display progress in terminal
     vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
     char* task = static_cast<char*>(clientData);
-    cout << task << ": " << std::fixed << std::setprecision( 1 )  << filter->GetProgress() * 100 << "%" << endl;
+    cout << "\33[2K\r"; // erase line
+    cout << task << ": ";
+    if( filter->GetProgress() > 0.999 )
+        cout << "done";
+    else
+        cout << std::fixed << std::setprecision( 1 )  << filter->GetProgress() * 100 << "%";
     cout << flush;
 }
 
@@ -206,7 +212,7 @@ int main(int argc, char *argv[])
     rawVolumeData->DeepCopy(reader->GetOutput());
 
     reader->Delete(); // free memory
-    cout << endl << "Done" << endl << endl;
+    cout << endl << endl;
     //******************************//
 
 
@@ -229,7 +235,7 @@ int main(int argc, char *argv[])
     // free memory
     rawVolumeData->Delete();
     surfaceExtractor->Delete();
-    cout << endl << "Done" << endl << endl;
+    cout << endl << endl;
     //******************************//
 
     if( mesh->GetNumberOfCells() == 0 )
@@ -279,7 +285,7 @@ int main(int argc, char *argv[])
         else if( extension == "stl" )
             VTKMeshRoutines::exportAsStlFile( mesh, settings.outputFilePath );
         else
-            cerr << "Unknown file ending" << endl;
+            cerr << "Unknown file type" << endl;
     }
     else
     {
