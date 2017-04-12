@@ -72,7 +72,7 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const fl
     progressCallback->SetClientData( (void*) (progressData.c_str()) );
 
     unsigned int numberOfCellsBefore = mesh->GetNumberOfCells();
-    cout << "Mesh reduction by " << reduction << endl;
+    cout << "Mesh reduction by " << std::fixed << std::setprecision( 3 ) << reduction << endl;
 
     // Note1: vtkQuadricDecimation seems to be better than vtkDecimatePro
     // Note2: vtkQuadricDecimation might have problem with face normals

@@ -46,6 +46,8 @@ struct Dicom2MeshSettings
     bool setOriginToCenterOfMass = false;
     bool enableMeshReduction = false;
     float reductionRate = 0.5;
+    bool enablePolygonLimitation = false;
+    int polygonLimit = 100000;
     bool extracOnlyBigObjects = false;
     float nbrVerticesRatio = 0.1;
     bool enableSmoothing = false;
@@ -81,6 +83,9 @@ void showUsage()
     cout << "This creates a mesh with a reduced number of polygons by 80%" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -r 0.8" << endl << endl;
 
+    cout << "This creates a mesh with a limited number of polygons of 10000. This has the same effect as reducing -r the mesh. It does not make sense to use these two options together." << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -p 10000" << endl << endl;
+
     cout << "This creates a mesh where small connected objects are removed. In particular, only connected objects with a minimum number of vertices of 20% of the object with the most vertices are part of the result." << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -e  0.2" << endl << endl;
 
@@ -103,6 +108,15 @@ string getSettingsAsString( const Dicom2MeshSettings& settings )
     if(settings.enableMeshReduction)
     {
         ret.append("enabled (rate="); ret.append( to_string(settings.reductionRate )); ret.append(")\n");
+    }
+    else
+    {
+        ret.append("disabled\n");
+    }
+    ret.append("Mesh polygon limitation: ");
+    if(settings.enablePolygonLimitation)
+    {
+        ret.append("enabled (nbr="); ret.append( to_string(settings.polygonLimit )); ret.append(")\n");
     }
     else
     {
@@ -192,7 +206,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
         else if( cArg.compare("-h") == 0 )
         {
             showUsage();
-            return true;
+            return false;
         }
         else if( cArg.compare("-r") == 0 )
         {
@@ -201,6 +215,14 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             a++;
             if( a < argc ) // default value is 0.5
                 settings.reductionRate = stof( string(argv[a]) );
+        }
+        else if( cArg.compare("-p") == 0 )
+        {
+            settings.enablePolygonLimitation = true;
+            // next argument is polygon limit
+            a++;
+            if( a < argc ) // default value is 100000
+                settings.polygonLimit = stoi( string(argv[a]) );
         }
         else if( cArg.compare("-e") == 0 )
         {
@@ -265,6 +287,19 @@ int main(int argc, char *argv[])
             cout << "Reduction skipped due to invalid reductionRate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
         else
            VTKMeshRoutines:: meshReduction( mesh, settings.reductionRate, progressCallback );
+    }
+
+    if( settings.enablePolygonLimitation )
+    {
+        if( mesh->GetNumberOfCells() > settings.polygonLimit )
+        {
+            float reductionRate = 1.0 - (  ((float)settings.polygonLimit) / ((float)(mesh->GetNumberOfCells()))  ) ;
+            VTKMeshRoutines:: meshReduction( mesh, reductionRate, progressCallback );
+        }
+        else
+        {
+            cout << "Reducing polygons not necessary." << endl << endl;
+        }
     }
 
     if( settings.extracOnlyBigObjects )
