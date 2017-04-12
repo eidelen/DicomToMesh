@@ -25,22 +25,16 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-
-#include <vtkCallbackCommand.h>
-#include <vtkDICOMImageReader.h>
-#include <vtkImageData.h>
-#include <vtkSmartPointer.h>
-#include <vtkMarchingCubes.h>
+#include <vtkAlgorithm.h>
 
 #include "vtkMeshRoutines.h"
+#include "vtkDicomRoutines.h"
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released
-//       within the function scope.
-
+//       within the function body.
 
 using namespace std;
-
 
 struct Dicom2MeshSettings
 {
@@ -56,7 +50,6 @@ struct Dicom2MeshSettings
     float nbrVerticesRatio = 0.1;
     bool enableSmoothing = false;
 };
-
 
 void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
 {
@@ -100,11 +93,55 @@ void showUsage()
     cout << "Arguments can be combined." << endl << endl;
 }
 
-int main(int argc, char *argv[])
+string getSettingsAsString( const Dicom2MeshSettings& settings )
 {
-    //****** Parse arguments *******//
-    Dicom2MeshSettings settings;
-    for( unsigned int a = 0; a < argc; a++ )
+    string ret = "Dicom2Mesh Settings\n-------------------\n";
+    ret.append("Input directory: "); ret.append(settings.pathToDicomDirectory); ret.append("\n");
+    ret.append("Output file path: "); ret.append(settings.outputFilePath); ret.append("\n");
+    ret.append("Surface segementation: "); ret.append( to_string(settings.isoValue )); ret.append("\n");
+    ret.append("Mesh reduction: ");
+    if(settings.enableMeshReduction)
+    {
+        ret.append("enabled (rate="); ret.append( to_string(settings.reductionRate )); ret.append(")\n");
+    }
+    else
+    {
+        ret.append("disabled\n");
+    }
+    ret.append("Mesh smoothing: ");
+    if(settings.enableSmoothing)
+    {
+        ret.append("enabled\n");
+    }
+    else
+    {
+        ret.append("disabled\n");
+    }
+    ret.append("Mesh centering: ");
+    if(settings.setOriginToCenterOfMass)
+    {
+        ret.append("enabled\n");
+    }
+    else
+    {
+        ret.append("disabled\n");
+    }
+    ret.append("Mesh filtering: ");
+    if(settings.extracOnlyBigObjects)
+    {
+        ret.append("enabled (size-ratio="); ret.append( to_string(settings.nbrVerticesRatio )); ret.append(")\n");
+    }
+    else
+    {
+        ret.append("disabled\n");
+    }
+
+    return ret;
+}
+
+bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings )
+{
+    for( int a = 0; a < argc; a++ )
     {
         string cArg( argv[a] );
 
@@ -120,7 +157,7 @@ int main(int argc, char *argv[])
             else
             {
                 showUsage();
-                return -1;
+                return false;
             }
         }
         else if( cArg.compare("-o") == 0 )
@@ -135,7 +172,7 @@ int main(int argc, char *argv[])
             else
             {
                 showUsage();
-                return -1;
+                return false;
             }
         }
         else if( cArg.compare("-t") == 0 )
@@ -149,13 +186,13 @@ int main(int argc, char *argv[])
             else
             {
                 showUsage();
-                return -1;
+                return false;
             }
         }
         else if( cArg.compare("-h") == 0 )
         {
             showUsage();
-            return 0;
+            return true;
         }
         else if( cArg.compare("-r") == 0 )
         {
@@ -181,61 +218,34 @@ int main(int argc, char *argv[])
         {
             settings.enableSmoothing = true;
         }
-
     }
 
     if( !settings.pathToDicomSet )
     {
         cerr << "Path to DICOM directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
-        return -1;
+        return false;
     }
 
-    //******************************//
+    return true;
+}
 
+int main(int argc, char *argv[])
+{
+    //****** Parse arguments *******//
+    Dicom2MeshSettings settings;
+    if( !parseSettings( argc, argv, settings) )
+        return -1;
+
+    cout << endl << getSettingsAsString( settings ) << endl;
+    //******************************//
 
     vtkSmartPointer<vtkCallbackCommand> progressCallback = vtkSmartPointer<vtkCallbackCommand>::New();
     progressCallback->SetCallback(myVtkProgressCallback);
 
-
     //******** Read DICOM *********//
-    cout << "Read DICOM images located under " << settings.pathToDicomDirectory << endl;
-    string progressData("Read DICOM");
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
-
-    vtkDICOMImageReader* reader = vtkDICOMImageReader::New();
-    reader->SetDirectoryName( settings.pathToDicomDirectory.c_str() );
-    reader->AddObserver(vtkCommand::ProgressEvent, progressCallback);
-    reader->Update();
-
-
-    vtkImageData* rawVolumeData = vtkImageData::New();
-    rawVolumeData->DeepCopy(reader->GetOutput());
-
-    reader->Delete(); // free memory
-    cout << endl << endl;
-    //******************************//
-
-
-    //******** Create Mesh ******* //
-    cout << "Create surface mesh with iso value = " << settings.isoValue << endl;
-    progressData = "Create mesh";
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
-
-    vtkMarchingCubes* surfaceExtractor = vtkMarchingCubes::New();
-    surfaceExtractor->ComputeNormalsOn();
-    surfaceExtractor->ComputeScalarsOn();
-    surfaceExtractor->SetValue( 0, settings.isoValue) ;
-    surfaceExtractor->SetInputData( rawVolumeData );
-    surfaceExtractor->AddObserver(vtkCommand::ProgressEvent, progressCallback);
-    surfaceExtractor->Update();
-
-    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>::New();
-    mesh->DeepCopy( surfaceExtractor->GetOutput() );
-
-    // free memory
-    rawVolumeData->Delete();
-    surfaceExtractor->Delete();
-    cout << endl << endl;
+    vtkImageData* imgData = VTKDicomRoutines::loadDicomImage( settings.pathToDicomDirectory, progressCallback );
+    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>( VTKDicomRoutines::dicomToMesh( imgData, settings.isoValue, progressCallback ) );
+    imgData->Delete();
     //******************************//
 
     if( mesh->GetNumberOfCells() == 0 )
@@ -243,7 +253,6 @@ int main(int argc, char *argv[])
         cerr << "No mesh could be created. Wrong DICOM or wrong iso value" << endl;
         return -1;
     }
-
 
     //***** Mesh post-processing *****//
     if( settings.setOriginToCenterOfMass )
@@ -272,7 +281,6 @@ int main(int argc, char *argv[])
     }
 
     //********************************//
-
 
     // check if obj or stl
     string::size_type idx = settings.outputFilePath.rfind('.');

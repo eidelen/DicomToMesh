@@ -63,7 +63,7 @@ void VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
 
     // Free memory
     transformFilter->Delete();
-    cout << endl << "Done" << endl << endl;
+    cout << "Done" << endl << endl;
 }
 
 void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction, vtkSmartPointer<vtkCallbackCommand> progressCallback )
