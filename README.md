@@ -24,7 +24,9 @@ The 3D surface mesh is computed by the marching cubes algorithm. As an input, th
 
 # Building
 
-The software is written in C++ 11 and uses VTK 7.0. CMake is used as build-system.
+The software is written in C++11 and uses VTK 7.0. CMake is used as build-system. 
+
+In order to extend the supported DICOM formats, the libray vtk-dicom can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
 
 
 # Contributors

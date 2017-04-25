@@ -266,6 +266,12 @@ int main(int argc, char *argv[])
 
     //******** Read DICOM *********//
     vtkImageData* imgData = VTKDicomRoutines::loadDicomImage( settings.pathToDicomDirectory, progressCallback );
+    if( imgData == NULL )
+    {
+        cerr << "No image data could be created. Maybe wrong directory?" << endl;
+        return -1;
+    }
+
     vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>( VTKDicomRoutines::dicomToMesh( imgData, settings.isoValue, progressCallback ) );
     imgData->Delete();
     //******************************//
