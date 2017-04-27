@@ -51,6 +51,7 @@ struct Dicom2MeshSettings
     bool extracOnlyBigObjects = false;
     float nbrVerticesRatio = 0.1;
     bool enableSmoothing = false;
+    bool showIn3DView = false;
 };
 
 void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
@@ -94,6 +95,9 @@ void showUsage()
 
     cout << "This creates a mesh which is smoothed." << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -s" << endl << endl;
+
+    cout << "This creates a mesh and shows it in a 3d view." << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -v" << endl << endl;
 
     cout << "Arguments can be combined." << endl << endl;
 }
@@ -240,6 +244,10 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
         {
             settings.enableSmoothing = true;
         }
+        else if( cArg.compare("-v") == 0 )
+        {
+            settings.showIn3DView = true;
+        }
     }
 
     if( !settings.pathToDicomSet )
@@ -340,6 +348,11 @@ int main(int argc, char *argv[])
     {
         cerr << "No Filename." << endl;
     }
+
+
+    if( settings.showIn3DView )
+        VTKMeshRoutines::displayMesh( mesh );
+
 
     return 0;
 }
