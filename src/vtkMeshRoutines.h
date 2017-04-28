@@ -82,15 +82,8 @@ public:
      */
     static void exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
 
-    /**
-     * Display mesh in a 3d view.
-     * @param mesh Mesh to show.
-     */
-    static void displayMesh( const vtkSmartPointer<vtkPolyData>& mesh );
-
 
     static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
-
 };
 
 #endif // _vtkMeshRoutines_H_

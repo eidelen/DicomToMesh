@@ -29,6 +29,7 @@
 
 #include "vtkMeshRoutines.h"
 #include "vtkDicomRoutines.h"
+#include "vtkMeshVisualizer.h"
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released
@@ -351,7 +352,7 @@ int main(int argc, char *argv[])
 
 
     if( settings.showIn3DView )
-        VTKMeshRoutines::displayMesh( mesh );
+        VTKMeshVisualizer::displayMesh( mesh );
 
 
     return 0;

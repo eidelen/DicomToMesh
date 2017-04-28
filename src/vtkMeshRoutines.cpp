@@ -30,12 +30,6 @@
 #include <vtkSTLWriter.h>
 #include <vtkCallbackCommand.h>
 #include <vtkMath.h>
-#include <vtkRenderer.h>
-#include <vtkActor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkInteractorStyleTrackballCamera.h>
 
 #include <string>
 #include <iostream>
@@ -273,24 +267,3 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
     cout << "Done" << endl << endl;
 }
 
-void VTKMeshRoutines::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
-{
-    // show mesh
-    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindow->AddRenderer(renderer);
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    renderWindowInteractor->SetInteractorStyle( vtkInteractorStyleTrackballCamera::New() );
-    renderWindowInteractor->SetRenderWindow( renderWindow );
-
-    // Visualize
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->SetInputData( mesh );
-
-    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
-    renderer->AddActor(actor);
-
-    renderWindow->Render();
-    renderWindowInteractor->Start();
-}

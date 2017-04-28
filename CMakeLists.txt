@@ -20,7 +20,7 @@ if( USE_VTK_DICOM )
 endif( USE_VTK_DICOM )
 
 include_directories( src )
-set(DICOM_TO_MESH_SRC  src/main.cpp src/vtkMeshRoutines.cpp src/vtkDicomRoutines.cpp )
+set(DICOM_TO_MESH_SRC  src/main.cpp src/vtkMeshRoutines.cpp src/vtkDicomRoutines.cpp src/vtkMeshVisualizer.cpp )
 
 add_executable( dicom2mesh ${DICOM_TO_MESH_SRC} )
 target_link_libraries( dicom2mesh ${DICOM_TO_MESH_LIBS}  )
