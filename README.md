@@ -22,6 +22,14 @@ The 3D surface mesh is computed by the marching cubes algorithm. As an input, th
 
 <p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/mesh-filter.png" width="80%"></p>
 
+
+# Visualisation 
+
+By passing the command line option <code>-v</code> the resulting mesh is visualised in a 3D environment. By double clicking the mesh's  surface, the corresponding 3D coordinate is printed to the shell.
+
+<p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/mesh-visualization.png" width="50%"></p>
+
+
 # Building
 
 The software is written in C++11 and uses VTK 7.0. CMake is used as build-system. 
@@ -35,3 +43,5 @@ The code was written for the medical planning and navigation library of AOT AG (
 
 Have fun,
 Adrian
+
+<p align="right"><img alt="filter" src="http://eidelen.diffuse.ch/aot.jpg" width="30%"></p>
