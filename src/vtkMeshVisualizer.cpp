@@ -107,7 +107,7 @@ void VTKMeshVisualizerInteraction::OnLeftButtonDown()
         picker->Pick( clickPos[0], clickPos[1], 0, this->GetDefaultRenderer() );
 
         double* pos = picker->GetPickPosition();
-        std::cout << "Pick position: [ " << pos[0] << "; " << pos[1] << "; " << pos[2] << " ] "<< std::endl;
+        std::cout << "Pick position: [ " << std::fixed << std::setprecision( 3 ) << pos[0] << "; " << pos[1] << "; " << pos[2] << "; 1.0 ] "<< std::endl;
 
         m_pickingMarker->SetPosition( pos );
     }
