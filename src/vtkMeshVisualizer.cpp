@@ -47,10 +47,12 @@ void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
 
     // Visualize
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetScalarVisibility(0);
     mapper->SetInputData( mesh );
 
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
+    actor->GetProperty()->SetColor(0.8,0.8,0.8);
     renderer->AddActor(actor);
 
     renderWindow->Render();

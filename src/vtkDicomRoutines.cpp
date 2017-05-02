@@ -134,7 +134,6 @@ vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageD
 
     vtkMarchingCubes* surfaceExtractor = vtkMarchingCubes::New();
     surfaceExtractor->ComputeNormalsOn();
-    surfaceExtractor->ComputeScalarsOn();
     surfaceExtractor->SetValue( 0,threshold ) ;
     surfaceExtractor->SetInputData( imageData );
     surfaceExtractor->AddObserver(vtkCommand::ProgressEvent, progressCallback);
