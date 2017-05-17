@@ -30,6 +30,7 @@
 #include <vtkSTLWriter.h>
 #include <vtkCallbackCommand.h>
 #include <vtkMath.h>
+#include <vtkOBJReader.h>
 
 #include <string>
 #include <iostream>
@@ -265,5 +266,22 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
     objFile.flush();
 
     cout << "Done" << endl << endl;
+}
+
+vtkPolyData* VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
+{
+    cout << "Load obj file " << pathToObjFile << endl << endl;
+
+    vtkOBJReader* reader = vtkOBJReader::New();
+    reader->SetFileName( pathToObjFile.c_str() );
+    reader->Update();
+
+    vtkPolyData* mesh = vtkPolyData::New();
+    mesh->DeepCopy( reader->GetOutput() );
+
+    // Free memory
+    reader->Delete();
+
+    return mesh;
 }
 

@@ -39,7 +39,7 @@ using namespace std;
 
 struct Dicom2MeshSettings
 {
-    string pathToDicomDirectory;
+    string pathToInputData;
     bool pathToDicomSet = false;
     string outputFilePath = "mesh.stl";
     bool pathToOutputSet = false;
@@ -67,6 +67,50 @@ void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* c
     else
         cout << std::fixed << std::setprecision( 1 )  << filter->GetProgress() * 100 << "%";
     cout << flush;
+}
+
+vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful )
+{
+    vtkSmartPointer<vtkPolyData> mesh;
+    bool loadObj = false; bool loadStl = false;
+
+    // check if a mesh file is loaded
+    string::size_type idx = settings.pathToInputData.rfind('.');
+    if( idx != string::npos )
+    {
+        string extension = settings.pathToInputData.substr(idx+1);
+        loadObj = extension == "obj";
+        loadStl = extension == "stl";
+    }
+
+    if( loadObj )
+    {
+        mesh = VTKMeshRoutines::importObjFile( settings.pathToInputData );
+        successful = true;
+    }
+    else if( loadStl )
+    {
+        cerr << "stl import not yet implemented" << endl;
+        successful = false;
+    }
+    else
+    {
+        // default: try to load dicom directory
+        vtkImageData* imgData = VTKDicomRoutines::loadDicomImage( settings.pathToInputData, progressCallback );
+        if( imgData == NULL )
+        {
+            cerr << "No image data could be created. Maybe wrong directory?" << endl;
+            successful = false;
+        }
+        else
+        {
+            mesh = vtkSmartPointer<vtkPolyData>( VTKDicomRoutines::dicomToMesh( imgData, settings.isoValue, progressCallback ) );
+            imgData->Delete();
+            successful = true;
+        }
+    }
+
+    return mesh;
 }
 
 void showUsage()
@@ -100,13 +144,16 @@ void showUsage()
     cout << "This creates a mesh and shows it in a 3d view." << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -v" << endl << endl;
 
+    cout << "Alternatively a mesh file (obj, stl) can be loaded directly. This is handy to modify an existing mesh." << endl;
+    cout << "> dicom2mesh -i abc.obj " << endl << endl;
+
     cout << "Arguments can be combined." << endl << endl;
 }
 
 string getSettingsAsString( const Dicom2MeshSettings& settings )
 {
     string ret = "Dicom2Mesh Settings\n-------------------\n";
-    ret.append("Input directory: "); ret.append(settings.pathToDicomDirectory); ret.append("\n");
+    ret.append("Input directory: "); ret.append(settings.pathToInputData); ret.append("\n");
     ret.append("Output file path: "); ret.append(settings.outputFilePath); ret.append("\n");
     ret.append("Surface segementation: "); ret.append( to_string(settings.isoValue )); ret.append("\n");
     ret.append("Mesh reduction: ");
@@ -170,7 +217,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             a++;
             if( a < argc )
             {
-                settings.pathToDicomDirectory = argv[a];
+                settings.pathToInputData = argv[a];
                 settings.pathToDicomSet = true;
             }
             else
@@ -273,16 +320,13 @@ int main(int argc, char *argv[])
     vtkSmartPointer<vtkCallbackCommand> progressCallback = vtkSmartPointer<vtkCallbackCommand>::New();
     progressCallback->SetCallback(myVtkProgressCallback);
 
-    //******** Read DICOM *********//
-    vtkImageData* imgData = VTKDicomRoutines::loadDicomImage( settings.pathToDicomDirectory, progressCallback );
-    if( imgData == NULL )
-    {
-        cerr << "No image data could be created. Maybe wrong directory?" << endl;
-        return -1;
-    }
 
-    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>( VTKDicomRoutines::dicomToMesh( imgData, settings.isoValue, progressCallback ) );
-    imgData->Delete();
+
+    //******** Read DICOM *********//
+    bool loadSuccessful;
+    vtkSmartPointer<vtkPolyData> mesh = loadInputData( settings, progressCallback, loadSuccessful );
+    if( !loadSuccessful )
+        return -1;
     //******************************//
 
     if( mesh->GetNumberOfCells() == 0 )

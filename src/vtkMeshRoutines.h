@@ -82,6 +82,12 @@ public:
      */
     static void exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
 
+    /**
+     * Opens a obj file and returns a vtkPolyData mesh.
+     * @param pathToObjFile Path to the obj file.
+     * @return Resulting 3D mesh.
+     */
+    static vtkPolyData* importObjFile( const std::string& pathToObjFile );
 
     static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
 };
