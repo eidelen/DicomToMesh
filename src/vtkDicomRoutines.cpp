@@ -34,6 +34,7 @@ using namespace std;
 #include "vtkDICOMItem.h"
 #include "vtkStringArray.h"
 #include "vtkDICOMReader.h"
+#include "vtkImageThreshold.h"
 
 vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom, vtkSmartPointer<vtkCallbackCommand> progressCallback )
 {
@@ -132,9 +133,20 @@ vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageD
     string progressData = "Create mesh";
     progressCallback->SetClientData( (void*) (progressData.c_str()) );
 
+    vtkImageThreshold* isoValueThreshold = vtkImageThreshold::New();
+    isoValueThreshold->SetInputData( imageData );
+    unsigned char lower = 100;
+    unsigned char upper = 150;
+    isoValueThreshold->ThresholdBetween(lower, upper);
+    isoValueThreshold->ReplaceInOn();
+    isoValueThreshold->SetInValue( 200 );
+    isoValueThreshold->SetOutValue( 0 );
+    isoValueThreshold->Update();
+
     vtkMarchingCubes* surfaceExtractor = vtkMarchingCubes::New();
     surfaceExtractor->ComputeNormalsOn();
-    surfaceExtractor->SetValue( 0,threshold ) ;
+    surfaceExtractor->ComputeScalarsOn();
+    surfaceExtractor->SetValue( 0, 199 ) ;
     surfaceExtractor->SetInputData( imageData );
     surfaceExtractor->AddObserver(vtkCommand::ProgressEvent, progressCallback);
     surfaceExtractor->Update();
