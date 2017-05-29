@@ -31,6 +31,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkMath.h>
 #include <vtkOBJReader.h>
+#include <vtkTypedArray.h>
 
 #include <string>
 #include <iostream>

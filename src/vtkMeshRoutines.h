@@ -27,6 +27,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkVector.h>
+#include <vtkCallbackCommand.h>
 #include <string>
 #include <vector>
 
