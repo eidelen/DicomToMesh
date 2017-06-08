@@ -244,16 +244,16 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
     objContent.append("g polyDefault \n");
     objContent.append("s off \n");
 
-    for(unsigned int i = 0; i < numberOfFaces; i++)
+    for(long long i = 0; i < numberOfFaces; i++)
     {
         vtkSmartPointer<vtkIdList> face = vtkSmartPointer<vtkIdList>::New();
         mesh->GetCellPoints(i,face);
         long long v0Idx = face->GetId(0); long long v1Idx = face->GetId(1); long long v2Idx = face->GetId(2);
 
-        sprintf(buffer,"f %lld/%lld/%lld %lld/%lld/%lld %lld/%lld/%lld \n",
-                                                          v0Idx+1, v0Idx+1, v0Idx+1,
-                                                          v1Idx+1, v1Idx+1, v1Idx+1,
-                                                          v2Idx+1, v2Idx+1, v2Idx+1);
+        sprintf(buffer,"f %lld//%lld %lld//%lld %lld//%lld \n",
+                                                          v0Idx+1, v0Idx+1,
+                                                          v1Idx+1, v1Idx+1,
+                                                          v2Idx+1, v2Idx+1);
 
         objContent.append(buffer);
     }
