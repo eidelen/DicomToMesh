@@ -53,6 +53,7 @@ struct Dicom2MeshSettings
     float nbrVerticesRatio = 0.1;
     bool enableSmoothing = false;
     bool showIn3DView = false;
+    bool enableCrop = false;
 };
 
 void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
@@ -104,6 +105,9 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
         }
         else
         {
+            if( settings.enableCrop )
+                VTKDicomRoutines::cropDicom( imgData );
+
             mesh = vtkSmartPointer<vtkPolyData>( VTKDicomRoutines::dicomToMesh( imgData, settings.isoValue, progressCallback ) );
             imgData->Delete();
             successful = true;
@@ -122,6 +126,9 @@ void showUsage()
 
     cout << "This creates a mesh file called abc.stl by using a iso value of 700" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.stl  -t 700 " << endl << endl;
+
+    cout << "This option offers the possibility to crop the input dicom volume" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -z" << endl << endl;
 
     cout << "This creates a mesh with a reduced number of polygons by half" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -r" << endl << endl;
@@ -196,6 +203,15 @@ string getSettingsAsString( const Dicom2MeshSettings& settings )
     if(settings.extracOnlyBigObjects)
     {
         ret.append("enabled (size-ratio="); ret.append( to_string(settings.nbrVerticesRatio )); ret.append(")\n");
+    }
+    else
+    {
+        ret.append("disabled\n");
+    }
+    ret.append("Volume cropping: ");
+    if(settings.enableCrop)
+    {
+        ret.append("enabled\n");
     }
     else
     {
@@ -296,6 +312,10 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
         {
             settings.showIn3DView = true;
         }
+        else if( cArg.compare("-z") == 0 )
+        {
+            settings.enableCrop = true;
+        }
     }
 
     if( !settings.pathToDicomSet )
@@ -345,7 +365,7 @@ int main(int argc, char *argv[])
         if( settings.reductionRate < 0.0 || settings.reductionRate > 1.0 )
             cout << "Reduction skipped due to invalid reductionRate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
         else
-           VTKMeshRoutines:: meshReduction( mesh, settings.reductionRate, progressCallback );
+           VTKMeshRoutines::meshReduction( mesh, settings.reductionRate, progressCallback );
     }
 
     if( settings.enablePolygonLimitation )
@@ -353,7 +373,7 @@ int main(int argc, char *argv[])
         if( mesh->GetNumberOfCells() > settings.polygonLimit )
         {
             float reductionRate = 1.0 - (  ((float)settings.polygonLimit) / ((float)(mesh->GetNumberOfCells()))  ) ;
-            VTKMeshRoutines:: meshReduction( mesh, reductionRate, progressCallback );
+            VTKMeshRoutines::meshReduction( mesh, reductionRate, progressCallback );
         }
         else
         {

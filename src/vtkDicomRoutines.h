@@ -52,6 +52,13 @@ public:
      */
     static vtkPolyData* dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold, vtkSmartPointer<vtkCallbackCommand> progressCallback );
 
+
+    /**
+     * Crop dicom images in terms of used slice ranges.
+     * @param imageData
+     */
+    static void cropDicom( vtkSmartPointer<vtkImageData> imageData );
+
 };
 
 #endif // _vtkDicomRoutines_H_

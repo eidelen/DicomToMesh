@@ -23,8 +23,10 @@
 
 #include <vtkDICOMImageReader.h>
 #include <vtkMarchingCubes.h>
+#include <vtkExtractVOI.h>
 #include <iostream>
 #include "vtkDicomRoutines.h"
+
 
 using namespace std;
 
@@ -147,4 +149,35 @@ vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageD
     cout << endl << endl;
 
     return mesh;
+}
+
+void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
+{
+    int* inputImgDimension = imageData->GetDimensions();
+    int xd = inputImgDimension[0]; int yd = inputImgDimension[1]; int zd = inputImgDimension[2];
+
+    // ask user for slice range
+    int startSlice, endSlice;
+    cout << "Input image sclice range from   0 - " << zd << endl;
+    cout << "Start slice = ";
+    scanf("%d", &startSlice);
+    cout << endl << "End slice = ";
+    scanf("%d", &endSlice);
+    cout << endl;
+
+    // check passed slice values
+    if( startSlice < 0 || startSlice > endSlice || endSlice < zd )
+    {
+        cout << "Invalid slice settings - skip cropping." << endl;
+    }
+    else
+    {
+        cout << "Crop from slice " << startSlice << " to " << endSlice << endl;
+
+        vtkSmartPointer<vtkExtractVOI> cropper = vtkSmartPointer<vtkExtractVOI>::New();
+        cropper->SetInputData( imageData );
+        cropper->SetVOI(0,xd-1, 0,yd-1, 200,300 );
+        cropper->Update();
+        imageData->DeepCopy( cropper->GetOutput() );
+    }
 }
