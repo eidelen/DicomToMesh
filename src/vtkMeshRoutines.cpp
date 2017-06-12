@@ -96,7 +96,7 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const fl
 
 void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio )
 {
-    cout << "Remove small connected objects: Size ratio = " << ratio << endl;
+    cout << "Remove small connected objects: Size ratio = " << std::fixed << std::setprecision( 3 ) << ratio << endl;
 
     vtkPolyDataConnectivityFilter* connectivityFilter = vtkPolyDataConnectivityFilter::New();
     connectivityFilter->SetInputData( mesh );

@@ -176,7 +176,7 @@ void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
 
         vtkSmartPointer<vtkExtractVOI> cropper = vtkSmartPointer<vtkExtractVOI>::New();
         cropper->SetInputData( imageData );
-        cropper->SetVOI(0,xd-1, 0,yd-1, 200,300 );
+        cropper->SetVOI(0,xd-1, 0,yd-1, startSlice, endSlice );
         cropper->Update();
         imageData->DeepCopy( cropper->GetOutput() );
     }
