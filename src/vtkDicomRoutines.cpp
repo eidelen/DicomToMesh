@@ -166,7 +166,7 @@ void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
     cout << endl;
 
     // check passed slice values
-    if( startSlice < 0 || startSlice > endSlice || endSlice < zd )
+    if( startSlice < 0 || startSlice > endSlice || endSlice >= zd )
     {
         cout << "Invalid slice settings - skip cropping." << endl;
     }
