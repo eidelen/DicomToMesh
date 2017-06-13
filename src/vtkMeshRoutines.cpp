@@ -31,6 +31,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkMath.h>
 #include <vtkOBJReader.h>
+#include <vtkSTLReader.h>
 #include <vtkTypedArray.h>
 
 #include <string>
@@ -275,6 +276,23 @@ vtkPolyData* VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
 
     vtkOBJReader* reader = vtkOBJReader::New();
     reader->SetFileName( pathToObjFile.c_str() );
+    reader->Update();
+
+    vtkPolyData* mesh = vtkPolyData::New();
+    mesh->DeepCopy( reader->GetOutput() );
+
+    // Free memory
+    reader->Delete();
+
+    return mesh;
+}
+
+vtkPolyData* VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
+{
+    cout << "Load stl file " << pathToStlFile << endl << endl;
+
+    vtkSTLReader* reader = vtkSTLReader::New();
+    reader->SetFileName( pathToStlFile.c_str() );
     reader->Update();
 
     vtkPolyData* mesh = vtkPolyData::New();

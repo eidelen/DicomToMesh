@@ -90,6 +90,13 @@ public:
      */
     static vtkPolyData* importObjFile( const std::string& pathToObjFile );
 
+    /**
+     * Opens a stl file and returns a vtkPolyData mesh.
+     * @param pathToStlFile Path to the stl file.
+     * @return Resulting 3D mesh.
+     */
+    static vtkPolyData* importStlFile( const std::string& pathToStlFile );
+
     static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
 };
 

@@ -91,8 +91,8 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
     }
     else if( loadStl )
     {
-        cerr << "stl import not yet implemented" << endl;
-        successful = false;
+        mesh = VTKMeshRoutines::importStlFile( settings.pathToInputData );
+        successful = true;
     }
     else
     {
@@ -121,11 +121,11 @@ void showUsage()
 {
     cout << "How to use dicom2Mesh:" << endl << endl;
 
-    cout << "Minimum example. This creates a mesh file called mesh.stl by using a iso value of 400 (makes bone visible)" << endl;
-    cout << "> dicom2mesh -i pathToDicomDirectory " << endl << endl;
+    cout << "Minimum example. This transforms a dicom data set into a 3d mesh file called mesh.stl by using an iso value of 400 (makes bone visible)" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory -o mesh.stl" << endl << endl;
 
-    cout << "This creates a mesh file called abc.stl by using a iso value of 700" << endl;
-    cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.stl  -t 700 " << endl << endl;
+    cout << "This creates a mesh file called abc.obj by using an iso value of 700" << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.obj  -t 700 " << endl << endl;
 
     cout << "This option offers the possibility to crop the input dicom volume" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -z" << endl << endl;
