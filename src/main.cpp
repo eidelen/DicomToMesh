@@ -41,8 +41,8 @@ struct Dicom2MeshSettings
 {
     string pathToInputData;
     bool pathToDicomSet = false;
+    bool enabledExportMeshFile = false;
     string outputFilePath = "mesh.stl";
-    bool pathToOutputSet = false;
     int isoValue = 400; // Hard Tissue
     bool setOriginToCenterOfMass = false;
     bool enableMeshReduction = false;
@@ -249,7 +249,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             if( a < argc )
             {
                 settings.outputFilePath = argv[a];
-                settings.pathToOutputSet = true;
+                settings.enabledExportMeshFile = true;
             }
             else
             {
@@ -397,21 +397,24 @@ int main(int argc, char *argv[])
     //********************************//
 
     // check if obj or stl
-    string::size_type idx = settings.outputFilePath.rfind('.');
-    if( idx != string::npos )
+    if( settings.enabledExportMeshFile )
     {
-        string extension = settings.outputFilePath.substr(idx+1);
+        string::size_type idx = settings.outputFilePath.rfind('.');
+        if( idx != string::npos )
+        {
+            string extension = settings.outputFilePath.substr(idx+1);
 
-        if( extension == "obj" )
-            VTKMeshRoutines::exportAsObjFile( mesh, settings.outputFilePath );
-        else if( extension == "stl" )
-            VTKMeshRoutines::exportAsStlFile( mesh, settings.outputFilePath );
+            if( extension == "obj" )
+                VTKMeshRoutines::exportAsObjFile( mesh, settings.outputFilePath );
+            else if( extension == "stl" )
+                VTKMeshRoutines::exportAsStlFile( mesh, settings.outputFilePath );
+            else
+                cerr << "Unknown file type" << endl;
+        }
         else
-            cerr << "Unknown file type" << endl;
-    }
-    else
-    {
-        cerr << "No Filename." << endl;
+        {
+            cerr << "No Filename." << endl;
+        }
     }
 
 
