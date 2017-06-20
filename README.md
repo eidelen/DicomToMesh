@@ -39,7 +39,7 @@ In order to extend the supported DICOM formats, the libray vtk-dicom can be opti
 
 # Contributors
 
-The code was written for the medical planning and navigation library of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, I decided to make our code public as well. Hope somebody can use parts of it.
+DicomToMesh is a small inhouse product of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
 
 Have fun,
 Adrian
