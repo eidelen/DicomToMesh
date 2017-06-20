@@ -41,7 +41,6 @@ In order to extend the supported DICOM formats, the libray vtk-dicom can be opti
 
 DicomToMesh is a small inhouse product of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
 
-Have fun,
-Adrian
+Have fun :)
 
 <p align="right"><img alt="filter" src="http://eidelen.diffuse.ch/aot.jpg" width="30%"></p>
