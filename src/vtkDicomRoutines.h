@@ -50,7 +50,7 @@ public:
      * @param pathToDicom Path to the DICOM directory.
      * @return DICOM image data.
      */
-    vtkImageData* loadDicomImage( const std::string& pathToDicom );
+    vtkSmartPointer<vtkImageData> loadDicomImage( const std::string& pathToDicom );
 
     /**
      * Creates a mesh from out DICOM raw data.
@@ -58,7 +58,7 @@ public:
      * @param threshold Threshold for surface segmentation.
      * @return Resulting 3D mesh.
      */
-     vtkPolyData* dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold );
+    vtkSmartPointer<vtkPolyData> dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold );
 
 
     /**

@@ -90,7 +90,7 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
 
     if( loadObj )
     {
-        mesh = vmr->importObjFile( settings.pathToInputData );
+        mesh =  vmr->importObjFile( settings.pathToInputData );
         successful = true;
     }
     else if( loadStl )
@@ -103,8 +103,8 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
         std::shared_ptr<VTKDicomRoutines> vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
         vdr->SetProgressCallback( progressCallback );
 
-        // default: try to load dicom directory
-        vtkImageData* imgData = vdr->loadDicomImage( settings.pathToInputData );
+
+        vtkSmartPointer<vtkImageData> imgData = vdr->loadDicomImage( settings.pathToInputData );
         if( imgData == NULL )
         {
             cerr << "No image data could be created. Maybe wrong directory?" << endl;
@@ -115,8 +115,7 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
             if( settings.enableCrop )
                 vdr->cropDicom( imgData );
 
-            mesh = vtkSmartPointer<vtkPolyData>(vdr->dicomToMesh( imgData, settings.isoValue ) );
-            imgData->Delete();
+            mesh = vdr->dicomToMesh( imgData, settings.isoValue );
             successful = true;
         }
     }

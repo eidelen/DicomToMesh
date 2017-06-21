@@ -63,15 +63,15 @@ void VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
     computeCenter->SetUseScalarsAsWeights(false);
     computeCenter->Update();
 
-    double objectCenter[3];
+    double* objectCenter = new double[3];
     computeCenter->GetCenter(objectCenter);
 
     cout << "Move origin to center of mass: [" << objectCenter[0] << "," << objectCenter[1] << "," << objectCenter[2] << "]" << endl;
 
-    vtkSmartPointer<vtkTransform> translation = vtkTransform::New();
+    vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
     translation->Translate(-objectCenter[0], -objectCenter[1], -objectCenter[2]);
 
-    vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
+    vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     transformFilter->SetInputData( mesh );
     transformFilter->SetTransform( translation );
     transformFilter->Update();
@@ -79,7 +79,8 @@ void VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
     mesh->DeepCopy( transformFilter->GetOutput() );
 
     // Free memory
-    transformFilter->Delete();
+    delete[] objectCenter;
+
     cout << "Done" << endl << endl;
 }
 
@@ -90,7 +91,7 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const fl
 
     // Note1: vtkQuadricDecimation seems to be better than vtkDecimatePro
     // Note2: vtkQuadricDecimation might have problem with face normals
-    vtkQuadricDecimation* decimator = vtkQuadricDecimation::New();
+    vtkSmartPointer<vtkQuadricDecimation> decimator = vtkSmartPointer<vtkQuadricDecimation>::New();
     decimator->SetInputData( mesh );
     decimator->SetTargetReduction( reduction );
     if( m_progressCallback.Get() != NULL )
@@ -103,9 +104,6 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const fl
 
     mesh->DeepCopy( decimator->GetOutput() );
 
-    // Free memory
-    decimator->Delete();
-
     unsigned int numberOfCellsAfter = mesh->GetNumberOfCells();
     cout << endl << "Mesh reduced from " << numberOfCellsBefore << " to " <<  numberOfCellsAfter << " faces" << endl;
     cout << endl << endl;
@@ -115,7 +113,7 @@ void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, con
 {
     cout << "Remove small connected objects: Size ratio = " << std::fixed << std::setprecision( 3 ) << ratio << endl;
 
-    vtkPolyDataConnectivityFilter* connectivityFilter = vtkPolyDataConnectivityFilter::New();
+    vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
     connectivityFilter->SetInputData( mesh );
     connectivityFilter->SetExtractionModeToAllRegions();
     connectivityFilter->Update();
@@ -139,10 +137,6 @@ void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, con
     connectivityFilter->Update();
 
     mesh->DeepCopy( connectivityFilter->GetOutput() );
-
-    // Free memory
-    connectivityFilter->Delete();
-
     cout << "Done" << endl << endl << endl;
 }
 
@@ -151,7 +145,7 @@ void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned in
 {
     cout << "Mesh smoothing with " << nbrOfSmoothingIterations << " iterations." << endl;
 
-    vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
+    vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
     smoother->SetInputData( mesh );
     smoother->SetNumberOfIterations( nbrOfSmoothingIterations );
     smoother->SetFeatureAngle(45);
@@ -165,10 +159,6 @@ void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned in
     smoother->Update();
 
     mesh->DeepCopy( smoother->GetOutput() );
-
-    // Free memory
-    smoother->Delete();
-
     cout << endl << endl;
 }
 
@@ -233,7 +223,7 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
     cout << "Mesh export as obj file: " << path << endl;
 
     string objContent("");
-    char buffer[256];
+    char* buffer = new char[256];
 
     objContent.append( "#dicom2mesh obj exporter \n");
 
@@ -292,14 +282,16 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
     objFile.write( objContent.c_str(), objContent.length() );
     objFile.flush();
 
+    delete[] buffer;
+
     cout << "Done" << endl << endl;
 }
 
-vtkPolyData* VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
+vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
 {
     cout << "Load obj file " << pathToObjFile << endl ;
 
-    vtkOBJReader* reader = vtkOBJReader::New();
+    vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
     reader->SetFileName( pathToObjFile.c_str() );
     if( m_progressCallback.Get() != NULL )
     {
@@ -309,21 +301,18 @@ vtkPolyData* VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
     }
     reader->Update();
 
-    vtkPolyData* mesh = vtkPolyData::New();
+    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>::New();
     mesh->DeepCopy( reader->GetOutput() );
-
-    // Free memory
-    reader->Delete();
 
     cout << endl << endl;
     return mesh;
 }
 
-vtkPolyData* VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
+vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
 {
     cout << "Load stl file " << pathToStlFile << endl;
 
-    vtkSTLReader* reader = vtkSTLReader::New();
+    vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
     reader->SetFileName( pathToStlFile.c_str() );
     if( m_progressCallback.Get() != NULL )
     {
@@ -333,11 +322,8 @@ vtkPolyData* VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
     }
     reader->Update();
 
-    vtkPolyData* mesh = vtkPolyData::New();
+    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>::New();
     mesh->DeepCopy( reader->GetOutput() );
-
-    // Free memory
-    reader->Delete();
 
     cout << endl << endl;
     return mesh;

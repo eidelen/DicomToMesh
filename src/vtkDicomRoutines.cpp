@@ -51,7 +51,7 @@ void VTKDicomRoutines::SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> 
 #include "vtkStringArray.h"
 #include "vtkDICOMReader.h"
 
-vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
+vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
 {
     // analyze dicom directory. there might be mulitple data
     vtkSmartPointer<vtkDICOMDirectory> dicomDirectory = vtkSmartPointer<vtkDICOMDirectory>::New();
@@ -101,7 +101,7 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
     const vtkDICOMItem& selected_serie = dicomDirectory->GetSeriesRecord( s_nbr );
     cout << endl << "Load serie " << s_nbr << ", " << selected_serie.Get(DC::SeriesDescription).AsString() << endl;
 
-    vtkDICOMReader* reader = vtkDICOMReader::New();
+    vtkSmartPointer<vtkDICOMReader> reader = vtkSmartPointer<vtkDICOMReader>::New();
     reader->SetFileNames( dicomDirectory->GetFileNamesForSeries( s_nbr ) );
     if( m_progressCallback.Get() != NULL )
     {
@@ -111,22 +111,20 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
     }
     reader->Update();
 
-    vtkImageData* rawVolumeData = vtkImageData::New();
+    vtkSmartPointer<vtkImageData> rawVolumeData = vtkSmartPointer<vtkImageData>::New();
     rawVolumeData->DeepCopy(reader->GetOutput());
 
-    reader->Delete(); // free memory
     cout << endl << endl;
-
     return rawVolumeData;
 }
 
 #else
 
-vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
+vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
 {
     cout << "Read DICOM images located under " << pathToDicom << endl;
 
-    vtkDICOMImageReader* reader = vtkDICOMImageReader::New();
+    vtkSmartPointer<vtkDICOMImageReader> reader = vtkSmartPointer<vtkDICOMImageReader>::New();
     reader->SetDirectoryName( pathToDicom.c_str() );
     if( m_progressCallback.Get() != NULL )
     {
@@ -136,10 +134,9 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
     }
     reader->Update();
 
-    vtkImageData* rawVolumeData = vtkImageData::New();
+    vtkSmartPointer<vtkImageData> rawVolumeData = vtkSmartPointer<vtkImageData>::New();
     rawVolumeData->DeepCopy(reader->GetOutput());
 
-    reader->Delete(); // free memory
     cout << endl << endl;
 
     return rawVolumeData;
@@ -147,11 +144,11 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
 
 #endif // USEVTKDICOM
 
-vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold )
+vtkSmartPointer<vtkPolyData> VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold )
 {
     cout << "Create surface mesh with iso value = " << threshold << endl;
 
-    vtkMarchingCubes* surfaceExtractor = vtkMarchingCubes::New();
+    vtkSmartPointer<vtkMarchingCubes> surfaceExtractor = vtkSmartPointer<vtkMarchingCubes>::New();
     surfaceExtractor->ComputeNormalsOn();
     surfaceExtractor->SetValue( 0,threshold ) ;
     surfaceExtractor->SetInputData( imageData );
@@ -163,13 +160,10 @@ vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageD
     }
     surfaceExtractor->Update();
 
-    vtkPolyData* mesh = vtkPolyData::New();
+    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>::New();
     mesh->DeepCopy( surfaceExtractor->GetOutput() );
 
-    // free memory
-    surfaceExtractor->Delete();
     cout << endl << endl;
-
     return mesh;
 }
 
