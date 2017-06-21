@@ -27,8 +27,22 @@
 #include <iostream>
 #include "vtkDicomRoutines.h"
 
-
 using namespace std;
+
+VTKDicomRoutines::VTKDicomRoutines()
+{
+    m_progressCallback = vtkSmartPointer<vtkCallbackCommand>(NULL);
+}
+
+VTKDicomRoutines::~VTKDicomRoutines()
+{
+}
+
+void VTKDicomRoutines::SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> progressCallback )
+{
+    m_progressCallback = progressCallback;
+}
+
 
 #ifdef USEVTKDICOM // advanced vtk dicom library. to be enabled in cmake.
 
@@ -37,7 +51,7 @@ using namespace std;
 #include "vtkStringArray.h"
 #include "vtkDICOMReader.h"
 
-vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom, vtkSmartPointer<vtkCallbackCommand> progressCallback )
+vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
 {
     // analyze dicom directory. there might be mulitple data
     vtkSmartPointer<vtkDICOMDirectory> dicomDirectory = vtkSmartPointer<vtkDICOMDirectory>::New();
@@ -87,12 +101,14 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom, 
     const vtkDICOMItem& selected_serie = dicomDirectory->GetSeriesRecord( s_nbr );
     cout << endl << "Load serie " << s_nbr << ", " << selected_serie.Get(DC::SeriesDescription).AsString() << endl;
 
-    string progressData("Read DICOM");
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
-
     vtkDICOMReader* reader = vtkDICOMReader::New();
     reader->SetFileNames( dicomDirectory->GetFileNamesForSeries( s_nbr ) );
-    reader->AddObserver(vtkCommand::ProgressEvent, progressCallback);
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Read DICOM");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     reader->Update();
 
     vtkImageData* rawVolumeData = vtkImageData::New();
@@ -106,15 +122,18 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom, 
 
 #else
 
-vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom, vtkSmartPointer<vtkCallbackCommand> progressCallback )
+vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
 {
     cout << "Read DICOM images located under " << pathToDicom << endl;
-    string progressData("Read DICOM");
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
 
     vtkDICOMImageReader* reader = vtkDICOMImageReader::New();
     reader->SetDirectoryName( pathToDicom.c_str() );
-    reader->AddObserver(vtkCommand::ProgressEvent, progressCallback);
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Read DICOM");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     reader->Update();
 
     vtkImageData* rawVolumeData = vtkImageData::New();
@@ -128,17 +147,20 @@ vtkImageData* VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom, 
 
 #endif // USEVTKDICOM
 
-vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold, vtkSmartPointer<vtkCallbackCommand> progressCallback )
+vtkPolyData* VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold )
 {
     cout << "Create surface mesh with iso value = " << threshold << endl;
-    string progressData = "Create mesh";
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
 
     vtkMarchingCubes* surfaceExtractor = vtkMarchingCubes::New();
     surfaceExtractor->ComputeNormalsOn();
     surfaceExtractor->SetValue( 0,threshold ) ;
     surfaceExtractor->SetInputData( imageData );
-    surfaceExtractor->AddObserver(vtkCommand::ProgressEvent, progressCallback);
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData = "Create mesh";
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        surfaceExtractor->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     surfaceExtractor->Update();
 
     vtkPolyData* mesh = vtkPolyData::New();
@@ -177,7 +199,15 @@ void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
         vtkSmartPointer<vtkExtractVOI> cropper = vtkSmartPointer<vtkExtractVOI>::New();
         cropper->SetInputData( imageData );
         cropper->SetVOI(0,xd-1, 0,yd-1, startSlice, endSlice );
+        if( m_progressCallback.Get() != NULL )
+        {
+            string progressData = "Crop volume";
+            m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+            cropper->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+        }
         cropper->Update();
         imageData->DeepCopy( cropper->GetOutput() );
+
+        cout << endl << endl;
     }
 }

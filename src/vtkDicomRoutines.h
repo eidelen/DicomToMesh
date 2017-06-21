@@ -33,32 +33,45 @@
 class VTKDicomRoutines
 {
 
-public:
+public:   
+
+    VTKDicomRoutines();
+    ~VTKDicomRoutines();
+
+    /**
+     * Sets the progress callback function.
+     * @param progressCallback A progress callback.
+     */
+    void SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> progressCallback );
 
     /**
      * Loads the DICOM images within a directory.
+     * If there are multiple DICOM sets, user interaction is needed.
      * @param pathToDicom Path to the DICOM directory.
-     * @param progressCallback Progress callback function.
      * @return DICOM image data.
      */
-    static vtkImageData* loadDicomImage( const std::string& pathToDicom, vtkSmartPointer<vtkCallbackCommand> progressCallback );
+    vtkImageData* loadDicomImage( const std::string& pathToDicom );
 
     /**
      * Creates a mesh from out DICOM raw data.
      * @param imageData DICOM image data.
      * @param threshold Threshold for surface segmentation.
-     * @param progressCallback Progress callback function.
      * @return Resulting 3D mesh.
      */
-    static vtkPolyData* dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold, vtkSmartPointer<vtkCallbackCommand> progressCallback );
+     vtkPolyData* dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold );
 
 
     /**
      * Crop dicom images in terms of used slice ranges.
+     * This starts a dialog with the user.
      * @param imageData
      */
-    static void cropDicom( vtkSmartPointer<vtkImageData> imageData );
+    void cropDicom( vtkSmartPointer<vtkImageData> imageData );
 
+
+private:
+
+    vtkSmartPointer<vtkCallbackCommand> m_progressCallback;
 };
 
 #endif // _vtkDicomRoutines_H_

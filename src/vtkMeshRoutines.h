@@ -36,20 +36,28 @@ class VTKMeshRoutines
 
 public:
 
+    VTKMeshRoutines();
+    ~VTKMeshRoutines();
+
+    /**
+     * Sets the progress callback function.
+     * @param progressCallback A progress callback.
+     */
+    void SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> progressCallback );
+
     /**
      * Moves the mesh to center of the coordinate system. In particular,
      * the center of mass is computed and the mesh is translated accordingly.
      * @param mesh The input mesh. Mesh will be modified afterwards.
      */
-    static void moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh );
+    void moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh );
 
     /**
      * Reduces the size / details of a 3D mesh.
      * @param mesh The input mesh. Mesh will be modified afterwards.
      * @param reduction Reduction factor. 0.1 is little reduction. 0.9 is strong reduction.
-     * @param progressCallback Progress callback function pointer.
      */
-    static void meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction, vtkSmartPointer<vtkCallbackCommand> progressCallback );
+    void meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction );
 
     /**
      * Labels connected regions and removes regions below a certain size.
@@ -58,46 +66,50 @@ public:
      *              object with a minimum number of 20% vertices relative to the
      *              number of vertices in the largest objects are extracted.
      */
-    static void removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio );
+    void removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio );
 
     /**
      * Smooths the mesh surface.
      * @param mesh The input mesh. Mesh will be modified afterwards.
      * @param nbrOfSmoothingIterations Number of smoothing iterations.
-     * @param progressCallback Progress callback function pointer.
      */
     //Todo: Understand FeatureAngle and RelaxationFactor. Then add it as argument.
-    static void smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingIterations, vtkSmartPointer<vtkCallbackCommand> progressCallback );
+    void smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingIterations );
 
     /**
      * Export the mesh in STL format.
      * @param mesh Mesh to export.
      * @param path Path to the exported stl file.
      */
-    static void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
+    void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
 
     /**
      * Export the mesh in OBJ format.
      * @param mesh Mesh to export.
      * @param path Path to the exported obj file.
      */
-    static void exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
+    void exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
 
     /**
      * Opens a obj file and returns a vtkPolyData mesh.
      * @param pathToObjFile Path to the obj file.
      * @return Resulting 3D mesh.
      */
-    static vtkPolyData* importObjFile( const std::string& pathToObjFile );
+    vtkPolyData* importObjFile( const std::string& pathToObjFile );
 
     /**
      * Opens a stl file and returns a vtkPolyData mesh.
      * @param pathToStlFile Path to the stl file.
      * @return Resulting 3D mesh.
      */
-    static vtkPolyData* importStlFile( const std::string& pathToStlFile );
+    vtkPolyData* importStlFile( const std::string& pathToStlFile );
 
     static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
+
+
+private:
+
+    vtkSmartPointer<vtkCallbackCommand> m_progressCallback;
 };
 
 #endif // _vtkMeshRoutines_H_

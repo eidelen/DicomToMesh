@@ -42,6 +42,20 @@
 
 using namespace std;
 
+VTKMeshRoutines::VTKMeshRoutines()
+{
+    m_progressCallback = vtkSmartPointer<vtkCallbackCommand>(NULL);
+}
+
+VTKMeshRoutines::~VTKMeshRoutines()
+{
+}
+
+void VTKMeshRoutines::SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> progressCallback )
+{
+    m_progressCallback = progressCallback;
+}
+
 void VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
 {
     vtkSmartPointer<vtkCenterOfMass> computeCenter = vtkSmartPointer<vtkCenterOfMass>::New();
@@ -69,11 +83,8 @@ void VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
     cout << "Done" << endl << endl;
 }
 
-void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction, vtkSmartPointer<vtkCallbackCommand> progressCallback )
+void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction )
 {
-    string progressData = "Reduce mesh";
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
-
     unsigned int numberOfCellsBefore = mesh->GetNumberOfCells();
     cout << "Mesh reduction by " << std::fixed << std::setprecision( 3 ) << reduction << endl;
 
@@ -82,7 +93,12 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const fl
     vtkQuadricDecimation* decimator = vtkQuadricDecimation::New();
     decimator->SetInputData( mesh );
     decimator->SetTargetReduction( reduction );
-    decimator->AddObserver(vtkCommand::ProgressEvent, progressCallback);
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Reduce mesh");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        decimator->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     decimator->Update();
 
     mesh->DeepCopy( decimator->GetOutput() );
@@ -127,14 +143,12 @@ void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, con
     // Free memory
     connectivityFilter->Delete();
 
-    cout << "Done" << endl << endl;
+    cout << "Done" << endl << endl << endl;
 }
 
 //Todo: Understand FeatureAngle and RelaxationFactor. Then add it as argument.
-void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingIterations, vtkSmartPointer<vtkCallbackCommand> progressCallback )
+void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingIterations )
 {
-    string progressData = "Smooth mesh";
-    progressCallback->SetClientData( (void*) (progressData.c_str()) );
     cout << "Mesh smoothing with " << nbrOfSmoothingIterations << " iterations." << endl;
 
     vtkSmoothPolyDataFilter* smoother = vtkSmoothPolyDataFilter::New();
@@ -142,7 +156,12 @@ void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned in
     smoother->SetNumberOfIterations( nbrOfSmoothingIterations );
     smoother->SetFeatureAngle(45);
     smoother->SetRelaxationFactor(0.05);
-    smoother->AddObserver(vtkCommand::ProgressEvent, progressCallback);
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Smooth mesh");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        smoother->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     smoother->Update();
 
     mesh->DeepCopy( smoother->GetOutput() );
@@ -160,8 +179,14 @@ void VTKMeshRoutines::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh,
     writer->SetFileName( path.c_str() );
     writer->SetInputData( mesh );
     writer->SetFileTypeToASCII();
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Export mesh");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     writer->Write();
-    cout << "Done" << endl << endl;
+    cout << endl << endl;
 }
 
 void VTKMeshRoutines::computeVertexNormalsTrivial(const vtkSmartPointer<vtkPolyData>& mesh , std::vector<vtkVector3d> &normals)
@@ -272,10 +297,16 @@ void VTKMeshRoutines::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh,
 
 vtkPolyData* VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
 {
-    cout << "Load obj file " << pathToObjFile << endl << endl;
+    cout << "Load obj file " << pathToObjFile << endl ;
 
     vtkOBJReader* reader = vtkOBJReader::New();
     reader->SetFileName( pathToObjFile.c_str() );
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Read file");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     reader->Update();
 
     vtkPolyData* mesh = vtkPolyData::New();
@@ -284,15 +315,22 @@ vtkPolyData* VTKMeshRoutines::importObjFile( const std::string& pathToObjFile )
     // Free memory
     reader->Delete();
 
+    cout << endl << endl;
     return mesh;
 }
 
 vtkPolyData* VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
 {
-    cout << "Load stl file " << pathToStlFile << endl << endl;
+    cout << "Load stl file " << pathToStlFile << endl;
 
     vtkSTLReader* reader = vtkSTLReader::New();
     reader->SetFileName( pathToStlFile.c_str() );
+    if( m_progressCallback.Get() != NULL )
+    {
+        string progressData("Read file");
+        m_progressCallback->SetClientData( (void*) (progressData.c_str()) );
+        reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
     reader->Update();
 
     vtkPolyData* mesh = vtkPolyData::New();
@@ -301,6 +339,7 @@ vtkPolyData* VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
     // Free memory
     reader->Delete();
 
+    cout << endl << endl;
     return mesh;
 }
 

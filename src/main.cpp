@@ -25,6 +25,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <memory>
 #include <vtkAlgorithm.h>
 
 #include "vtkMeshRoutines.h"
@@ -46,17 +47,17 @@ struct Dicom2MeshSettings
     int isoValue = 400; // Hard Tissue
     bool setOriginToCenterOfMass = false;
     bool enableMeshReduction = false;
-    float reductionRate = 0.5;
+    float reductionRate = 0.5f;
     bool enablePolygonLimitation = false;
     int polygonLimit = 100000;
     bool extracOnlyBigObjects = false;
-    float nbrVerticesRatio = 0.1;
+    float nbrVerticesRatio = 0.1f;
     bool enableSmoothing = false;
     bool showIn3DView = false;
     bool enableCrop = false;
 };
 
-void myVtkProgressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData)
+void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
 {
     // display progress in terminal
     vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
@@ -84,20 +85,26 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
         loadStl = extension == "stl";
     }
 
+    std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
+    vmr->SetProgressCallback( progressCallback );
+
     if( loadObj )
     {
-        mesh = VTKMeshRoutines::importObjFile( settings.pathToInputData );
+        mesh = vmr->importObjFile( settings.pathToInputData );
         successful = true;
     }
     else if( loadStl )
     {
-        mesh = VTKMeshRoutines::importStlFile( settings.pathToInputData );
+        mesh = vmr->importStlFile( settings.pathToInputData );
         successful = true;
     }
     else
     {
+        std::shared_ptr<VTKDicomRoutines> vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
+        vdr->SetProgressCallback( progressCallback );
+
         // default: try to load dicom directory
-        vtkImageData* imgData = VTKDicomRoutines::loadDicomImage( settings.pathToInputData, progressCallback );
+        vtkImageData* imgData = vdr->loadDicomImage( settings.pathToInputData );
         if( imgData == NULL )
         {
             cerr << "No image data could be created. Maybe wrong directory?" << endl;
@@ -106,9 +113,9 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
         else
         {
             if( settings.enableCrop )
-                VTKDicomRoutines::cropDicom( imgData );
+                vdr->cropDicom( imgData );
 
-            mesh = vtkSmartPointer<vtkPolyData>( VTKDicomRoutines::dicomToMesh( imgData, settings.isoValue, progressCallback ) );
+            mesh = vtkSmartPointer<vtkPolyData>(vdr->dicomToMesh( imgData, settings.isoValue ) );
             imgData->Delete();
             successful = true;
         }
@@ -340,8 +347,6 @@ int main(int argc, char *argv[])
     vtkSmartPointer<vtkCallbackCommand> progressCallback = vtkSmartPointer<vtkCallbackCommand>::New();
     progressCallback->SetCallback(myVtkProgressCallback);
 
-
-
     //******** Read DICOM *********//
     bool loadSuccessful;
     vtkSmartPointer<vtkPolyData> mesh = loadInputData( settings, progressCallback, loadSuccessful );
@@ -356,8 +361,11 @@ int main(int argc, char *argv[])
     }
 
     //***** Mesh post-processing *****//
+    std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
+    vmr->SetProgressCallback( progressCallback );
+
     if( settings.setOriginToCenterOfMass )
-        VTKMeshRoutines::moveMeshToCOSCenter( mesh );
+        vmr->moveMeshToCOSCenter( mesh );
 
     if( settings.enableMeshReduction )
     {
@@ -365,15 +373,15 @@ int main(int argc, char *argv[])
         if( settings.reductionRate < 0.0 || settings.reductionRate > 1.0 )
             cout << "Reduction skipped due to invalid reductionRate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
         else
-           VTKMeshRoutines::meshReduction( mesh, settings.reductionRate, progressCallback );
+           vmr->meshReduction( mesh, settings.reductionRate );
     }
 
     if( settings.enablePolygonLimitation )
     {
         if( mesh->GetNumberOfCells() > settings.polygonLimit )
         {
-            float reductionRate = 1.0 - (  ((float)settings.polygonLimit) / ((float)(mesh->GetNumberOfCells()))  ) ;
-            VTKMeshRoutines::meshReduction( mesh, reductionRate, progressCallback );
+            float reductionRate = 1.0f - (  (float(settings.polygonLimit)) / (float(mesh->GetNumberOfCells()))) ;
+            vmr->meshReduction( mesh, reductionRate );
         }
         else
         {
@@ -383,15 +391,15 @@ int main(int argc, char *argv[])
 
     if( settings.extracOnlyBigObjects )
     {
-        if( settings.nbrVerticesRatio < 0.0 || settings.nbrVerticesRatio > 1.0 )
+        if( settings.nbrVerticesRatio < 0.0f || settings.nbrVerticesRatio > 1.0f )
             cout << "Smoothing skipped due to invalid reductionRate " << settings.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
         else
-            VTKMeshRoutines::removeSmallObjects( mesh, settings.nbrVerticesRatio );
+            vmr->removeSmallObjects( mesh, settings.nbrVerticesRatio );
     }
 
     if( settings.enableSmoothing )
     {
-        VTKMeshRoutines::smoothMesh( mesh, 20, progressCallback );
+        vmr->smoothMesh( mesh, 20 );
     }
 
     //********************************//
@@ -405,9 +413,9 @@ int main(int argc, char *argv[])
             string extension = settings.outputFilePath.substr(idx+1);
 
             if( extension == "obj" )
-                VTKMeshRoutines::exportAsObjFile( mesh, settings.outputFilePath );
+                vmr->exportAsObjFile( mesh, settings.outputFilePath );
             else if( extension == "stl" )
-                VTKMeshRoutines::exportAsStlFile( mesh, settings.outputFilePath );
+                vmr->exportAsStlFile( mesh, settings.outputFilePath );
             else
                 cerr << "Unknown file type" << endl;
         }
@@ -417,10 +425,8 @@ int main(int argc, char *argv[])
         }
     }
 
-
     if( settings.showIn3DView )
         VTKMeshVisualizer::displayMesh( mesh );
-
 
     return 0;
 }
