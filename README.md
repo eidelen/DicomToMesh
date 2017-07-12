@@ -42,13 +42,12 @@ In order to extend the supported DICOM formats, the libray vtk-dicom can be opti
 Command line arguments can be combined and passed in arbitrary order.
 
 **Input and output:** The path to the DICOM directory is passed by the argument <code>-i dicomPath</code>. The file name of the resulting 3D mesh is specified by the parameter <code>-o meshPath</code>. This simple example transforms a DICOM data set into a 3D mesh file called mesh.stl. A default iso-value of 400 is used. 
-<code>
-> dicom2mesh -i pathToDicomDirectory -o mesh.stl 
-</code>
+
+<code>> dicom2mesh -i pathToDicomDirectory -o mesh.stl</code>
+
 Alternatively, one can use an existing 3d mesh as input. This is useful if you want to apply only mesh post-processing routines and bypass the time consuming mesh creation step. This example imports the former mesh.stl and exports it in the OBJ mesh format.
-<code> 
-> dicom2mesh -i mesh.stl -o newMesh.obj
-</code>
+
+<code>> dicom2mesh -i mesh.stl -o newMesh.obj</code>
 
 To be extended...
 
