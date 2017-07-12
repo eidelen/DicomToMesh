@@ -65,7 +65,7 @@ void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
 VTKMeshVisualizerInteraction* VTKMeshVisualizerInteraction::New()
 {
     VTKMeshVisualizerInteraction* result = new VTKMeshVisualizerInteraction();
-    vtkObjectFactory::ConstructInstance(result->GetClassName());
+    result->InitializeObjectBase();
     return result;
 }
 

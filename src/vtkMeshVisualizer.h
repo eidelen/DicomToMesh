@@ -36,9 +36,9 @@ class VTKMeshVisualizerInteraction : public vtkInteractorStyleTrackballCamera
 {
 public:
     static VTKMeshVisualizerInteraction* New();
-    vtkTypeMacro( VTKMeshVisualizerInteraction, vtkInteractorStyleTrackballCamera );
+    vtkTypeMacro( VTKMeshVisualizerInteraction, vtkInteractorStyleTrackballCamera )
 
-    virtual void OnLeftButtonDown();
+    virtual void OnLeftButtonDown() override;
 
 private:
     VTKMeshVisualizerInteraction();
@@ -61,7 +61,6 @@ public:
      * @param mesh Mesh to show.
      */
     static void displayMesh( const vtkSmartPointer<vtkPolyData>& mesh );
-
 };
 
 
