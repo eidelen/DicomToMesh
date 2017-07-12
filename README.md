@@ -6,7 +6,7 @@ DicomToMesh is a handy command line tool, which enables the user to automaticall
 
 # Mesh Creation
 
-The 3D surface mesh is computed by the marching cubes algorithm. As an input, this algorithm requires a threshold which indicates what range of voxel values should be considered. This threshold is also known as iso-value. In CT scans, the iso-value depends on the tissue (density). 
+The 3D surface mesh is computed by the marching cubes algorithm. As an input, this algorithm requires a threshold which indicates what range of voxel values should be considered. This threshold is also known as iso-value. In CT scans, the iso-value depends on the tissue (density). In Dicom2Mesh you can specify the iso-value with the parameter <code>-t X</code>, where X is an integer.
 
 # Mesh Post-Processing Options
 
@@ -37,9 +37,24 @@ The software is written in C++11 and uses VTK 7.0. CMake is used as build-system
 In order to extend the supported DICOM formats, the libray vtk-dicom can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
 
 
+# How to use Dicom2Mesh
+
+Command line arguments can be combined and passed in arbitrary order.
+
+**Input and output:** The path to the DICOM directory is passed by the argument <code>-i dicomPath</code>. The file name of the resulting 3D mesh is specified by the parameter <code>-o meshPath</code>. This simple example transforms a DICOM data set into a 3D mesh file called mesh.stl. A default iso-value of 400 is used. 
+<code>
+> dicom2mesh -i pathToDicomDirectory -o mesh.stl 
+</code>
+Alternatively, one can use an existing 3d mesh as input. This is useful if you want to apply only mesh post-processing routines and bypass the time consuming mesh creation step. This example imports the former mesh.stl and exports it in the OBJ mesh format.
+<code> 
+> dicom2mesh -i mesh.stl -o newMesh.obj
+</code>
+
+To be extended...
+
 # Contributors
 
-DicomToMesh is a small inhouse product of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
+DicomToMesh is a small in-house product of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
 
 Have fun :)
 
