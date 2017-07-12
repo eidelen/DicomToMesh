@@ -43,18 +43,19 @@ struct Dicom2MeshSettings
     string pathToInputData;
     bool pathToDicomSet = false;
     bool enabledExportMeshFile = false;
-    string outputFilePath = "mesh.stl";
-    int isoValue = 400; // Hard Tissue
     bool setOriginToCenterOfMass = false;
     bool enableMeshReduction = false;
-    float reductionRate = 0.5f;
     bool enablePolygonLimitation = false;
-    int polygonLimit = 100000;
     bool extracOnlyBigObjects = false;
-    float nbrVerticesRatio = 0.1f;
     bool enableSmoothing = false;
     bool showIn3DView = false;
     bool enableCrop = false;
+    char pad[3];
+    int isoValue = 400; // Hard Tissue
+    unsigned long polygonLimit = 100000;
+    double nbrVerticesRatio = 0.1;
+    double reductionRate = 0.5;
+    string outputFilePath = "mesh.stl";
 };
 
 void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
@@ -288,7 +289,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             // next argument is reduction (float)
             a++;
             if( a < argc ) // default value is 0.5
-                settings.reductionRate = stof( string(argv[a]) );
+                settings.reductionRate = stod( string(argv[a]) );
         }
         else if( cArg.compare("-p") == 0 )
         {
@@ -296,7 +297,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             // next argument is polygon limit
             a++;
             if( a < argc ) // default value is 100000
-                settings.polygonLimit = stoi( string(argv[a]) );
+                settings.polygonLimit = stoul( string(argv[a]) );
         }
         else if( cArg.compare("-e") == 0 )
         {
@@ -304,7 +305,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             // next argument is size ratio (float)
             a++;
             if( a < argc ) // default value is 0.1
-                settings.nbrVerticesRatio = stof( string(argv[a]) );
+                settings.nbrVerticesRatio = stod( string(argv[a]) );
         }
         else if( cArg.compare("-c") == 0 )
         {
@@ -377,9 +378,9 @@ int main(int argc, char *argv[])
 
     if( settings.enablePolygonLimitation )
     {
-        if( mesh->GetNumberOfCells() > settings.polygonLimit )
+        if( mesh->GetNumberOfCells() > vtkIdType(settings.polygonLimit) )
         {
-            float reductionRate = 1.0f - (  (float(settings.polygonLimit)) / (float(mesh->GetNumberOfCells()))) ;
+            double reductionRate = 1.0 - (  (double(settings.polygonLimit)) / (double(mesh->GetNumberOfCells()))) ;
             vmr->meshReduction( mesh, reductionRate );
         }
         else
@@ -390,7 +391,7 @@ int main(int argc, char *argv[])
 
     if( settings.extracOnlyBigObjects )
     {
-        if( settings.nbrVerticesRatio < 0.0f || settings.nbrVerticesRatio > 1.0f )
+        if( settings.nbrVerticesRatio < 0.0 || settings.nbrVerticesRatio > 1.0 )
             cout << "Smoothing skipped due to invalid reductionRate " << settings.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
         else
             vmr->removeSmallObjects( mesh, settings.nbrVerticesRatio );

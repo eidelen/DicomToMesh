@@ -57,7 +57,7 @@ public:
      * @param mesh The input mesh. Mesh will be modified afterwards.
      * @param reduction Reduction factor. 0.1 is little reduction. 0.9 is strong reduction.
      */
-    void meshReduction( vtkSmartPointer<vtkPolyData> mesh, const float& reduction );
+    void meshReduction(vtkSmartPointer<vtkPolyData> mesh, const double& reduction );
 
     /**
      * Labels connected regions and removes regions below a certain size.
@@ -66,7 +66,7 @@ public:
      *              object with a minimum number of 20% vertices relative to the
      *              number of vertices in the largest objects are extracted.
      */
-    void removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const float& ratio );
+    void removeSmallObjects(vtkSmartPointer<vtkPolyData> mesh, const double &ratio );
 
     /**
      * Smooths the mesh surface.
@@ -110,6 +110,7 @@ public:
 private:
 
     vtkSmartPointer<vtkCallbackCommand> m_progressCallback;
+    std::string m_progressDataString;
 };
 
 #endif // _vtkMeshRoutines_H_
