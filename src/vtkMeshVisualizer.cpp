@@ -29,7 +29,6 @@
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
 
-
 #include "vtkMeshVisualizer.h"
 
 void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
@@ -65,7 +64,13 @@ void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
 VTKMeshVisualizerInteraction* VTKMeshVisualizerInteraction::New()
 {
     VTKMeshVisualizerInteraction* result = new VTKMeshVisualizerInteraction();
+
+#if VTK_MAJOR_VERSION < 8
+    vtkObjectFactory::ConstructInstance(result->GetClassName());
+#else
     result->InitializeObjectBase();
+#endif
+
     return result;
 }
 
