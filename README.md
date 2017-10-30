@@ -45,9 +45,9 @@ Command line arguments can be combined and passed in arbitrary order.
 
 <code>> dicom2mesh -i pathToDicomDirectory -t 557 -o mesh.stl</code>
 
-Alternatively, one can use an existing 3d mesh as input. This is useful if you want to apply only mesh post-processing routines and bypass the time consuming mesh creation step. This example imports the former mesh.stl and exports it in the OBJ mesh format.
+Alternatively, one can use an existing 3d mesh as input. This is useful if you want to apply only mesh post-processing routines and bypass the time consuming mesh creation step. This example imports the former mesh.stl, centers it and exports it in the OBJ mesh format.
 
-<code>> dicom2mesh -i mesh.stl -o newMesh.obj</code>
+<code>> dicom2mesh -i mesh.stl -c -o newMesh.obj</code>
 
 **Mesh post-processing:** The following example shows different mesh post-processing methods applied to resulting surface mesh out of the marching cubes algorithm. In particular, a mesh is reduced by 90% of its original number faces <code>-r 0.9</code>. In addition, the mesh is smoothed <code>-s</code> and centred at the coordinate system's origin <code>-c</code>.  Another helpful function is the removal of small objects - here the removal of every object smaller than 5% of the biggest object <code>-e 0.05</code>.
 

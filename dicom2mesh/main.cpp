@@ -158,8 +158,8 @@ void showUsage()
     cout << "This creates a mesh and shows it in a 3d view." << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -v" << endl << endl;
 
-    cout << "Alternatively a mesh file (obj, stl) can be loaded directly. This is handy to modify an existing mesh." << endl;
-    cout << "> dicom2mesh -i abc.obj " << endl << endl;
+    cout << "Alternatively a mesh file (obj, stl) can be loaded directly, modified and exported again. This is handy to modify an existing mesh. Following example centers and saves a mesh as cba.stl." << endl;
+    cout << "> dicom2mesh -i abc.obj -c -o cba.stl " << endl << endl;
 
     cout << "Arguments can be combined." << endl << endl;
 }
