@@ -128,16 +128,16 @@ void showUsage()
 {
     cout << "How to use dicom2Mesh:" << endl << endl;
 
-    cout << "Minimum example. This transforms a dicom data set into a 3d mesh file called mesh.stl by using an iso value of 400 (makes bone visible)" << endl;
+    cout << "Minimum example. This transforms a dicom data set into a 3d mesh file called mesh.stl by using a default iso value of 400 (shows bone)" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory -o mesh.stl" << endl << endl;
 
-    cout << "This creates a mesh file called abc.obj by using an iso value of 700" << endl;
+    cout << "This creates a mesh file called abc.obj by using a custom iso value of 700" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.obj  -t 700 " << endl << endl;
 
     cout << "This option offers the possibility to crop the input dicom volume" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -z" << endl << endl;
 
-    cout << "This creates a mesh with a reduced number of polygons by half" << endl;
+    cout << "This creates a mesh with a reduced number of polygons by 50% as default" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -r" << endl << endl;
 
     cout << "This creates a mesh with a reduced number of polygons by 80%" << endl;

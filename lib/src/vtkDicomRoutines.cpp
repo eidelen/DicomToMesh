@@ -84,8 +84,8 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
     else if( nbrOfSeries > 1 ) // multiple dicom series
     {
         cout << "Which DICOM series you wish to load? ";
-        scanf("%d", &s_nbr);
-        if( s_nbr < 0 || s_nbr >= nbrOfSeries )
+        int scanRes = std::scanf("%d", &s_nbr);
+        if( scanRes == 1 && (s_nbr < 0 || s_nbr >= nbrOfSeries) )
         {
             cerr << "Wrong DICOM serie index" << endl;
             return NULL;
@@ -176,13 +176,13 @@ void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
     int startSlice, endSlice;
     cout << "Input image sclice range from   0 - " << zd << endl;
     cout << "Start slice = ";
-    scanf("%d", &startSlice);
+    int startSliceScanRes = std::scanf("%d", &startSlice);
     cout << endl << "End slice = ";
-    scanf("%d", &endSlice);
+    int endSliceScanRes = std::scanf("%d", &endSlice);
     cout << endl;
 
     // check passed slice values
-    if( startSlice < 0 || startSlice > endSlice || endSlice >= zd )
+    if( startSliceScanRes != 1 || endSliceScanRes != 1 || startSlice < 0 || startSlice > endSlice || endSlice >= zd )
     {
         cout << "Invalid slice settings - skip cropping." << endl;
     }
