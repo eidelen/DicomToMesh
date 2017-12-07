@@ -33,6 +33,8 @@
 #include <vtkOBJReader.h>
 #include <vtkSTLReader.h>
 #include <vtkTypedArray.h>
+#include <vtkIdTypeArray.h>
+#include <vtkIdList.h>
 
 #include <string>
 #include <iostream>
