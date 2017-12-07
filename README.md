@@ -36,6 +36,26 @@ The software is written in C++11 and uses VTK 7.0. CMake is used as build-system
 
 In order to extend the supported DICOM formats, the libray vtk-dicom can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
 
+Building DicomToMesh on Linux:
+```
+> git clone https://github.com/AOT-AG/DicomToMesh.git</code>
+> cd DicomToMesh</code>
+> mkdir build</code>
+> cd build</code>
+> ccmake ..  #opens ccmake window
+```
+Within the ccmake window, pass the path to your vtk installation or vtk build directory. In my case, it looks like that
+```
+CMAKE_BUILD_TYPE                 DEBUG                                        
+CMAKE_INSTALL_PREFIX             /usr/local                                   
+USE_VTK_DICOM                    OFF                                          
+VTK_DIR                          /home/eidelen/Development/libs/vtk/build     
+```
+Press <code>c</code> and then <code>g</code>. 
+Now you are back in terminal and ready to build.
+```
+> make
+```
 
 # How to use Dicom2Mesh
 
