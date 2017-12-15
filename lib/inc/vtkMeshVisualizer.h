@@ -24,6 +24,8 @@
 #ifndef _vtkMeshVisualizer_H_
 #define _vtkMeshVisualizer_H_
 
+#include "dllDefines.h"
+
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkInteractorStyleTrackballCamera.h>
@@ -35,7 +37,7 @@
 class VTKMeshVisualizerInteraction : public vtkInteractorStyleTrackballCamera
 {
 public:
-    static VTKMeshVisualizerInteraction* New();
+    static MYLIB_EXPORT VTKMeshVisualizerInteraction* New();
     vtkTypeMacro( VTKMeshVisualizerInteraction, vtkInteractorStyleTrackballCamera )
 
     virtual void OnLeftButtonDown() override;
@@ -60,7 +62,7 @@ public:
      * Display mesh in a 3d view.
      * @param mesh Mesh to show.
      */
-    static void displayMesh( const vtkSmartPointer<vtkPolyData>& mesh );
+    static MYLIB_EXPORT void displayMesh( const vtkSmartPointer<vtkPolyData>& mesh );
 };
 
 

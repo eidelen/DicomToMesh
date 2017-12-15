@@ -25,7 +25,10 @@ FILE(GLOB_RECURSE  DICOM_TO_MESH_LIB_INC       inc/*.h)
 FILE(GLOB_RECURSE  DICOM_TO_MESH_LIB_SRC       src/*.cpp)
 
 ADD_LIBRARY(dicom2meshlib SHARED ${DICOM_TO_MESH_LIB_INC} ${DICOM_TO_MESH_LIB_SRC})
-target_link_libraries(dicom2meshlib LINK_INTERFACE_LIBRARIES ${DICOM_TO_MESH_LIB_LIBS})
+target_link_libraries(dicom2meshlib ${DICOM_TO_MESH_LIB_LIBS})
 target_include_directories(dicom2meshlib INTERFACE inc)
 target_compile_features(dicom2meshlib PRIVATE cxx_range_for)
+
+
+
 

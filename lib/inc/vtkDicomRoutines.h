@@ -24,13 +24,15 @@
 #ifndef _vtkDicomRoutines_H_
 #define _vtkDicomRoutines_H_
 
+#include "dllDefines.h"
+
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
 #include <vtkCallbackCommand.h>
 #include <string>
 
-class VTKDicomRoutines
+class MYLIB_EXPORT VTKDicomRoutines
 {
 
 public:   

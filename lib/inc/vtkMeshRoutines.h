@@ -24,6 +24,8 @@
 #ifndef _vtkMeshRoutines_H_
 #define _vtkMeshRoutines_H_
 
+#include "dllDefines.h"
+
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkVector.h>
@@ -31,7 +33,7 @@
 #include <string>
 #include <vector>
 
-class VTKMeshRoutines
+class MYLIB_EXPORT VTKMeshRoutines
 {
 
 public:
