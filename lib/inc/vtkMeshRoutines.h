@@ -106,6 +106,21 @@ public:
      */
     vtkSmartPointer<vtkPolyData> importStlFile( const std::string& pathToStlFile );
 
+    /**
+     * Opens a ply file and returns a vtkPolyData mesh.
+     * @param pathToPlyFile Path to the ply file.
+     * @return Resulting 3D mesh.
+     */
+    vtkSmartPointer<vtkPolyData> importPlyFile( const std::string& pathToPlyFile );
+
+    /**
+     * Export the mesh in PLY format.
+     * @param mesh Mesh to export.
+     * @param path Path to the exported ply file.
+     */
+    void exportAsPlyFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
+
+
     static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
 
 

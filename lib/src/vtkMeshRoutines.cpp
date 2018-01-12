@@ -28,10 +28,12 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkSTLWriter.h>
+#include <vtkPLYWriter.h>
 #include <vtkCallbackCommand.h>
 #include <vtkMath.h>
 #include <vtkOBJReader.h>
 #include <vtkSTLReader.h>
+#include <vtkPLYReader.h>
 #include <vtkTypedArray.h>
 #include <vtkIdTypeArray.h>
 #include <vtkIdList.h>
@@ -161,23 +163,6 @@ void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned in
     smoother->Update();
 
     mesh->DeepCopy( smoother->GetOutput() );
-    cout << endl << endl;
-}
-
-void VTKMeshRoutines::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const string& path )
-{
-    cout << "Mesh export as stl file: " << path << endl;
-    vtkSmartPointer<vtkSTLWriter> writer = vtkSTLWriter::New();
-    writer->SetFileName( path.c_str() );
-    writer->SetInputData( mesh );
-    writer->SetFileTypeToASCII();
-    if( m_progressCallback.Get() != NULL )
-    {
-        m_progressDataString = "Export mesh";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
-        writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
-    }
-    writer->Write();
     cout << endl << endl;
 }
 
@@ -313,6 +298,23 @@ vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importObjFile( const std::string& 
     return mesh;
 }
 
+void VTKMeshRoutines::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const string& path )
+{
+    cout << "Mesh export as stl file: " << path << endl;
+    vtkSmartPointer<vtkSTLWriter> writer = vtkSTLWriter::New();
+    writer->SetFileName( path.c_str() );
+    writer->SetInputData( mesh );
+    writer->SetFileTypeToASCII();
+    if( m_progressCallback.Get() != NULL )
+    {
+        m_progressDataString = "Export mesh";
+        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
+        writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
+    writer->Write();
+    cout << endl << endl;
+}
+
 vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importStlFile( const std::string& pathToStlFile )
 {
     cout << "Load stl file " << pathToStlFile << endl;
@@ -334,3 +336,40 @@ vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importStlFile( const std::string& 
     return mesh;
 }
 
+vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importPlyFile( const std::string& pathToPlyFile )
+{
+    cout << "Load ply file " << pathToPlyFile << endl;
+
+    vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+    reader->SetFileName( pathToPlyFile.c_str() );
+    if( m_progressCallback.Get() != NULL )
+    {
+        m_progressDataString = "Read file";
+        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
+        reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
+    reader->Update();
+
+    vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>::New();
+    mesh->DeepCopy( reader->GetOutput() );
+
+    cout << endl << endl;
+    return mesh;
+}
+
+void VTKMeshRoutines::exportAsPlyFile( const vtkSmartPointer<vtkPolyData>& mesh, const string& path )
+{
+    cout << "Mesh export as ply file: " << path << endl;
+    vtkSmartPointer<vtkPLYWriter> writer = vtkPLYWriter::New();
+    writer->SetFileName( path.c_str() );
+    writer->SetInputData( mesh );
+    writer->SetFileTypeToASCII();
+    if( m_progressCallback.Get() != NULL )
+    {
+        m_progressDataString = "Export mesh";
+        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
+        writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
+    writer->Write();
+    cout << endl << endl;
+}

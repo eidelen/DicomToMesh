@@ -75,15 +75,16 @@ void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, voi
 vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful )
 {
     vtkSmartPointer<vtkPolyData> mesh;
-    bool loadObj = false; bool loadStl = false;
+    bool loadObj = false; bool loadStl = false; bool loadPly = false;
 
-    // check if a mesh file is loaded
+    // check if input is a mesh file
     string::size_type idx = settings.pathToInputData.rfind('.');
     if( idx != string::npos )
     {
         string extension = settings.pathToInputData.substr(idx+1);
         loadObj = extension == "obj";
         loadStl = extension == "stl";
+        loadPly = extension == "ply";
     }
 
     std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
@@ -99,8 +100,15 @@ vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, 
         mesh = vmr->importStlFile( settings.pathToInputData );
         successful = true;
     }
+    else if( loadPly )
+    {
+        mesh = vmr->importPlyFile( settings.pathToInputData );
+        successful = true;
+    }
     else
     {
+        // if not a mesh file, it is a dicom directroy
+
         std::shared_ptr<VTKDicomRoutines> vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
         vdr->SetProgressCallback( progressCallback );
 
@@ -134,8 +142,8 @@ void showUsage()
     cout << "This creates a mesh file called abc.obj by using a custom iso value of 700" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.obj  -t 700 " << endl << endl;
 
-    cout << "This option offers the possibility to crop the input dicom volume" << endl;
-    cout << "> dicom2mesh -i pathToDicomDirectory  -z" << endl << endl;
+    cout << "This option offers the possibility to crop the input dicom volume. The created mesh is called def.ply." << endl;
+    cout << "> dicom2mesh -i pathToDicomDirectory  -z  -o def.ply" << endl << endl;
 
     cout << "This creates a mesh with a reduced number of polygons by 50% as default" << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -r" << endl << endl;
@@ -158,7 +166,7 @@ void showUsage()
     cout << "This creates a mesh and shows it in a 3d view." << endl;
     cout << "> dicom2mesh -i pathToDicomDirectory  -v" << endl << endl;
 
-    cout << "Alternatively a mesh file (obj, stl) can be loaded directly, modified and exported again. This is handy to modify an existing mesh. Following example centers and saves a mesh as cba.stl." << endl;
+    cout << "Alternatively a mesh file (obj, stl, ply) can be loaded directly, modified and exported again. This is handy to modify an existing mesh. Following example centers and saves a mesh as cba.stl." << endl;
     cout << "> dicom2mesh -i abc.obj -c -o cba.stl " << endl << endl;
 
     cout << "Arguments can be combined." << endl << endl;
@@ -416,6 +424,8 @@ int main(int argc, char *argv[])
                 vmr->exportAsObjFile( mesh, settings.outputFilePath );
             else if( extension == "stl" )
                 vmr->exportAsStlFile( mesh, settings.outputFilePath );
+            else if( extension == "ply" )
+                vmr->exportAsPlyFile( mesh, settings.outputFilePath );
             else
                 cerr << "Unknown file type" << endl;
         }
