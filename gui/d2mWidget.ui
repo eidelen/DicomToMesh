@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>D2MWidget</class>
+ <widget class="QWidget" name="D2MWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1201</width>
+    <height>678</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dicom2Mesh - AOT AG</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_5"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
