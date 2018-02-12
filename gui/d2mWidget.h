@@ -26,6 +26,9 @@
 #define WIDGET_H
  
 #include <QWidget>
+#include <vtkObject.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
  
 namespace Ui {
     class D2MWidget;
@@ -39,8 +42,22 @@ public:
     explicit D2MWidget(QWidget *parent = 0);
     ~D2MWidget();
 
+    static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
+
+public slots:
+    void openDicomBtn();
+    void saveBtn();
+    void runBtn();
+
+private:
+    vtkSmartPointer<vtkPolyData> loadInputData( const std::string& path, const int& threshold, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful );
+
+
 private:
     Ui::D2MWidget *ui;
+
+    std::string m_dicom_path;
+    std::string m_mesh_path;
 
 };
 
