@@ -4,10 +4,11 @@ project(dicom2meshgui)
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CMAKE_AUTOMOC ON)
+SET(CMAKE_AUTORCC ON)
 
 find_package(Qt5Widgets REQUIRED)
 
-SET( APP_SOURCES main.cpp d2mWidget.cpp )
+SET( APP_SOURCES main.cpp d2mWidget.cpp rsc/dicom2meshgui.qrc)
 SET( APP_UIS d2mWidget.ui )
 SET( APP_INCLUDE_DIRS . )
 

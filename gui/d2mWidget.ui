@@ -22,6 +22,29 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="2">
+      <widget class="QToolButton" name="runBtn">
+       <property name="minimumSize">
+        <size>
+         <width>75</width>
+         <height>75</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Run</string>
+       </property>
+       <property name="icon">
+        <iconset resource="rsc/dicom2meshgui.qrc">
+         <normaloff>:/icons/play-button.png</normaloff>:/icons/play-button.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QToolButton" name="saveBtn">
        <property name="minimumSize">
@@ -33,18 +56,15 @@
        <property name="text">
         <string>Save</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QToolButton" name="runBtn">
-       <property name="minimumSize">
-        <size>
-         <width>75</width>
-         <height>75</height>
-        </size>
+       <property name="icon">
+        <iconset resource="rsc/dicom2meshgui.qrc">
+         <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
        </property>
-       <property name="text">
-        <string>Run</string>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -58,6 +78,16 @@
        </property>
        <property name="text">
         <string>Open</string>
+       </property>
+       <property name="icon">
+        <iconset resource="rsc/dicom2meshgui.qrc">
+         <normaloff>:/icons/folder.png</normaloff>:/icons/folder.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -270,6 +300,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="rsc/dicom2meshgui.qrc"/>
+ </resources>
  <connections/>
 </ui>
