@@ -75,14 +75,13 @@ void D2MWidget::saveBtn()
 
 void D2MWidget::runBtn()
 {
-    vtkSmartPointer<vtkCallbackCommand> progressCallbackVTK = vtkSmartPointer<vtkCallbackCommand>::New();
-    progressCallbackVTK->SetCallback(progressCallback);
-
     //******** Read DICOM *********//
-    bool loadSuccessful;
-    vtkSmartPointer<vtkPolyData> mesh = loadInputData( m_dicom_path, 400, progressCallbackVTK, loadSuccessful );
-    if( !loadSuccessful )
+
+    if( !loadDicomImage() )
+    {
         return;
+    }
+
 //    //******************************//
 //
 //    if( mesh->GetNumberOfCells() == 0 )
@@ -177,30 +176,28 @@ void D2MWidget::progressCallback(vtkObject* caller, long unsigned int /*eventId*
     std::cout << std::flush;
 }
 
-vtkSmartPointer<vtkPolyData> D2MWidget::loadInputData( const std::string& path, const int& threshold, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful )
+bool D2MWidget::loadDicomImage( )
 {
-    vtkSmartPointer<vtkPolyData> mesh;
+    bool ret;
+
+    vtkSmartPointer<vtkCallbackCommand> progressCallbackVTK = vtkSmartPointer<vtkCallbackCommand>::New();
+    progressCallbackVTK->SetCallback(progressCallback);
 
     std::shared_ptr<VTKDicomRoutines> vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
-    vdr->SetProgressCallback( progressCallback );
+    vdr->SetProgressCallback( progressCallbackVTK );
 
-    vtkSmartPointer<vtkImageData> imgData = vdr->loadDicomImage( path );
+    vtkSmartPointer<vtkImageData> imgData = vdr->loadDicomImage( m_dicom_path );
     if( imgData == NULL )
     {
-        std::cerr << "No image data could be created. Maybe wrong directory?" << endl;
-        successful = false;
+        std::cerr << "No DICOM data could be found in the directory" << endl;
+        ret = false;
     }
     else
     {
-        /*
-        if( settings.enableCrop )
-            vdr->cropDicom( imgData );
-         */
-
-        mesh = vdr->dicomToMesh( imgData, threshold );
-        successful = true;
+        m_mesh = vdr->dicomToMesh( imgData, ui->thresholdSpinBox->value() );
+        ret = true;
     }
 
-    return mesh;
+    return m_mesh;
 }
 

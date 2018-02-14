@@ -50,7 +50,7 @@ public slots:
     void runBtn();
 
 private:
-    vtkSmartPointer<vtkPolyData> loadInputData( const std::string& path, const int& threshold, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful );
+    bool loadDicomImage( );
 
 
 private:
@@ -58,6 +58,7 @@ private:
 
     std::string m_dicom_path;
     std::string m_mesh_path;
+    vtkSmartPointer<vtkPolyData> m_mesh;
 
 };
 
