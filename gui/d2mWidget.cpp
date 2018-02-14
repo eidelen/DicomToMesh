@@ -36,14 +36,10 @@ D2MWidget::D2MWidget(QWidget *parent) : QWidget(parent), ui(new Ui::D2MWidget)
     connect(ui->openBtn, SIGNAL(clicked()), this, SLOT(openDicomBtn()));
     connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(saveBtn()));
     connect(ui->runBtn, SIGNAL(clicked()), this, SLOT(runBtn()));
-
-    // vtk progress callback
-    m_progressCB = vtkSmartPointer<vtkCallbackCommand>::New();
-    m_progressCB->SetCallback(progressCallback);
-    m_progressCB->SetClientData(static_cast<void*>(ui->progressBar));
+    connect(this, &D2MWidget::doUpdateProgress, this, &D2MWidget::updateProgress);
 
     // conversion thread
-    m_converter = new DicomConverter(m_progressCB);
+    m_converter = new DicomConverter(this);
     m_converter->moveToThread(&m_conversionThread);
     connect(&m_conversionThread, &QThread::finished, m_converter, &QObject::deleteLater);
 
@@ -52,6 +48,9 @@ D2MWidget::D2MWidget(QWidget *parent) : QWidget(parent), ui(new Ui::D2MWidget)
 
     connect(this, &D2MWidget::doCenter, m_converter, &DicomConverter::centerMesh);
     connect(m_converter, &DicomConverter::centerMesh_Done, this, &D2MWidget::center_done);
+
+    connect(this, &D2MWidget::doReduction, m_converter, &DicomConverter::reduction);
+    connect(m_converter, &DicomConverter::reduction_Done, this, &D2MWidget::reduction_done);
 
     m_conversionThread.start();
 }
@@ -97,14 +96,14 @@ void D2MWidget::runBtn()
     ui->progressBar->setValue(0);
     emit doLoad( m_dicom_path, ui->thresholdSpinBox->value());
 
-    // after dicom images loaded, slot load_done
+    // after dicom images loaded, slot load_done is called
 }
 
 void D2MWidget::load_done(bool ok)
 {
     if( ok )
     {
-        ui->infoLable->setText("Read DICOM done");
+        ui->infoLable->setText("Center mesh");
         emit doCenter(ui->centerCB->isChecked());
 
         // when done, center_done is called
@@ -119,11 +118,26 @@ void D2MWidget::center_done(bool ok)
 {
     if( ok )
     {
-        ui->infoLable->setText("Center mesh done");
+        ui->infoLable->setText("Mesh reduction");
+        emit doReduction(ui->reduceCB->isChecked(), ui->reduceSP->value());
+
+        // after reducing, reduction_done is called
     }
     else
     {
         ui->infoLable->setText("Center mesh failed");
+    }
+}
+
+void D2MWidget::reduction_done(bool ok)
+{
+    if( ok )
+    {
+        ui->infoLable->setText("Reduction done");
+    }
+    else
+    {
+        ui->infoLable->setText("Reduction failed");
     }
 }
 
@@ -135,18 +149,7 @@ void D2MWidget::center_done(bool ok)
 
 //    //******************************//
 //
-//    if( mesh->GetNumberOfCells() == 0 )
-//    {
-//        cerr << "No mesh could be created. Wrong DICOM or wrong iso value" << endl;
-//        return -1;
-//    }
 //
-//    //***** Mesh post-processing *****//
-//    std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
-//    vmr->SetProgressCallback( progressCallback );
-//
-//    if( settings.setOriginToCenterOfMass )
-//        vmr->moveMeshToCOSCenter( mesh );
 //
 //    if( settings.enableMeshReduction )
 //    {
@@ -212,17 +215,14 @@ void D2MWidget::center_done(bool ok)
 //        VTKMeshVisualizer::displayMesh( mesh );
 
 
-void D2MWidget::progressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
+void D2MWidget::converterProgress(float progress)
 {
-    // display progress in terminal
-    vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
-    QProgressBar* pb = static_cast<QProgressBar*>(clientData);
+    emit doUpdateProgress(progress);
+}
 
-    if( pb != NULL )
-    {
-        pb->setValue(static_cast<int>(filter->GetProgress() * 100));
-        //std::cout << filter->GetProgress() * 100 << std::endl;
-    }
+void D2MWidget::updateProgress(float progress)
+{
+    ui->progressBar->setValue(static_cast<int>(progress));
 }
 
 

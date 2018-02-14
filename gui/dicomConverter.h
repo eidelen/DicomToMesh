@@ -34,22 +34,33 @@
 
 #include <QObject>
 
+class DicomConverter_Listener
+{
+public:
+    virtual void converterProgress(float progress) = 0;
+};
+
 class DicomConverter : public QObject
 {
 Q_OBJECT
 
 public:
-    DicomConverter(vtkSmartPointer<vtkCallbackCommand> cb);
+    DicomConverter(DicomConverter_Listener* host);
+
+    static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
 
 public slots:
     void loadDicomImage( const QString& pathToDicom, int threshold );
     void centerMesh(bool doCentering );
+    void reduction( bool doReduction, float reductionRate );
 
 signals:
     void loadDicomImage_Done(bool ok);
     void centerMesh_Done(bool ok);
+    void reduction_Done(bool ok);
 
 private:
+    DicomConverter_Listener* m_host;
     vtkSmartPointer<vtkCallbackCommand> m_progressCB;
     vtkSmartPointer<vtkPolyData> m_mesh;
     std::shared_ptr<VTKDicomRoutines> m_vdr;

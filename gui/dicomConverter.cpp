@@ -23,15 +23,30 @@
 
 #include "dicomConverter.h"
 
-DicomConverter::DicomConverter(vtkSmartPointer<vtkCallbackCommand> cb)
+#include <vtkAlgorithm.h>
+
+DicomConverter::DicomConverter(DicomConverter_Listener* host)
 {
-    m_progressCB = cb;
+    m_host = host;
+
+    m_progressCB = vtkSmartPointer<vtkCallbackCommand>::New();
+    m_progressCB->SetCallback(progressCallback);
+    m_progressCB->SetClientData(static_cast<void*>(m_host));
 
     m_vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
     m_vdr->SetProgressCallback( m_progressCB );
 
     m_vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
     m_vmr->SetProgressCallback( m_progressCB );
+}
+
+void DicomConverter::progressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
+{
+    // display progress in terminal
+    vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
+
+    DicomConverter_Listener* host = static_cast<DicomConverter_Listener*>(clientData);
+    host->converterProgress( filter->GetProgress() * 100);
 }
 
 
@@ -73,4 +88,24 @@ void DicomConverter::centerMesh(bool doCentering )
     }
 
     emit centerMesh_Done(true);
+}
+void DicomConverter::reduction(bool doReduction, float reductionRate)
+{
+    bool ret = true;
+
+    if( doReduction )
+    {
+        if( reductionRate > 0.0 && reductionRate < 1.0 )
+        {
+            m_vmr->meshReduction(m_mesh, reductionRate);
+            ret = true;
+        }
+        else
+        {
+            std::cerr << "Invalid reduction rate: " << reductionRate << endl;
+            ret = false;
+        }
+    }
+
+    emit reduction_Done(ret);
 }

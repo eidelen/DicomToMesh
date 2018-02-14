@@ -36,7 +36,7 @@ namespace Ui {
     class D2MWidget;
 }
  
-class D2MWidget : public QWidget
+class D2MWidget : public QWidget, public DicomConverter_Listener
 {
     Q_OBJECT
  
@@ -44,19 +44,25 @@ public:
     explicit D2MWidget(QWidget *parent = 0);
     ~D2MWidget();
 
-    static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
+    // from DicomConverter_Listener
+    void converterProgress(float progress);
 
 public slots:
     void openDicomBtn();
     void saveBtn();
     void runBtn();
+    void updateProgress(float progress);
 
     void load_done(bool ok);
     void center_done(bool ok);
+    void reduction_done(bool ok);
 
 signals:
     void doLoad(const QString& pathToDicom, int threshold);
-    void doCenter(bool doCentering );
+    void doCenter(bool doCentering);
+    void doReduction(bool doReduction, float reductionRate);
+
+    void doUpdateProgress(float progress);
 
 private:
     Ui::D2MWidget *ui;
