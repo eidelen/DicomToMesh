@@ -100,8 +100,6 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const do
     decimator->SetTargetReduction( reduction );
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Reduce mesh";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str()) ) );
         decimator->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     decimator->Update();
@@ -156,8 +154,6 @@ void VTKMeshRoutines::smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned in
     smoother->SetRelaxationFactor(0.05);
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Smooth mesh";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str()) ) );
         smoother->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     smoother->Update();
@@ -285,8 +281,6 @@ vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importObjFile( const std::string& 
     reader->SetFileName( pathToObjFile.c_str() );
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Read file";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
         reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     reader->Update();
@@ -307,8 +301,6 @@ void VTKMeshRoutines::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh,
     writer->SetFileTypeToASCII();
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Export mesh";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
         writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     writer->Write();
@@ -323,8 +315,6 @@ vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importStlFile( const std::string& 
     reader->SetFileName( pathToStlFile.c_str() );
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Read file";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
         reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     reader->Update();
@@ -344,8 +334,6 @@ vtkSmartPointer<vtkPolyData> VTKMeshRoutines::importPlyFile( const std::string& 
     reader->SetFileName( pathToPlyFile.c_str() );
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Read file";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
         reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     reader->Update();
@@ -366,8 +354,6 @@ void VTKMeshRoutines::exportAsPlyFile( const vtkSmartPointer<vtkPolyData>& mesh,
     writer->SetFileTypeToASCII();
     if( m_progressCallback.Get() != NULL )
     {
-        m_progressDataString = "Export mesh";
-        m_progressCallback->SetClientData( static_cast<void*>( const_cast<char*>( m_progressDataString.c_str() ) ) );
         writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
     }
     writer->Write();
