@@ -25,13 +25,9 @@
 #include "d2mWidget.h"
 #include "ui_d2mWidget.h"
 
-#include "vtkMeshRoutines.h"
-#include "vtkDicomRoutines.h"
-#include "vtkMeshVisualizer.h"
-
-
 #include <QFileDialog>
 #include <vtkAlgorithm.h>
+
 
 D2MWidget::D2MWidget(QWidget *parent) : QWidget(parent), ui(new Ui::D2MWidget)
 {
@@ -40,11 +36,32 @@ D2MWidget::D2MWidget(QWidget *parent) : QWidget(parent), ui(new Ui::D2MWidget)
     connect(ui->openBtn, SIGNAL(clicked()), this, SLOT(openDicomBtn()));
     connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(saveBtn()));
     connect(ui->runBtn, SIGNAL(clicked()), this, SLOT(runBtn()));
+
+    // vtk progress callback
+    m_progressCB = vtkSmartPointer<vtkCallbackCommand>::New();
+    m_progressCB->SetCallback(progressCallback);
+    m_progressCB->SetClientData(static_cast<void*>(ui->progressBar));
+
+    // conversion thread
+    m_converter = new DicomConverter(m_progressCB);
+    m_converter->moveToThread(&m_conversionThread);
+    connect(&m_conversionThread, &QThread::finished, m_converter, &QObject::deleteLater);
+
+    connect(this, &D2MWidget::doLoad, m_converter, &DicomConverter::loadDicomImage);
+    connect(m_converter, &DicomConverter::loadDicomImage_Done, this, &D2MWidget::load_done);
+
+    connect(this, &D2MWidget::doCenter, m_converter, &DicomConverter::centerMesh);
+    connect(m_converter, &DicomConverter::centerMesh_Done, this, &D2MWidget::center_done);
+
+    m_conversionThread.start();
 }
 
 D2MWidget::~D2MWidget()
 {
     delete ui;
+
+    m_conversionThread.quit();
+    m_conversionThread.wait();
 }
 
 void D2MWidget::openDicomBtn()
@@ -56,7 +73,7 @@ void D2MWidget::openDicomBtn()
         newInLablePath.append(dicomPath);
         ui->inLable->setText(newInLablePath);
 
-        m_dicom_path = dicomPath.toStdString();
+        m_dicom_path = dicomPath;
     }
 }
 
@@ -69,18 +86,52 @@ void D2MWidget::saveBtn()
         newOutLable.append(savePath);
         ui->outLable->setText(newOutLable);
 
-        m_mesh_path = savePath.toStdString();
+        m_mesh_path = savePath;
     }
 }
 
 void D2MWidget::runBtn()
 {
-    //******** Read DICOM *********//
+    // Read Dicom images
+    ui->infoLable->setText("Read DICOM images");
+    ui->progressBar->setValue(0);
+    emit doLoad( m_dicom_path, ui->thresholdSpinBox->value());
 
+    // after dicom images loaded, slot load_done
+}
+
+void D2MWidget::load_done(bool ok)
+{
+    if( ok )
+    {
+        ui->infoLable->setText("Read DICOM done");
+        emit doCenter(ui->centerCB->isChecked());
+
+        // when done, center_done is called
+    }
+    else
+    {
+        ui->infoLable->setText("Read DICOM failed");
+    }
+}
+
+void D2MWidget::center_done(bool ok)
+{
+    if( ok )
+    {
+        ui->infoLable->setText("Center mesh done");
+    }
+    else
+    {
+        ui->infoLable->setText("Center mesh failed");
+    }
+}
+
+/*
     if( !loadDicomImage() )
     {
         return;
-    }
+    }*/
 
 //    //******************************//
 //
@@ -160,44 +211,18 @@ void D2MWidget::runBtn()
 //    if( settings.showIn3DView )
 //        VTKMeshVisualizer::displayMesh( mesh );
 
-}
 
 void D2MWidget::progressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
 {
     // display progress in terminal
     vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
-    char* task = static_cast<char*>(clientData);
-    cout << "\33[2K\r"; // erase line
-    cout << task << ": ";
-    if( filter->GetProgress() > 0.999 )
-        cout << "done";
-    else
-        std::cout << std::fixed << std::setprecision( 1 )  << filter->GetProgress() * 100 << "%";
-    std::cout << std::flush;
+    QProgressBar* pb = static_cast<QProgressBar*>(clientData);
+
+    if( pb != NULL )
+    {
+        pb->setValue(static_cast<int>(filter->GetProgress() * 100));
+        //std::cout << filter->GetProgress() * 100 << std::endl;
+    }
 }
 
-bool D2MWidget::loadDicomImage( )
-{
-    bool ret;
-
-    vtkSmartPointer<vtkCallbackCommand> progressCallbackVTK = vtkSmartPointer<vtkCallbackCommand>::New();
-    progressCallbackVTK->SetCallback(progressCallback);
-
-    std::shared_ptr<VTKDicomRoutines> vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
-    vdr->SetProgressCallback( progressCallbackVTK );
-
-    vtkSmartPointer<vtkImageData> imgData = vdr->loadDicomImage( m_dicom_path );
-    if( imgData == NULL )
-    {
-        std::cerr << "No DICOM data could be found in the directory" << endl;
-        ret = false;
-    }
-    else
-    {
-        m_mesh = vdr->dicomToMesh( imgData, ui->thresholdSpinBox->value() );
-        ret = true;
-    }
-
-    return m_mesh;
-}
 

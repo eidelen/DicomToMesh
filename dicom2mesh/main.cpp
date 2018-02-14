@@ -58,13 +58,12 @@ struct Dicom2MeshSettings
     string outputFilePath = "mesh.stl";
 };
 
-void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
+void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* /*clientData*/, void* /*callData*/)
 {
     // display progress in terminal
     vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
-    char* task = static_cast<char*>(clientData);
     cout << "\33[2K\r"; // erase line
-    cout << task << ": ";
+    cout << "Progress: ";
     if( filter->GetProgress() > 0.999 )
         cout << "done";
     else

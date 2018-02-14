@@ -21,52 +21,56 @@
 **
 *****************************************************************************/
 
-
-#ifndef WIDGET_H
-#define WIDGET_H
-
 #include "dicomConverter.h"
 
-#include <vtkCallbackCommand.h>
-#include <QWidget>
-#include <QThread>
-
-
-namespace Ui {
-    class D2MWidget;
-}
- 
-class D2MWidget : public QWidget
+DicomConverter::DicomConverter(vtkSmartPointer<vtkCallbackCommand> cb)
 {
-    Q_OBJECT
- 
-public:
-    explicit D2MWidget(QWidget *parent = 0);
-    ~D2MWidget();
+    m_progressCB = cb;
 
-    static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
+    m_vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
+    m_vdr->SetProgressCallback( m_progressCB );
 
-public slots:
-    void openDicomBtn();
-    void saveBtn();
-    void runBtn();
+    m_vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
+    m_vmr->SetProgressCallback( m_progressCB );
+}
 
-    void load_done(bool ok);
-    void center_done(bool ok);
 
-signals:
-    void doLoad(const QString& pathToDicom, int threshold);
-    void doCenter(bool doCentering );
+void DicomConverter::loadDicomImage( const QString& pathToDicom, int threshold )
+{
+    bool ret;
 
-private:
-    Ui::D2MWidget *ui;
+    std::cout << "loadDicomImage" << std::endl;
 
-    QString m_dicom_path;
-    QString m_mesh_path;
-    vtkSmartPointer<vtkCallbackCommand> m_progressCB;
-    QThread m_conversionThread;
-    DicomConverter* m_converter;
-};
+    vtkSmartPointer<vtkImageData> imgData = m_vdr->loadDicomImage( pathToDicom.toStdString() );
+    if( imgData == NULL )
+    {
+        std::cerr << "No DICOM data could be found in the directory" << endl;
+        ret = false;
+    }
+    else
+    {
+        m_mesh = m_vdr->dicomToMesh( imgData, threshold);
 
- 
-#endif // WIDGET_H
+        if( m_mesh->GetNumberOfCells() == 0 )
+        {
+            std::cerr << "No mesh could be created. Wrong DICOM or wrong iso value" << endl;
+            ret = false;
+        }
+        else
+        {
+            ret = true;
+        }
+    }
+
+    emit loadDicomImage_Done(ret);
+}
+
+void DicomConverter::centerMesh(bool doCentering )
+{
+    if( doCentering )
+    {
+        m_vmr->moveMeshToCOSCenter( m_mesh );
+    }
+
+    emit centerMesh_Done(true);
+}

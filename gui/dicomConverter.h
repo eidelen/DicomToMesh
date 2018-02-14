@@ -22,51 +22,38 @@
 *****************************************************************************/
 
 
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef QDICOM_CONVERTER_H
+#define QDICOM_CONVERTER_H
 
-#include "dicomConverter.h"
+#include "vtkDicomRoutines.h"
+#include "vtkMeshRoutines.h"
 
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
 #include <vtkCallbackCommand.h>
-#include <QWidget>
-#include <QThread>
 
+#include <QObject>
 
-namespace Ui {
-    class D2MWidget;
-}
- 
-class D2MWidget : public QWidget
+class DicomConverter : public QObject
 {
-    Q_OBJECT
- 
-public:
-    explicit D2MWidget(QWidget *parent = 0);
-    ~D2MWidget();
+Q_OBJECT
 
-    static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
+public:
+    DicomConverter(vtkSmartPointer<vtkCallbackCommand> cb);
 
 public slots:
-    void openDicomBtn();
-    void saveBtn();
-    void runBtn();
-
-    void load_done(bool ok);
-    void center_done(bool ok);
+    void loadDicomImage( const QString& pathToDicom, int threshold );
+    void centerMesh(bool doCentering );
 
 signals:
-    void doLoad(const QString& pathToDicom, int threshold);
-    void doCenter(bool doCentering );
+    void loadDicomImage_Done(bool ok);
+    void centerMesh_Done(bool ok);
 
 private:
-    Ui::D2MWidget *ui;
-
-    QString m_dicom_path;
-    QString m_mesh_path;
     vtkSmartPointer<vtkCallbackCommand> m_progressCB;
-    QThread m_conversionThread;
-    DicomConverter* m_converter;
+    vtkSmartPointer<vtkPolyData> m_mesh;
+    std::shared_ptr<VTKDicomRoutines> m_vdr;
+    std::shared_ptr<VTKMeshRoutines> m_vmr;
 };
 
- 
-#endif // WIDGET_H
+#endif // QDICOM_CONVERTER_H
