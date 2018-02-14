@@ -51,13 +51,19 @@ public:
 
 public slots:
     void loadDicomImage( const QString& pathToDicom, int threshold );
-    void centerMesh(bool doCentering );
-    void reduction( bool doReduction, float reductionRate );
+    void centerMesh();
+    void reduction(float reductionRate);
+    void filtering(float filterRate);
+    void smoothing();
+    void exportMesh(const QString& meshPath);
 
 signals:
     void loadDicomImage_Done(bool ok);
     void centerMesh_Done(bool ok);
     void reduction_Done(bool ok);
+    void filtering_Done(bool ok);
+    void smoothing_Done(bool ok);
+    void export_Done(bool ok);
 
 private:
     DicomConverter_Listener* m_host;

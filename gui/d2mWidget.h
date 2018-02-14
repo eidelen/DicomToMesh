@@ -56,13 +56,23 @@ public slots:
     void load_done(bool ok);
     void center_done(bool ok);
     void reduction_done(bool ok);
+    void filter_done(bool ok);
+    void smoothing_done(bool ok);
+    void export_done(bool ok);
 
 signals:
     void doLoad(const QString& pathToDicom, int threshold);
-    void doCenter(bool doCentering);
-    void doReduction(bool doReduction, float reductionRate);
+    void doCenter();
+    void doReduction(float reductionRate);
+    void doFilter(float filterRate);
+    void doSmoothing();
+    void doExport(const QString& path);
 
     void doUpdateProgress(float progress);
+
+private:
+    void handleStartConversion();
+    void handleEndConversion();
 
 private:
     Ui::D2MWidget *ui;

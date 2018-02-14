@@ -52,7 +52,19 @@ D2MWidget::D2MWidget(QWidget *parent) : QWidget(parent), ui(new Ui::D2MWidget)
     connect(this, &D2MWidget::doReduction, m_converter, &DicomConverter::reduction);
     connect(m_converter, &DicomConverter::reduction_Done, this, &D2MWidget::reduction_done);
 
+    connect(this, &D2MWidget::doFilter, m_converter, &DicomConverter::filtering);
+    connect(m_converter, &DicomConverter::filtering_Done, this, &D2MWidget::filter_done);
+
+    connect(this, &D2MWidget::doSmoothing, m_converter, &DicomConverter::smoothing);
+    connect(m_converter, &DicomConverter::smoothing_Done, this, &D2MWidget::smoothing_done);
+
+    connect(this, &D2MWidget::doExport, m_converter, &DicomConverter::exportMesh);
+    connect(m_converter, &DicomConverter::export_Done, this, &D2MWidget::export_done);
+
     m_conversionThread.start();
+
+    m_mesh_path = "";
+    m_dicom_path = "";
 }
 
 D2MWidget::~D2MWidget()
@@ -91,9 +103,10 @@ void D2MWidget::saveBtn()
 
 void D2MWidget::runBtn()
 {
+    handleStartConversion();
+
     // Read Dicom images
     ui->infoLable->setText("Read DICOM images");
-    ui->progressBar->setValue(0);
     emit doLoad( m_dicom_path, ui->thresholdSpinBox->value());
 
     // after dicom images loaded, slot load_done is called
@@ -103,14 +116,23 @@ void D2MWidget::load_done(bool ok)
 {
     if( ok )
     {
-        ui->infoLable->setText("Center mesh");
-        emit doCenter(ui->centerCB->isChecked());
+        if( ui->centerCB->isChecked() )
+        {
+            ui->infoLable->setText("Center mesh");
+            emit doCenter();
 
-        // when done, center_done is called
+            // when done, center_done is called
+        }
+        else
+        {
+            // jump directly to center_done
+            center_done(true);
+        }
     }
     else
     {
         ui->infoLable->setText("Read DICOM failed");
+        handleEndConversion();
     }
 }
 
@@ -118,14 +140,23 @@ void D2MWidget::center_done(bool ok)
 {
     if( ok )
     {
-        ui->infoLable->setText("Mesh reduction");
-        emit doReduction(ui->reduceCB->isChecked(), ui->reduceSP->value());
+        if( ui->reduceCB->isChecked() )
+        {
+            ui->infoLable->setText("Mesh reduction");
+            emit doReduction(ui->reduceSP->value());
 
-        // after reducing, reduction_done is called
+            // after reducing, reduction_done is called
+        }
+        else
+        {
+            // jump directly to center_done
+            reduction_done(true);
+        }
     }
     else
     {
         ui->infoLable->setText("Center mesh failed");
+        handleEndConversion();
     }
 }
 
@@ -133,83 +164,89 @@ void D2MWidget::reduction_done(bool ok)
 {
     if( ok )
     {
-        ui->infoLable->setText("Reduction done");
+        if(ui->filterCB->isChecked())
+        {
+            ui->infoLable->setText("Filter small objects");
+            emit doFilter(ui->filterSP->value());
+
+            // after filtering, filter_done is called
+        }
+        else
+        {
+            // jump directly to center_done
+            filter_done(true);
+        }
     }
     else
     {
         ui->infoLable->setText("Reduction failed");
+        handleEndConversion();
     }
 }
 
-/*
-    if( !loadDicomImage() )
+void D2MWidget::filter_done(bool ok)
+{
+    if( ok )
     {
-        return;
-    }*/
+        if( ui->smoothCB->isChecked() )
+        {
+            ui->infoLable->setText("Smoothing mesh");
+            emit doSmoothing();
 
-//    //******************************//
-//
-//
-//
-//    if( settings.enableMeshReduction )
-//    {
-//        // check reduction rate
-//        if( settings.reductionRate < 0.0 || settings.reductionRate > 1.0 )
-//            cout << "Reduction skipped due to invalid reductionRate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
-//        else
-//            vmr->meshReduction( mesh, settings.reductionRate );
-//    }
-//
-//    if( settings.enablePolygonLimitation )
-//    {
-//        if( mesh->GetNumberOfCells() > vtkIdType(settings.polygonLimit) )
-//        {
-//            double reductionRate = 1.0 - (  (double(settings.polygonLimit)) / (double(mesh->GetNumberOfCells()))) ;
-//            vmr->meshReduction( mesh, reductionRate );
-//        }
-//        else
-//        {
-//            cout << "Reducing polygons not necessary." << endl << endl;
-//        }
-//    }
-//
-//    if( settings.extracOnlyBigObjects )
-//    {
-//        if( settings.nbrVerticesRatio < 0.0 || settings.nbrVerticesRatio > 1.0 )
-//            cout << "Smoothing skipped due to invalid reductionRate " << settings.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
-//        else
-//            vmr->removeSmallObjects( mesh, settings.nbrVerticesRatio );
-//    }
-//
-//    if( settings.enableSmoothing )
-//    {
-//        vmr->smoothMesh( mesh, 20 );
-//    }
-//
-//    //********************************//
-//
-//    // check if obj or stl
-//    if( settings.enabledExportMeshFile )
-//    {
-//        string::size_type idx = settings.outputFilePath.rfind('.');
-//        if( idx != string::npos )
-//        {
-//            string extension = settings.outputFilePath.substr(idx+1);
-//
-//            if( extension == "obj" )
-//                vmr->exportAsObjFile( mesh, settings.outputFilePath );
-//            else if( extension == "stl" )
-//                vmr->exportAsStlFile( mesh, settings.outputFilePath );
-//            else if( extension == "ply" )
-//                vmr->exportAsPlyFile( mesh, settings.outputFilePath );
-//            else
-//                cerr << "Unknown file type" << endl;
-//        }
-//        else
-//        {
-//            cerr << "No Filename." << endl;
-//        }
-//    }
+            // after smooting, smoothing_done is called
+        }
+        else
+        {
+            // jump directly to center_done
+            smoothing_done(true);
+        }
+    }
+    else
+    {
+        ui->infoLable->setText("Filtering failed");
+        handleEndConversion();
+    }
+}
+
+void D2MWidget::smoothing_done(bool ok)
+{
+    if( ok )
+    {
+        if( m_mesh_path != "" )
+        {
+            ui->infoLable->setText("Export mesh file");
+            emit doExport(m_mesh_path);
+
+            // after exporting, export_done cis alled
+        }
+        else
+        {
+            export_done(true);
+        }
+    }
+    else
+    {
+        ui->infoLable->setText("Smoothing failed");
+        handleEndConversion();
+    }
+}
+
+void D2MWidget::export_done(bool ok)
+{
+    if( ok )
+    {
+        ui->infoLable->setText("Done");
+        handleEndConversion();
+    }
+    else
+    {
+        ui->infoLable->setText("Export failed");
+        handleEndConversion();
+    }
+}
+
+
+
 //
 //    if( settings.showIn3DView )
 //        VTKMeshVisualizer::displayMesh( mesh );
@@ -224,5 +261,18 @@ void D2MWidget::updateProgress(float progress)
 {
     ui->progressBar->setValue(static_cast<int>(progress));
 }
+
+void D2MWidget::handleStartConversion()
+{
+    ui->runBtn->setEnabled(false);
+}
+
+void D2MWidget::handleEndConversion()
+{
+    ui->runBtn->setEnabled(true);
+}
+
+
+
 
 

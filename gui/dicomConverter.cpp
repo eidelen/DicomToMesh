@@ -24,6 +24,7 @@
 #include "dicomConverter.h"
 
 #include <vtkAlgorithm.h>
+#include <string>
 
 DicomConverter::DicomConverter(DicomConverter_Listener* host)
 {
@@ -80,32 +81,90 @@ void DicomConverter::loadDicomImage( const QString& pathToDicom, int threshold )
     emit loadDicomImage_Done(ret);
 }
 
-void DicomConverter::centerMesh(bool doCentering )
+void DicomConverter::centerMesh()
 {
-    if( doCentering )
-    {
-        m_vmr->moveMeshToCOSCenter( m_mesh );
-    }
-
+    m_vmr->moveMeshToCOSCenter( m_mesh );
     emit centerMesh_Done(true);
 }
-void DicomConverter::reduction(bool doReduction, float reductionRate)
+
+void DicomConverter::reduction(float reductionRate)
 {
     bool ret = true;
 
-    if( doReduction )
+    if( reductionRate > 0.0 && reductionRate < 1.0 )
     {
-        if( reductionRate > 0.0 && reductionRate < 1.0 )
-        {
-            m_vmr->meshReduction(m_mesh, reductionRate);
-            ret = true;
-        }
-        else
-        {
-            std::cerr << "Invalid reduction rate: " << reductionRate << endl;
-            ret = false;
-        }
+        m_vmr->meshReduction(m_mesh, reductionRate);
+        ret = true;
+    }
+    else
+    {
+        std::cerr << "Invalid reduction rate: " << reductionRate << endl;
+        ret = false;
     }
 
     emit reduction_Done(ret);
+}
+
+void DicomConverter::filtering(float filterRate )
+{
+    bool ret = true;
+
+    if( filterRate > 0.0 && filterRate < 1.0 )
+    {
+        m_vmr->removeSmallObjects(m_mesh, filterRate);
+        ret = true;
+    }
+    else
+    {
+        std::cerr << "Invalid filter rate: " << filterRate << endl;
+        ret = false;
+    }
+
+    emit filtering_Done(ret);
+}
+
+void DicomConverter::smoothing()
+{
+    bool ret = true;
+
+    m_vmr->smoothMesh(m_mesh, 20);
+
+    emit smoothing_Done(ret);
+}
+
+void DicomConverter::exportMesh(const QString &meshPath)
+{
+    bool ret = true;
+
+    std::string path = meshPath.toStdString();
+    std::string::size_type idx = path.rfind('.');
+    if( idx != std::string::npos )
+    {
+        std::string extension = path.substr(idx+1);
+
+        if( extension == "obj" )
+        {
+            m_vmr->exportAsObjFile(m_mesh, path);
+        }
+        else if( extension == "stl" )
+        {
+            m_vmr->exportAsStlFile( m_mesh, path );
+        }
+        else if( extension == "ply" )
+        {
+            m_vmr->exportAsPlyFile( m_mesh, path );
+        }
+        else
+        {
+            std::cerr << "Unknown file type" << endl;
+            ret = false;
+        }
+    }
+    else
+    {
+        std::cerr << "No Filename." << endl;
+        ret = false;
+    }
+
+    emit export_Done(ret);
 }
