@@ -21,59 +21,58 @@
 **
 *****************************************************************************/
 
-#ifndef _vtkDicomRoutines_H_
-#define _vtkDicomRoutines_H_
 
-#include "dllDefines.h"
+#ifndef QDICOM_CONVERTER_H
+#define QDICOM_CONVERTER_H
+
+#include "vtkDicomRoutines.h"
+#include "vtkMeshRoutines.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <vtkImageData.h>
 #include <vtkCallbackCommand.h>
-#include <string>
 
-class MYLIB_EXPORT VTKDicomRoutines
+#include <QObject>
+
+class DicomConverter_Listener
 {
-
-public:   
-
-    VTKDicomRoutines();
-    ~VTKDicomRoutines();
-
-    /**
-     * Sets the progress callback function.
-     * @param progressCallback A progress callback.
-     */
-    void SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> progressCallback );
-
-    /**
-     * Loads the DICOM images within a directory.
-     * If there are multiple DICOM sets, user interaction is needed.
-     * @param pathToDicom Path to the DICOM directory.
-     * @return DICOM image data.
-     */
-    vtkSmartPointer<vtkImageData> loadDicomImage( const std::string& pathToDicom );
-
-    /**
-     * Creates a mesh from out DICOM raw data.
-     * @param imageData DICOM image data.
-     * @param threshold Threshold for surface segmentation.
-     * @return Resulting 3D mesh.
-     */
-    vtkSmartPointer<vtkPolyData> dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold );
-
-
-    /**
-     * Crop dicom images in terms of used slice ranges.
-     * This starts a dialog with the user.
-     * @param imageData
-     */
-    void cropDicom( vtkSmartPointer<vtkImageData> imageData );
-
-
-private:
-
-    vtkSmartPointer<vtkCallbackCommand> m_progressCallback;
+public:
+    virtual void converterProgress(float progress) = 0;
 };
 
-#endif // _vtkDicomRoutines_H_
+class DicomConverter : public QObject
+{
+Q_OBJECT
+
+public:
+    DicomConverter(DicomConverter_Listener* host);
+
+    static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
+
+    vtkSmartPointer<vtkPolyData> getMesh();
+
+public slots:
+    void loadDicomImage( const QString& pathToDicom, int threshold );
+    void centerMesh();
+    void reduction(float reductionRate);
+    void filtering(float filterRate);
+    void smoothing();
+    void exportMesh(const QString& meshPath);
+
+signals:
+    void loadDicomImage_Done(bool ok);
+    void centerMesh_Done(bool ok);
+    void reduction_Done(bool ok);
+    void filtering_Done(bool ok);
+    void smoothing_Done(bool ok);
+    void export_Done(bool ok);
+
+private:
+    DicomConverter_Listener* m_host;
+    vtkSmartPointer<vtkCallbackCommand> m_progressCB;
+    vtkSmartPointer<vtkPolyData> m_mesh;
+    std::shared_ptr<VTKDicomRoutines> m_vdr;
+    std::shared_ptr<VTKMeshRoutines> m_vmr;
+};
+
+#endif // QDICOM_CONVERTER_H

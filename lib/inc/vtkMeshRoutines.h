@@ -127,7 +127,6 @@ public:
 private:
 
     vtkSmartPointer<vtkCallbackCommand> m_progressCallback;
-    std::string m_progressDataString;
 };
 
 #endif // _vtkMeshRoutines_H_

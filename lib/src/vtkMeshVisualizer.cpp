@@ -38,6 +38,8 @@ void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindow->AddRenderer(renderer);
 
+    renderWindow->SetSize(1000, 800);
+
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     vtkSmartPointer<VTKMeshVisualizerInteraction> pickingInteraction = vtkSmartPointer<VTKMeshVisualizerInteraction>::New();
     pickingInteraction->SetDefaultRenderer(renderer);

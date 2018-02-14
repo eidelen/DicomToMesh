@@ -58,13 +58,12 @@ struct Dicom2MeshSettings
     string outputFilePath = "mesh.stl";
 };
 
-void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
+void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* /*clientData*/, void* /*callData*/)
 {
     // display progress in terminal
     vtkAlgorithm* filter = static_cast<vtkAlgorithm*>(caller);
-    char* task = static_cast<char*>(clientData);
     cout << "\33[2K\r"; // erase line
-    cout << task << ": ";
+    cout << "Progress: ";
     if( filter->GetProgress() > 0.999 )
         cout << "done";
     else
@@ -379,7 +378,7 @@ int main(int argc, char *argv[])
     {
         // check reduction rate
         if( settings.reductionRate < 0.0 || settings.reductionRate > 1.0 )
-            cout << "Reduction skipped due to invalid reductionRate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
+            cout << "Reduction skipped due to invalid reduction rate " << settings.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
         else
            vmr->meshReduction( mesh, settings.reductionRate );
     }
@@ -400,7 +399,7 @@ int main(int argc, char *argv[])
     if( settings.extracOnlyBigObjects )
     {
         if( settings.nbrVerticesRatio < 0.0 || settings.nbrVerticesRatio > 1.0 )
-            cout << "Smoothing skipped due to invalid reductionRate " << settings.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
+            cout << "Filtering skipped due to invalid filter rate " << settings.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
         else
             vmr->removeSmallObjects( mesh, settings.nbrVerticesRatio );
     }
