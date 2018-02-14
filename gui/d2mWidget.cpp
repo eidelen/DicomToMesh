@@ -24,6 +24,7 @@
 
 #include "d2mWidget.h"
 #include "ui_d2mWidget.h"
+#include "vtkMeshVisualizer.h"
 
 #include <QFileDialog>
 #include <vtkAlgorithm.h>
@@ -235,7 +236,8 @@ void D2MWidget::export_done(bool ok)
 {
     if( ok )
     {
-        ui->infoLable->setText("Done");
+        ui->infoLable->setText("Visualize");
+        VTKMeshVisualizer::displayMesh( m_converter->getMesh() );
         handleEndConversion();
     }
     else
@@ -245,12 +247,11 @@ void D2MWidget::export_done(bool ok)
     }
 }
 
-
-
-//
-//    if( settings.showIn3DView )
-//        VTKMeshVisualizer::displayMesh( mesh );
-
+void D2MWidget::visualize_done(bool ok)
+{
+    ui->infoLable->setText("Done");
+    handleEndConversion();
+}
 
 void D2MWidget::converterProgress(float progress)
 {
@@ -271,6 +272,8 @@ void D2MWidget::handleEndConversion()
 {
     ui->runBtn->setEnabled(true);
 }
+
+
 
 
 

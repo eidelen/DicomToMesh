@@ -49,6 +49,8 @@ public:
 
     static void progressCallback(vtkObject* caller, long unsigned int eventId, void* clientData, void* callData);
 
+    vtkSmartPointer<vtkPolyData> getMesh();
+
 public slots:
     void loadDicomImage( const QString& pathToDicom, int threshold );
     void centerMesh();

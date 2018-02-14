@@ -168,3 +168,8 @@ void DicomConverter::exportMesh(const QString &meshPath)
 
     emit export_Done(ret);
 }
+
+vtkSmartPointer<vtkPolyData> DicomConverter::getMesh()
+{
+    return m_mesh;
+}
