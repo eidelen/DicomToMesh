@@ -137,6 +137,14 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
     vtkSmartPointer<vtkImageData> rawVolumeData = vtkSmartPointer<vtkImageData>::New();
     rawVolumeData->DeepCopy(reader->GetOutput());
 
+    // check if load was successful
+    int* dims = rawVolumeData->GetDimensions();
+    if( dims[0] < 1 || dims[1] < 1 || dims[2] < 1 )
+    {
+        cerr << "No DICOM data in directory" << endl;
+        return NULL;
+    }
+
     cout << endl << endl;
 
     return rawVolumeData;
