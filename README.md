@@ -73,12 +73,17 @@ Alternatively, one can use an existing 3d mesh as input. This is useful if you w
 
 <code>> dicom2mesh -i pathToDicomDirectory -r 0.9 -s -c -e 0.05 -o mesh.stl</code>
 
+# GUI
+
+Dicom2Mesh can be built with a small GUI on top. This showed up to be helpful for users without command line experience. However, the control possibilities are limited compared to the command line version.
+
+<p align="center"><img alt="dicom2mesh_gui" src="http://eidelen.diffuse.ch/dicomtomesh_gui.png" width="60%"></p>
+
+The icons in the gui were made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>. The license is <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
 
 # Contributors
 
 DicomToMesh is a small in-house product of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
-
-The icons in the gui were made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
 
 Have fun :)
 
