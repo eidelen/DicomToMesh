@@ -39,9 +39,9 @@ In order to extend the supported DICOM formats, the libray vtk-dicom can be opti
 Building DicomToMesh on Linux:
 ```
 > git clone https://github.com/AOT-AG/DicomToMesh.git</code>
-> cd DicomToMesh</code>
-> mkdir build</code>
-> cd build</code>
+> cd DicomToMesh
+> mkdir build
+> cd build
 > ccmake ..  #opens ccmake window
 ```
 Within the ccmake window, pass the path to your vtk installation or vtk build directory. In my case, it looks like that
