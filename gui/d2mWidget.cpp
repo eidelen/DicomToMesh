@@ -27,8 +27,6 @@
 #include "vtkMeshVisualizer.h"
 
 #include <QFileDialog>
-#include <vtkAlgorithm.h>
-
 
 D2MWidget::D2MWidget(QWidget *parent) : QWidget(parent), ui(new Ui::D2MWidget)
 {
@@ -76,6 +74,17 @@ D2MWidget::~D2MWidget()
     m_conversionThread.wait();
 }
 
+void D2MWidget::handleStartConversion()
+{
+    ui->runBtn->setEnabled(false);
+}
+
+void D2MWidget::handleEndConversion()
+{
+    ui->runBtn->setEnabled(true);
+}
+
+// choose path to dicom
 void D2MWidget::openDicomBtn()
 {
     QString dicomPath = QFileDialog::getExistingDirectory(this, "Choose DICOM directory", ".", QFileDialog::ShowDirsOnly);
@@ -89,6 +98,7 @@ void D2MWidget::openDicomBtn()
     }
 }
 
+// choose mesh path
 void D2MWidget::saveBtn()
 {
     QString savePath = QFileDialog::getSaveFileName(this, "Save mesh as", ".");
@@ -102,6 +112,7 @@ void D2MWidget::saveBtn()
     }
 }
 
+// start conversion -> a cascade of functions will be asynchronous called
 void D2MWidget::runBtn()
 {
     handleStartConversion();
@@ -247,12 +258,6 @@ void D2MWidget::export_done(bool ok)
     }
 }
 
-void D2MWidget::visualize_done(bool ok)
-{
-    ui->infoLable->setText("Done");
-    handleEndConversion();
-}
-
 void D2MWidget::converterProgress(float progress)
 {
     emit doUpdateProgress(progress);
@@ -262,20 +267,4 @@ void D2MWidget::updateProgress(float progress)
 {
     ui->progressBar->setValue(static_cast<int>(progress));
 }
-
-void D2MWidget::handleStartConversion()
-{
-    ui->runBtn->setEnabled(false);
-}
-
-void D2MWidget::handleEndConversion()
-{
-    ui->runBtn->setEnabled(true);
-}
-
-
-
-
-
-
 

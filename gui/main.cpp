@@ -23,15 +23,23 @@
 
 
 #include <QApplication>
+#include <QSplashScreen>
+#include <QThread>
 #include "d2mWidget.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    D2MWidget w;
-    w.show();
+    QPixmap pixmap(":/img/aot.jpg");
+    QSplashScreen splash(pixmap);
+    splash.show();
 
+    D2MWidget w;
+
+    QThread::msleep(1500);
+
+    w.show();
+    splash.finish(&w);
     return a.exec();
 }
-

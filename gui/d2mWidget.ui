@@ -23,7 +23,7 @@
    <item row="3" column="0">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>GroupBox</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -67,6 +67,9 @@
          <height>75</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Convert to mesh</string>
+       </property>
        <property name="text">
         <string>Run</string>
        </property>
@@ -90,6 +93,9 @@
          <height>75</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Save mesh as</string>
+       </property>
        <property name="text">
         <string>Save</string>
        </property>
@@ -112,6 +118,9 @@
          <width>75</width>
          <height>75</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Open Dicom directory</string>
        </property>
        <property name="text">
         <string>Open</string>

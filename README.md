@@ -32,9 +32,7 @@ By passing the command line option <code>-v</code> the resulting mesh is visuali
 
 # Building
 
-The software is written in C++11 and uses VTK 7.0. CMake is used as build-system. 
-
-In order to extend the supported DICOM formats, the libray vtk-dicom can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
+The software is written in C++11 and uses VTK 7.0. CMake is used as build-system.
 
 Building DicomToMesh on Linux:
 ```
@@ -46,7 +44,8 @@ Building DicomToMesh on Linux:
 ```
 Within the ccmake window, pass the path to your vtk installation or vtk build directory. In my case, it looks like that
 ```
-CMAKE_BUILD_TYPE                 DEBUG                                        
+BUILD_GUI                        OFF
+CMAKE_BUILD_TYPE                 DEBUG
 CMAKE_INSTALL_PREFIX             /usr/local                                   
 USE_VTK_DICOM                    OFF                                          
 VTK_DIR                          /home/eidelen/Development/libs/vtk/build     
@@ -56,6 +55,8 @@ Now you are back in terminal and ready to build.
 ```
 > make
 ```
+
+In order to extend the supported DICOM formats, the libray vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
 
 # How to use Dicom2Mesh
 
@@ -75,9 +76,14 @@ Alternatively, one can use an existing 3d mesh as input. This is useful if you w
 
 # GUI
 
-Dicom2Mesh can be built with a small GUI on top. This showed up to be helpful for users without command line experience. However, the control possibilities are limited compared to the command line version.
+Dicom2Mesh can be built with a small GUI on top.
+This showed up to be helpful for users without command line experience.
+However, the control possibilities are limited compared to the command line version.
 
-<p align="center"><img alt="dicom2mesh_gui" src="http://eidelen.diffuse.ch/dicomtomesh_gui.png" width="60%"></p>
+<p align="center"><img alt="dicom2mesh_gui" src="http://eidelen.diffuse.ch/dicomtomesh_gui2.png" width="75%"></p>
+
+In order to build the Dicom2Mesh GUI, please set the cmake flag <code>BUILD_GUI=ON</code> when configuring the project.
+The GUI requires QT.
 
 The icons in the gui were made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>. The license is <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
 

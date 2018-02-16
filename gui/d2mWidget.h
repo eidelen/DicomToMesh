@@ -59,7 +59,6 @@ public slots:
     void filter_done(bool ok);
     void smoothing_done(bool ok);
     void export_done(bool ok);
-    void visualize_done(bool ok);
 
 signals:
     void doLoad(const QString& pathToDicom, int threshold);
@@ -68,7 +67,6 @@ signals:
     void doFilter(float filterRate);
     void doSmoothing();
     void doExport(const QString& path);
-    void doVisualize();
 
     void doUpdateProgress(float progress);
 
