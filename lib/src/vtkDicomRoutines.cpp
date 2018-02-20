@@ -21,11 +21,12 @@
 **
 *****************************************************************************/
 
+#include "vtkDicomRoutines.h"
+
 #include <vtkDICOMImageReader.h>
 #include <vtkMarchingCubes.h>
 #include <vtkExtractVOI.h>
 #include <iostream>
-#include "vtkDicomRoutines.h"
 
 using namespace std;
 

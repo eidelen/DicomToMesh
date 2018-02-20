@@ -21,6 +21,8 @@
 **
 *****************************************************************************/
 
+#include "vtkMeshRoutines.h"
+
 #include <vtkCenterOfMass.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -29,7 +31,6 @@
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkSTLWriter.h>
 #include <vtkPLYWriter.h>
-#include <vtkCallbackCommand.h>
 #include <vtkMath.h>
 #include <vtkOBJReader.h>
 #include <vtkSTLReader.h>
@@ -38,11 +39,9 @@
 #include <vtkIdTypeArray.h>
 #include <vtkIdList.h>
 
-#include <string>
 #include <iostream>
 #include <fstream>
 
-#include "vtkMeshRoutines.h"
 
 using namespace std;
 

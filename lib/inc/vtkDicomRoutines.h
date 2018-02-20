@@ -62,7 +62,6 @@ public:
      */
     vtkSmartPointer<vtkPolyData> dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold );
 
-
     /**
      * Crop dicom images in terms of used slice ranges.
      * This starts a dialog with the user.

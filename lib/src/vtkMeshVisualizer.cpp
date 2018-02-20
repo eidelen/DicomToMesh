@@ -21,6 +21,8 @@
 **
 *****************************************************************************/
 
+#include "vtkMeshVisualizer.h"
+
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
@@ -28,8 +30,6 @@
 #include <vtkPropPicker.h>
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
-
-#include "vtkMeshVisualizer.h"
 
 void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
 {
@@ -58,7 +58,6 @@ void VTKMeshVisualizer::displayMesh( const vtkSmartPointer<vtkPolyData>& mesh )
 
     renderWindow->Render();
     renderWindowInteractor->Start();
-
 }
 
 

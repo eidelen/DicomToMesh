@@ -121,6 +121,11 @@ public:
     void exportAsPlyFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
 
 
+    /**
+     * Compute the vertex normals of a mesh.
+     * @param mesh The mesh, of which the vertex nomrals are computed.
+     * @param normals Contains normals at return.
+     */
     static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
 
 
