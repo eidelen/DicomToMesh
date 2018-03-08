@@ -34,6 +34,8 @@
 
 #include <QObject>
 
+#include <memory>
+
 class DicomConverter_Listener
 {
 public:
