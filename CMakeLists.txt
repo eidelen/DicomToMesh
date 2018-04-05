@@ -17,3 +17,11 @@ option(BUILD_GUI "Build Dicom2Mesh GUI" OFF)
 if(BUILD_GUI)
     add_subdirectory(gui)
 endif(BUILD_GUI)
+
+
+install(
+    TARGETS
+        dicom2mesh
+    RUNTIME DESTINATION
+        ${CMAKE_INSTALL_PREFIX}/bin
+)
