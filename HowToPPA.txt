@@ -1,0 +1,4 @@
+tar -acf dicom2mesh_0.1.orig.tar.gz DicomToMesh; cd DicomToMesh; debuild -S -sa; cd ..; 
+dput ppa:eidelen/d2m dicom2mesh_0.1-0ppa0_source.changes
+
+

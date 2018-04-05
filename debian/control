@@ -1,0 +1,12 @@
+Source: dicom2mesh
+Section: devel
+Priority: optional
+Maintainer: Adrian Schneider <adrian.schneider.pr@gmail.com>
+Build-Depends: cmake, build-essential, libvtk6-dev (>= 6.3.0)
+Homepage: https://github.com/AOT-AG/DicomToMesh
+
+Package: dicom2mesh
+Architecture: any
+Depends: vtk6 (>= 6.3.0)
+Description: DICOM to 3D mesh
+ Dicom2Mesh is a command line tool to create 3D surface meshs from a set of 2D DICOM images. The supported 3D mesh formats are STL, OBJ and PLY. Several mesh processing routines can be applied.
