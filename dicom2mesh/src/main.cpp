@@ -31,32 +31,12 @@
 #include "vtkMeshRoutines.h"
 #include "vtkDicomRoutines.h"
 #include "vtkMeshVisualizer.h"
+#include "dicom2mesh.h"
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released
 //       within the function body.
 
-using namespace std;
-
-struct Dicom2MeshSettings
-{
-    string pathToInputData;
-    bool pathToDicomSet = false;
-    bool enabledExportMeshFile = false;
-    bool setOriginToCenterOfMass = false;
-    bool enableMeshReduction = false;
-    bool enablePolygonLimitation = false;
-    bool extracOnlyBigObjects = false;
-    bool enableSmoothing = false;
-    bool showIn3DView = false;
-    bool enableCrop = false;
-    char pad[3];
-    int isoValue = 400; // Hard Tissue
-    unsigned long polygonLimit = 100000;
-    double nbrVerticesRatio = 0.1;
-    double reductionRate = 0.5;
-    string outputFilePath = "mesh.stl";
-};
 
 void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* /*clientData*/, void* /*callData*/)
 {
@@ -71,7 +51,7 @@ void myVtkProgressCallback(vtkObject* caller, long unsigned int /*eventId*/, voi
     cout << flush;
 }
 
-vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshSettings& settings, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful )
+vtkSmartPointer<vtkPolyData> loadInputData( const Dicom2MeshParameters& settings, vtkSmartPointer<vtkCallbackCommand> progressCallback, bool& successful )
 {
     vtkSmartPointer<vtkPolyData> mesh;
     bool loadObj = false; bool loadStl = false; bool loadPly = false;
@@ -171,32 +151,32 @@ void showUsage()
     cout << "Arguments can be combined." << endl << endl;
 }
 
-string getSettingsAsString( const Dicom2MeshSettings& settings )
+string getParametersAsString(const Dicom2MeshParameters &param)
 {
     string ret = "Dicom2Mesh Settings\n-------------------\n";
-    ret.append("Input directory: "); ret.append(settings.pathToInputData); ret.append("\n");
-    ret.append("Output file path: "); ret.append(settings.outputFilePath); ret.append("\n");
-    ret.append("Surface segementation: "); ret.append( to_string(settings.isoValue )); ret.append("\n");
+    ret.append("Input directory: "); ret.append(param.pathToInputData); ret.append("\n");
+    ret.append("Output file path: "); ret.append(param.outputFilePath); ret.append("\n");
+    ret.append("Surface segementation: "); ret.append( to_string(param.isoValue )); ret.append("\n");
     ret.append("Mesh reduction: ");
-    if(settings.enableMeshReduction)
+    if(param.enableMeshReduction)
     {
-        ret.append("enabled (rate="); ret.append( to_string(settings.reductionRate )); ret.append(")\n");
+        ret.append("enabled (rate="); ret.append( to_string(param.reductionRate )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Mesh polygon limitation: ");
-    if(settings.enablePolygonLimitation)
+    if(param.enablePolygonLimitation)
     {
-        ret.append("enabled (nbr="); ret.append( to_string(settings.polygonLimit )); ret.append(")\n");
+        ret.append("enabled (nbr="); ret.append( to_string(param.polygonLimit )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Mesh smoothing: ");
-    if(settings.enableSmoothing)
+    if(param.enableSmoothing)
     {
         ret.append("enabled\n");
     }
@@ -205,7 +185,7 @@ string getSettingsAsString( const Dicom2MeshSettings& settings )
         ret.append("disabled\n");
     }
     ret.append("Mesh centering: ");
-    if(settings.setOriginToCenterOfMass)
+    if(param.setOriginToCenterOfMass)
     {
         ret.append("enabled\n");
     }
@@ -214,16 +194,16 @@ string getSettingsAsString( const Dicom2MeshSettings& settings )
         ret.append("disabled\n");
     }
     ret.append("Mesh filtering: ");
-    if(settings.extracOnlyBigObjects)
+    if(param.extracOnlyBigObjects)
     {
-        ret.append("enabled (size-ratio="); ret.append( to_string(settings.nbrVerticesRatio )); ret.append(")\n");
+        ret.append("enabled (size-ratio="); ret.append( to_string(param.nbrVerticesRatio )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Volume cropping: ");
-    if(settings.enableCrop)
+    if(param.enableCrop)
     {
         ret.append("enabled\n");
     }
@@ -235,7 +215,7 @@ string getSettingsAsString( const Dicom2MeshSettings& settings )
     return ret;
 }
 
-bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings )
+bool parseCmdParameters(const int &argc, char **argv, Dicom2MeshParameters &param)
 {
     for( int a = 0; a < argc; a++ )
     {
@@ -247,8 +227,8 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             a++;
             if( a < argc )
             {
-                settings.pathToInputData = argv[a];
-                settings.pathToDicomSet = true;
+                param.pathToInputData = argv[a];
+                param.pathToDicomSet = true;
             }
             else
             {
@@ -262,8 +242,8 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             a++;
             if( a < argc )
             {
-                settings.outputFilePath = argv[a];
-                settings.enabledExportMeshFile = true;
+                param.outputFilePath = argv[a];
+                param.enabledExportMeshFile = true;
             }
             else
             {
@@ -277,7 +257,7 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
             a++;
             if( a < argc )
             {
-                settings.isoValue = stoi( string(argv[a]) );
+                param.isoValue = stoi( string(argv[a]) );
             }
             else
             {
@@ -292,47 +272,47 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
         }
         else if( cArg.compare("-r") == 0 )
         {
-            settings.enableMeshReduction = true;
+            param.enableMeshReduction = true;
             // next argument is reduction (float)
             a++;
             if( a < argc ) // default value is 0.5
-                settings.reductionRate = stod( string(argv[a]) );
+                param.reductionRate = stod( string(argv[a]) );
         }
         else if( cArg.compare("-p") == 0 )
         {
-            settings.enablePolygonLimitation = true;
+            param.enablePolygonLimitation = true;
             // next argument is polygon limit
             a++;
             if( a < argc ) // default value is 100000
-                settings.polygonLimit = stoul( string(argv[a]) );
+                param.polygonLimit = stoul( string(argv[a]) );
         }
         else if( cArg.compare("-e") == 0 )
         {
-            settings.extracOnlyBigObjects = true;
+            param.extracOnlyBigObjects = true;
             // next argument is size ratio (float)
             a++;
             if( a < argc ) // default value is 0.1
-                settings.nbrVerticesRatio = stod( string(argv[a]) );
+                param.nbrVerticesRatio = stod( string(argv[a]) );
         }
         else if( cArg.compare("-c") == 0 )
         {
-            settings.setOriginToCenterOfMass = true;
+            param.setOriginToCenterOfMass = true;
         }
         else if( cArg.compare("-s") == 0 )
         {
-            settings.enableSmoothing = true;
+            param.enableSmoothing = true;
         }
         else if( cArg.compare("-v") == 0 )
         {
-            settings.showIn3DView = true;
+            param.showIn3DView = true;
         }
         else if( cArg.compare("-z") == 0 )
         {
-            settings.enableCrop = true;
+            param.enableCrop = true;
         }
     }
 
-    if( !settings.pathToDicomSet )
+    if( !param.pathToDicomSet )
     {
         cerr << "Path to DICOM directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
         return false;
@@ -344,11 +324,11 @@ bool parseSettings( const int& argc, char* argv[], Dicom2MeshSettings& settings 
 int main(int argc, char *argv[])
 {
     //****** Parse arguments *******//
-    Dicom2MeshSettings settings;
-    if( !parseSettings( argc, argv, settings) )
+    Dicom2MeshParameters settings;
+    if( !parseCmdParameters(argc, argv, settings) )
         return -1;
 
-    cout << endl << getSettingsAsString( settings ) << endl;
+    cout << endl << getParametersAsString(settings) << endl;
     //******************************//
 
     vtkSmartPointer<vtkCallbackCommand> progressCallback = vtkSmartPointer<vtkCallbackCommand>::New();
