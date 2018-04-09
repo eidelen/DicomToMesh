@@ -1,4 +1,11 @@
-tar -acf dicom2mesh_0.1.orig.tar.gz DicomToMesh; cd DicomToMesh; debuild -S -sa; cd ..; 
+How to update ppa package (apt-get install ...)
+
+1) Update the version in file changelog
+
+2) Create package
+tar -acf dicom2mesh_0.1.orig.tar.gz DicomToMesh; cd DicomToMesh; debuild -S -sa; cd ..;
+
+3) Upload to server
 dput ppa:eidelen/d2m dicom2mesh_0.1-0ppa0_source.changes
 
 
