@@ -9,3 +9,5 @@ option(BUILD_GUI "Build Dicom2Mesh GUI" OFF)
 if(BUILD_GUI)
     add_subdirectory(gui)
 endif(BUILD_GUI)
+
+
