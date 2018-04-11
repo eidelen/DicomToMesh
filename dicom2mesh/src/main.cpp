@@ -21,12 +21,6 @@
 **
 *****************************************************************************/
 
-
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <memory>
-
 #include "dicom2mesh.h"
 
 int main(int argc, char *argv[])
