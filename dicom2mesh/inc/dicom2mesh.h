@@ -22,6 +22,9 @@
 *****************************************************************************/
 
 #include <string>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkCallbackCommand.h>
 
 #ifndef DICOM2MESH_H
 #define DICOM2MESH_H
@@ -30,7 +33,7 @@ using namespace std;
 
 struct Dicom2MeshParameters
 {
-    string pathToInputData;
+    std::string pathToInputData;
     bool pathToDicomSet = false;
     bool enabledExportMeshFile = false;
     bool setOriginToCenterOfMass = false;
@@ -46,6 +49,25 @@ struct Dicom2MeshParameters
     double nbrVerticesRatio = 0.1;
     double reductionRate = 0.5;
     string outputFilePath = "mesh.stl";
+};
+
+class Dicom2Mesh
+{
+public:
+    Dicom2Mesh(const Dicom2MeshParameters& params);
+    ~Dicom2Mesh();
+
+    int doMesh();
+    static bool parseCmdLineParameters( const int &argc, char **argv, Dicom2MeshParameters &param );
+    static void showUsageText();
+
+private:
+    vtkSmartPointer<vtkPolyData> loadInputData( bool& successful );
+    std::string getParametersAsString();
+
+private:
+    Dicom2MeshParameters m_params;
+    vtkSmartPointer<vtkCallbackCommand> m_vtkCallback;
 };
 
 #endif // DICOM2MESH_H
