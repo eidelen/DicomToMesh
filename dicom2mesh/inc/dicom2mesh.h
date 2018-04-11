@@ -21,15 +21,13 @@
 **
 *****************************************************************************/
 
+#ifndef DICOM2MESH_H
+#define DICOM2MESH_H
+
 #include <string>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
-
-#ifndef DICOM2MESH_H
-#define DICOM2MESH_H
-
-using namespace std;
 
 struct Dicom2MeshParameters
 {
@@ -48,7 +46,7 @@ struct Dicom2MeshParameters
     unsigned long polygonLimit = 100000;
     double nbrVerticesRatio = 0.1;
     double reductionRate = 0.5;
-    string outputFilePath = "mesh.stl";
+    std::string outputFilePath = "mesh.stl";
 };
 
 class Dicom2Mesh
