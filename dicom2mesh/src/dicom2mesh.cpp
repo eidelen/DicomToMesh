@@ -28,6 +28,7 @@
 
 #include <vtkAlgorithm.h>
 #include <iostream>
+#include <memory>
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released
