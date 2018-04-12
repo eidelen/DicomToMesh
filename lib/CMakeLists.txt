@@ -29,6 +29,12 @@ target_link_libraries(dicom2meshlib ${DICOM_TO_MESH_LIB_LIBS})
 target_include_directories(dicom2meshlib INTERFACE inc)
 target_compile_features(dicom2meshlib PRIVATE cxx_range_for)
 
+install(
+        TARGETS
+        dicom2meshlib
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+)
+
 
 
 

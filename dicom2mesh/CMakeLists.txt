@@ -13,6 +13,5 @@ target_compile_features( dicom2mesh PRIVATE cxx_range_for )
 install(
         TARGETS
         dicom2mesh
-        RUNTIME DESTINATION
-        ${CMAKE_INSTALL_PREFIX}/bin
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
 )
