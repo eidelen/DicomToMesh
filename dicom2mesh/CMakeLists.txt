@@ -10,8 +10,10 @@ add_executable( dicom2mesh src/main.cpp src/dicom2mesh.cpp )
 target_link_libraries( dicom2mesh dicom2meshlib ${VTK_LIBRARIES}  )
 target_compile_features( dicom2mesh PRIVATE cxx_range_for )
 
-install(
-        TARGETS
-        dicom2mesh
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-)
+if(UNIX)
+    install(
+            TARGETS
+            dicom2mesh
+            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+    )
+endif(UNIX)
