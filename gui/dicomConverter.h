@@ -39,7 +39,7 @@
 class DicomConverter_Listener
 {
 public:
-    virtual void converterProgress(float progress) = 0;
+    virtual void converterProgress(double progress) = 0;
 };
 
 class DicomConverter : public QObject
@@ -56,8 +56,8 @@ public:
 public slots:
     void loadDicomImage( const QString& pathToDicom, int threshold );
     void centerMesh();
-    void reduction(float reductionRate);
-    void filtering(float filterRate);
+    void reduction(double reductionRate);
+    void filtering(double filterRate);
     void smoothing();
     void exportMesh(const QString& meshPath);
 

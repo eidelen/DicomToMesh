@@ -251,6 +251,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
     if( !param.pathToDicomSet )
     {
         cerr << "Path to DICOM directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
+        cerr << "For help, run" << endl << "> dicom2mesh -h" << endl;
         return false;
     }
 

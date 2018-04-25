@@ -45,13 +45,13 @@ public:
     ~D2MWidget();
 
     // from DicomConverter_Listener
-    void converterProgress(float progress);
+    void converterProgress(double progress);
 
 public slots:
     void openDicomBtn();
     void saveBtn();
     void runBtn();
-    void updateProgress(float progress);
+    void updateProgress(double progress);
 
     void load_done(bool ok);
     void center_done(bool ok);
@@ -63,12 +63,12 @@ public slots:
 signals:
     void doLoad(const QString& pathToDicom, int threshold);
     void doCenter();
-    void doReduction(float reductionRate);
-    void doFilter(float filterRate);
+    void doReduction(double reductionRate);
+    void doFilter(double filterRate);
     void doSmoothing();
     void doExport(const QString& path);
 
-    void doUpdateProgress(float progress);
+    void doUpdateProgress(double progress);
 
 private:
     void handleStartConversion();

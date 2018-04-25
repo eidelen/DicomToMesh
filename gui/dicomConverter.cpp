@@ -87,7 +87,7 @@ void DicomConverter::centerMesh()
     emit centerMesh_Done(true);
 }
 
-void DicomConverter::reduction(float reductionRate)
+void DicomConverter::reduction(double reductionRate)
 {
     bool ret = true;
 
@@ -105,7 +105,7 @@ void DicomConverter::reduction(float reductionRate)
     emit reduction_Done(ret);
 }
 
-void DicomConverter::filtering(float filterRate )
+void DicomConverter::filtering(double filterRate )
 {
     bool ret = true;
 

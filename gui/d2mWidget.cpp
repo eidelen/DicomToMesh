@@ -258,12 +258,12 @@ void D2MWidget::export_done(bool ok)
     }
 }
 
-void D2MWidget::converterProgress(float progress)
+void D2MWidget::converterProgress(double progress)
 {
     emit doUpdateProgress(progress);
 }
 
-void D2MWidget::updateProgress(float progress)
+void D2MWidget::updateProgress(double progress)
 {
     ui->progressBar->setValue(static_cast<int>(progress));
 }
