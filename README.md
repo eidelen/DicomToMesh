@@ -34,7 +34,7 @@ By passing the command line option <code>-v</code> the resulting mesh is visuali
 
 The software is written in C++11 and uses VTK 7.0. CMake is used as build-system.
 
-Building DicomToMesh on Linux:
+Building DicomToMesh on Linux and OSX:
 ```
 > git clone https://github.com/AOT-AG/DicomToMesh.git</code>
 > cd DicomToMesh
@@ -55,6 +55,8 @@ Now you are back in terminal and ready to build.
 ```
 > make
 ```
+Building on Windows:
+Building on Windows is essentially the same as building under Linux and OSX. The project settings can be done with the cmake GUI. The versions we are using are VTK 7.0.0 together with Visual Studio 2015. The optional GUI we are building with QT 5.9.4. 
 
 In order to extend the supported DICOM formats, the libray vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
 
