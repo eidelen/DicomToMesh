@@ -55,10 +55,11 @@ Now you are back in terminal and ready to build.
 ```
 > make
 ```
-Building on Windows:
-Building on Windows is essentially the same as building under Linux and OSX. The project settings can be done with the cmake GUI. The versions we are using are VTK 7.0.0 together with Visual Studio 2015. The optional GUI we are building with QT 5.9.4. 
-
 In order to extend the supported DICOM formats, the libray vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
+
+Building on Windows:
+
+Building on Windows is essentially the same as building under Linux and OSX. The project settings can be done with the cmake GUI. The versions we are using are VTK 7.0.0 together with Visual Studio 2015. The optional GUI we are building with QT 5.9.4. 
 
 # How to use Dicom2Mesh
 
