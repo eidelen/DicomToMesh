@@ -1,6 +1,6 @@
 # DicomToMesh
 
-DicomToMesh is a handy command line tool, which enables the user to automatically create a 3D mesh from a set of 2D DICOM images, a common image format used in medicine. The supported 3D mesh formats are STL, OBJ and PLY.
+DicomToMesh is a handy command line tool, which enables the user to automatically create a 3D mesh from a set of 2D DICOM images, a common image format used in medicine. The supported 3D mesh formats are STL, OBJ and PLY. DicomToMesh works on Linux, OSX and Windows.
 
 <p align="center"><img alt="dicom2mesh" src="http://eidelen.diffuse.ch/dicomtomesh.png" width="80%"></p>
 
@@ -30,13 +30,24 @@ By passing the command line option <code>-v</code> the resulting mesh is visuali
 <p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/mesh-visualization.png" width="50%"></p>
 
 
+# Installation
+
+Ubuntu 18.04
+```
+> sudo add-apt-repository ppa:eidelen/d2m
+> sudo apt-get update
+> sudo apt-get install dicom2mesh
+```
+
+On OSX and Windows it is required to build DicomToMesh yourself. 
+
 # Building
 
 The software is written in C++11 and uses VTK 7.0. CMake is used as build-system.
 
 Building DicomToMesh on Linux and OSX:
 ```
-> git clone https://github.com/AOT-AG/DicomToMesh.git</code>
+> git clone https://github.com/AOT-AG/DicomToMesh.git
 > cd DicomToMesh
 > mkdir build
 > cd build
