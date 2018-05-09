@@ -1,11 +1,6 @@
-dicom2mesh (0.6-0ppa0) bionic; urgency=low
+dicom2mesh (0.7-0ppa0) bionic; urgency=low
 
-  * Initial dicom2mesh upload!
-  * Fixed build
-  * Again fix build error
-  * Fix dpkg command error
-  * Change structure
-  * Fix: Add shared library to installation
+  * Initial dicom2mesh ppa release!
 
 
- -- Adrian Schneider <adrian.schneider.pr@gmail.com>  Thu, 12 Apr 2018 16:42:00 +0200
+ -- Adrian Schneider <adrian.schneider.pr@gmail.com>  Thu, 05 May 2018 15:12:05 +0200

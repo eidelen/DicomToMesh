@@ -246,6 +246,11 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
         {
             param.enableCrop = true;
         }
+        else if( cArg.compare("--version") == 0 )
+        {
+            showVersionText();
+            return false;
+        }
     }
 
     if( !param.pathToDicomSet )
@@ -297,6 +302,12 @@ void Dicom2Mesh::showUsageText()
 
     std::cout << "Arguments can be combined." << std::endl << std::endl;
 }
+
+void Dicom2Mesh::showVersionText()
+{
+    std::cout << "dicom2Mesh version 0.7.0,   AOT AG - Switzerland" << std::endl;
+}
+
 
 vtkSmartPointer<vtkPolyData> Dicom2Mesh::loadInputData( bool& successful )
 {

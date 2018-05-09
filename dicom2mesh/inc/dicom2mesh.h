@@ -58,6 +58,7 @@ public:
     int doMesh();
     static bool parseCmdLineParameters( const int &argc, char **argv, Dicom2MeshParameters &param );
     static void showUsageText();
+    static void showVersionText();
 
 private:
     vtkSmartPointer<vtkPolyData> loadInputData( bool& successful );
