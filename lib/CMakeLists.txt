@@ -38,4 +38,21 @@ if(UNIX)
 endif(UNIX)
 
 
+# Test the library
+option(TESTDICOM2MESHLIB "TEST" OFF)
+IF(${TESTDICOM2MESHLIB})
+    MESSAGE(STATUS "Tests activated")
+    find_package(GTest REQUIRED)
+    include_directories(${GTEST_INCLUDE_DIRS})
+
+    FILE(GLOB_RECURSE  D2M_TESTS_INC       test/*.h)
+    FILE(GLOB_RECURSE  D2M_TESTS_SRC       test/*.cpp)
+
+    add_executable(runLibTests ${D2M_TESTS_INC} ${D2M_TESTS_SRC})
+    target_link_libraries(runLibTests ${GTEST_LIBRARIES} dicom2meshlib )
+    target_compile_features( runLibTests PRIVATE cxx_range_for )
+    target_compile_options( runLibTests PRIVATE "-Wpedantic" )
+ENDIF()
+
+
 
