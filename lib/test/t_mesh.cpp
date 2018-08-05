@@ -19,8 +19,26 @@ TEST(Mesh, OpenOBJ)
     vtkIdType numberOfVertices = mesh->GetPoints()->GetNumberOfPoints();
     vtkIdType numberOfFaces = mesh->GetNumberOfCells();
 
-    ASSERT_EQ( numberOfVertices, 2304 );
-    ASSERT_EQ( numberOfFaces, 576 );
+    ASSERT_EQ( numberOfVertices, 3456 );
+    ASSERT_EQ( numberOfFaces, 1152 );
+
+    delete vM;
+}
+
+TEST(Mesh, ReduceMesh)
+{
+    VTKMeshRoutines* vM = new VTKMeshRoutines();
+
+    vtkSmartPointer<vtkPolyData> mesh = vM->importObjFile( "lib/test/data/torus.obj" );
+    vtkIdType numberOfVertices = mesh->GetPoints()->GetNumberOfPoints();
+
+    for(int k = 0; k < 10; k++ )
+    {
+        vM->meshReduction(mesh, 0.1);
+        vtkIdType newNumberOfVertices = mesh->GetPoints()->GetNumberOfPoints();
+        ASSERT_LT( newNumberOfVertices, numberOfVertices );
+        numberOfVertices = newNumberOfVertices;
+    }
 
     delete vM;
 
