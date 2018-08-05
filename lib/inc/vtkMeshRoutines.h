@@ -52,7 +52,14 @@ public:
      * the center of mass is computed and the mesh is translated accordingly.
      * @param mesh The input mesh. Mesh will be modified afterwards.
      */
-    void moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh );
+
+    struct Vector3
+    {
+        double x;
+        double y;
+        double z;
+    };
+    Vector3 moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh );
 
     /**
      * Reduces the size / details of a 3D mesh.
