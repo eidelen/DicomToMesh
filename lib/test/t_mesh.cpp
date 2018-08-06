@@ -48,11 +48,11 @@ TEST(Mesh, CenterObject)
     VTKMeshRoutines* vM = new VTKMeshRoutines();
 
     vtkSmartPointer<vtkPolyData> mesh = vM->importObjFile( "lib/test/data/torus.obj" );
-    VTKMeshRoutines::Vector3 trans = vM->moveMeshToCOSCenter(mesh);
+    vtkVector3d trans = vM->moveMeshToCOSCenter(mesh);
 
-    ASSERT_NEAR(trans.x, 1.0, 0.1);
-    ASSERT_NEAR(trans.y, 3.0, 0.1);
-    ASSERT_NEAR(trans.z, -2.0, 0.1);
+    ASSERT_NEAR(trans.GetX(), -1.0, 0.1);
+    ASSERT_NEAR(trans.GetY(), -3.0, 0.1);
+    ASSERT_NEAR(trans.GetZ(), +2.0, 0.1);
 
     delete vM;
 }

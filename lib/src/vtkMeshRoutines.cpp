@@ -59,7 +59,7 @@ void VTKMeshRoutines::SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> p
     m_progressCallback = progressCallback;
 }
 
-VTKMeshRoutines::Vector3 VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
+vtkVector3d VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> mesh )
 {
     vtkSmartPointer<vtkCenterOfMass> computeCenter = vtkSmartPointer<vtkCenterOfMass>::New();
     computeCenter->SetInputData( mesh );
@@ -69,13 +69,8 @@ VTKMeshRoutines::Vector3 VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<v
     double* objectCenter = new double[3];
     computeCenter->GetCenter(objectCenter);
 
-    cout << "Move origin to center of mass: [" << objectCenter[0] << "," << objectCenter[1] << "," << objectCenter[2] << "]" << endl;
-
     // safe to returning vector
-    Vector3 retTrans;
-    retTrans.x = objectCenter[0];
-    retTrans.y = objectCenter[1];
-    retTrans.z = objectCenter[2];
+    vtkVector3d retV(-objectCenter[0],-objectCenter[1],-objectCenter[2]);
 
     vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
     translation->Translate(-objectCenter[0], -objectCenter[1], -objectCenter[2]);
@@ -92,7 +87,7 @@ VTKMeshRoutines::Vector3 VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<v
 
     cout << "Done" << endl << endl;
 
-    return retTrans;
+    return retV;
 }
 
 void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const double& reduction )

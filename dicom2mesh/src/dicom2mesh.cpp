@@ -83,7 +83,10 @@ int Dicom2Mesh::doMesh()
     vmr->SetProgressCallback( m_vtkCallback );
 
     if( m_params.setOriginToCenterOfMass )
-        vmr->moveMeshToCOSCenter( mesh );
+    {
+        vtkVector3d trans = vmr->moveMeshToCOSCenter(mesh);
+        cout << "Move mesh to the coordinate systems's center: Translation [" << trans.GetX() << "," << trans.GetY() << "," << trans.GetZ() << "]" << endl << endl;
+    }
 
     if( m_params.enableMeshReduction )
     {
