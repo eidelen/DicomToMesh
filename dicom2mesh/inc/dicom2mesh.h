@@ -62,7 +62,7 @@ public:
 
 private:
     vtkSmartPointer<vtkPolyData> loadInputData( bool& successful );
-    std::string getParametersAsString();
+    std::string getParametersAsString(const Dicom2MeshParameters& params);
 
 private:
     Dicom2MeshParameters m_params;
