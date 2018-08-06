@@ -29,6 +29,8 @@
 #include <vtkAlgorithm.h>
 #include <iostream>
 #include <memory>
+#include <fstream>
+#include <chrono>
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released
@@ -62,7 +64,9 @@ Dicom2Mesh::~Dicom2Mesh()
 
 int Dicom2Mesh::doMesh()
 {
-    std::cout << std::endl << getParametersAsString() << std::endl;
+    std::chrono::steady_clock::time_point t_begin = std::chrono::steady_clock::now();
+
+    std::cout << std::endl << getParametersAsString(m_params) << std::endl;
     //******************************//
 
     //******** Read DICOM *********//
@@ -141,12 +145,24 @@ int Dicom2Mesh::doMesh()
                 vmr->exportAsPlyFile( mesh, m_params.outputFilePath );
             else
                 cerr << "Unknown file type" << endl;
+
+
+            // safe mesh parameters in info file
+            std::string infoFilePath = m_params.outputFilePath.substr(0,idx+1).append("info");
+            std::ofstream infoFile;
+            infoFile.open(infoFilePath);
+            infoFile << getParametersAsString(m_params);
+            infoFile.close();
+            std::cout << "Parameters written to file:  " << infoFilePath << std::endl;
         }
         else
         {
             cerr << "No Filename." << endl;
         }
     }
+
+    std::chrono::steady_clock::time_point t_done = std::chrono::steady_clock::now();
+    std::cout << std::endl << "Required computing time: " << std::chrono::duration_cast<std::chrono::seconds>(t_done - t_begin).count() << " seconds" << std::endl;
 
     if( m_params.showIn3DView )
         VTKMeshVisualizer::displayMesh( mesh );
@@ -372,32 +388,32 @@ vtkSmartPointer<vtkPolyData> Dicom2Mesh::loadInputData( bool& successful )
     return mesh;
 }
 
-std::string Dicom2Mesh::getParametersAsString()
+std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params)
 {
     std::string ret = "Dicom2Mesh Settings\n-------------------\n";
-    ret.append("Input directory: "); ret.append(m_params.pathToInputData); ret.append("\n");
-    ret.append("Output file path: "); ret.append(m_params.outputFilePath); ret.append("\n");
-    ret.append("Surface segementation: "); ret.append( std::to_string(m_params.isoValue )); ret.append("\n");
+    ret.append("Input directory: "); ret.append(params.pathToInputData); ret.append("\n");
+    ret.append("Output file path: "); ret.append(params.outputFilePath); ret.append("\n");
+    ret.append("Surface segmentation: "); ret.append( std::to_string(params.isoValue )); ret.append("\n");
     ret.append("Mesh reduction: ");
-    if(m_params.enableMeshReduction)
+    if(params.enableMeshReduction)
     {
-        ret.append("enabled (rate="); ret.append( std::to_string(m_params.reductionRate )); ret.append(")\n");
+        ret.append("enabled (rate="); ret.append( std::to_string(params.reductionRate )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Mesh polygon limitation: ");
-    if(m_params.enablePolygonLimitation)
+    if(params.enablePolygonLimitation)
     {
-        ret.append("enabled (nbr="); ret.append( std::to_string(m_params.polygonLimit )); ret.append(")\n");
+        ret.append("enabled (nbr="); ret.append( std::to_string(params.polygonLimit )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Mesh smoothing: ");
-    if(m_params.enableSmoothing)
+    if(params.enableSmoothing)
     {
         ret.append("enabled\n");
     }
@@ -406,7 +422,7 @@ std::string Dicom2Mesh::getParametersAsString()
         ret.append("disabled\n");
     }
     ret.append("Mesh centering: ");
-    if(m_params.setOriginToCenterOfMass)
+    if(params.setOriginToCenterOfMass)
     {
         ret.append("enabled\n");
     }
@@ -415,22 +431,23 @@ std::string Dicom2Mesh::getParametersAsString()
         ret.append("disabled\n");
     }
     ret.append("Mesh filtering: ");
-    if(m_params.extracOnlyBigObjects)
+    if(params.extracOnlyBigObjects)
     {
-        ret.append("enabled (size-ratio="); ret.append( std::to_string(m_params.nbrVerticesRatio )); ret.append(")\n");
+        ret.append("enabled (size-ratio="); ret.append( std::to_string(params.nbrVerticesRatio )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Volume cropping: ");
-    if(m_params.enableCrop)
+    if(params.enableCrop)
     {
         ret.append("enabled\n");
     }
     else
     {
         ret.append("disabled\n");
+
     }
 
     return ret;
