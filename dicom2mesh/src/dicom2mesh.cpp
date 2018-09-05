@@ -25,6 +25,7 @@
 #include "vtkMeshRoutines.h"
 #include "vtkDicomRoutines.h"
 #include "vtkMeshVisualizer.h"
+#include "vtkVolumeVisualizer.h"
 
 #include <vtkAlgorithm.h>
 #include <iostream>
@@ -70,9 +71,9 @@ int Dicom2Mesh::doMesh()
     //******************************//
 
     //******** Read DICOM *********//
-    bool loadSuccessful;
-    vtkSmartPointer<vtkPolyData> mesh = loadInputData( loadSuccessful );
-    if( !loadSuccessful )
+    vtkSmartPointer<vtkPolyData> mesh;
+    vtkSmartPointer<vtkImageData> volume;
+    if( !loadInputData( volume, mesh) )
         return -1;
     //******************************//
 
@@ -165,7 +166,16 @@ int Dicom2Mesh::doMesh()
     std::cout << std::endl << "Required computing time: " << std::chrono::duration_cast<std::chrono::seconds>(t_done - t_begin).count() << " seconds" << std::endl;
 
     if( m_params.showIn3DView )
-        VTKMeshVisualizer::displayMesh( mesh );
+    {
+        if( m_params.doVolumeRendering )
+        {
+            VTKVolumeVisualizer::displayVolume(volume);
+        }
+        else
+        {
+            VTKMeshVisualizer::displayMesh(mesh);
+        }
+    }
 
     return 0;
 }
@@ -261,6 +271,11 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
         {
             param.showIn3DView = true;
         }
+        else if( cArg.compare("-vo") == 0 )
+        {
+            param.showIn3DView = true;
+            param.doVolumeRendering = true;
+        }
         else if( cArg.compare("-z") == 0 )
         {
             param.enableCrop = true;
@@ -328,9 +343,10 @@ void Dicom2Mesh::showVersionText()
 }
 
 
-vtkSmartPointer<vtkPolyData> Dicom2Mesh::loadInputData( bool& successful )
+bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d )
 {
-    vtkSmartPointer<vtkPolyData> mesh;
+    bool result = false;
+
     bool loadObj = false; bool loadStl = false; bool loadPly = false;
 
     // check if input is a mesh file
@@ -348,18 +364,18 @@ vtkSmartPointer<vtkPolyData> Dicom2Mesh::loadInputData( bool& successful )
 
     if( loadObj )
     {
-        mesh =  vmr->importObjFile( m_params.pathToInputData );
-        successful = true;
+        mesh3d =  vmr->importObjFile( m_params.pathToInputData );
+        result = true;
     }
     else if( loadStl )
     {
-        mesh = vmr->importStlFile( m_params.pathToInputData );
-        successful = true;
+        mesh3d = vmr->importStlFile( m_params.pathToInputData );
+        result = true;
     }
     else if( loadPly )
     {
-        mesh = vmr->importPlyFile( m_params.pathToInputData );
-        successful = true;
+        mesh3d = vmr->importPlyFile( m_params.pathToInputData );
+        result = true;
     }
     else
     {
@@ -369,23 +385,23 @@ vtkSmartPointer<vtkPolyData> Dicom2Mesh::loadInputData( bool& successful )
         vdr->SetProgressCallback( m_vtkCallback );
 
 
-        vtkSmartPointer<vtkImageData> imgData = vdr->loadDicomImage( m_params.pathToInputData );
-        if( imgData == NULL )
+        volume = vdr->loadDicomImage( m_params.pathToInputData );
+        if( volume == NULL )
         {
             cerr << "No image data could be created. Maybe wrong directory?" << endl;
-            successful = false;
+            result = false;
         }
         else
         {
             if( m_params.enableCrop )
-                vdr->cropDicom( imgData );
+                vdr->cropDicom( volume );
 
-            mesh = vdr->dicomToMesh( imgData, m_params.isoValue );
-            successful = true;
+            mesh3d = vdr->dicomToMesh( volume, m_params.isoValue );
+            result = true;
         }
     }
 
-    return mesh;
+    return result;
 }
 
 std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params)
@@ -447,7 +463,6 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
     else
     {
         ret.append("disabled\n");
-
     }
 
     return ret;

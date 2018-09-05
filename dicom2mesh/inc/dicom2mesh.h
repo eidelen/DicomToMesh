@@ -26,6 +26,7 @@
 
 #include <string>
 #include <vtkPolyData.h>
+#include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
 
@@ -40,6 +41,7 @@ struct Dicom2MeshParameters
     bool extracOnlyBigObjects = false;
     bool enableSmoothing = false;
     bool showIn3DView = false;
+    bool doVolumeRendering = false;
     bool enableCrop = false;
     char pad[3];
     int isoValue = 400; // Hard Tissue
@@ -61,7 +63,7 @@ public:
     static void showVersionText();
 
 private:
-    vtkSmartPointer<vtkPolyData> loadInputData( bool& successful );
+    bool loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d );
     std::string getParametersAsString(const Dicom2MeshParameters& params);
 
 private:
