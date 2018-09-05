@@ -26,85 +26,76 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSmartVolumeMapper.h>
 #include <vtkProperty.h>
 #include <vtkVolumeProperty.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkFixedPointVolumeRayCastMapper.h>
 
-// Code mainly taken from this example: https://www.vtk.org/Wiki/VTK/Examples/Cxx/VolumeRendering/SmartVolumeMapper
-
+// Code based on examples from:
+// https://www.vtk.org/Wiki/VTK/Examples/Cxx/VolumeRendering/SmartVolumeMapper
+// https://www.vtk.org/Wiki/VTK/Examples/Cxx/Medical/MedicalDemo4
 void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& imageData )
 {
-    // show mesh
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindow->AddRenderer(renderer);
 
-    renderWindow->SetSize(1000, 800);
+    // standard interaction
+    vtkSmartPointer<vtkRenderWindowInteractor> iren = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    iren->SetRenderWindow(renderWindow);
 
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    /*vtkSmartPointer<VTKVolumeVisualizerInteraction> pickingInteraction = vtkSmartPointer<VTKVolumeVisualizerInteraction>::New();
-    pickingInteraction->SetDefaultRenderer(renderer);
-    renderWindowInteractor->SetInteractorStyle( pickingInteraction );*/
-    renderWindowInteractor->SetRenderWindow( renderWindow );
-
-//    renderWindow->Render();
-
-    // Visualize
-    vtkSmartPointer<vtkSmartVolumeMapper> volM = vtkSmartPointer<vtkSmartVolumeMapper>::New();
-    volM->SetBlendModeToComposite(); // composite first
-
-
-#if VTK_MAJOR_VERSION <= 5
-    volM->SetInputConnection(imageData->GetProducerPort());
-#else
-    volM->SetInputData(imageData);
-#endif
-
-    vtkSmartPointer<vtkVolumeProperty> volProp = vtkSmartPointer<vtkVolumeProperty>::New();
-    volProp->SetInterpolationTypeToLinear();
-    volProp->ShadeOn();
-    volProp->SetAmbient(0.4);
-    volProp->SetDiffuse(0.6);
-    volProp->SetSpecular(0.2);
+    // setup volume rendering
+    vtkSmartPointer<vtkFixedPointVolumeRayCastMapper> volumeMapper = vtkSmartPointer<vtkFixedPointVolumeRayCastMapper>::New();
+    volumeMapper->SetInputData(imageData);
 
     // transfer function
-    vtkSmartPointer<vtkPiecewiseFunction> compOpacity = vtkSmartPointer<vtkPiecewiseFunction>::New();
-    compOpacity->AddPoint(0,    0.00);
-    compOpacity->AddPoint(10,   0.10);
-    compOpacity->AddPoint(300,  0.25);
-    compOpacity->AddPoint(700, 0.8);
-    compOpacity->AddPoint(2000, 0.95);
-    volProp->SetScalarOpacity(compOpacity); // composite first.
-    vtkSmartPointer<vtkColorTransferFunction> color = vtkSmartPointer<vtkColorTransferFunction>::New();
-    color->AddRGBPoint(0,    0.0, 0.0, 0.0);
-    color->AddRGBPoint(100,  1.0, 0.0, 0.0);
-    color->AddRGBPoint(300,  1.0, 0.0, 0.0);
-    color->AddRGBPoint(700,  0.6, 0.6, 0.6);
-    color->AddRGBPoint(2000, 1.0, 1.0, 1.0);
-    volProp->SetColor(color);
+    vtkSmartPointer<vtkColorTransferFunction>volumeColor = vtkSmartPointer<vtkColorTransferFunction>::New();
+    volumeColor->AddRGBPoint(0,    0.1, 0.0, 0.1);
+    volumeColor->AddRGBPoint(40,   0.0, 0.0, 0.7);
+    volumeColor->AddRGBPoint(700,  0.8, 0.2, 0.2);
+    volumeColor->AddRGBPoint(2000, 0.6,0.6, 0.6);
+    volumeColor->AddRGBPoint(2001, 1.0, 1.0, 1.0);
+    vtkSmartPointer<vtkPiecewiseFunction> volumeScalarOpacity = vtkSmartPointer<vtkPiecewiseFunction>::New();
+    volumeScalarOpacity->AddPoint(0,    0.00);
+    volumeScalarOpacity->AddPoint(40,   0.2);
+    volumeScalarOpacity->AddPoint(700,  0.15);
+    volumeScalarOpacity->AddPoint(2000, 0.5);
+    volumeScalarOpacity->AddPoint(5000, 1.0);
+
+    // The gradient opacity function is used to decrease the opacity
+    // in the "flat" regions of the volume while maintaining the opacity
+    // at the boundaries between tissue types.
+    vtkSmartPointer<vtkPiecewiseFunction> volumeGradientOpacity = vtkSmartPointer<vtkPiecewiseFunction>::New();
+    volumeGradientOpacity->AddPoint(0,   0.0);
+    volumeGradientOpacity->AddPoint(90,  0.5);
+    volumeGradientOpacity->AddPoint(100, 1.0);
+
+    vtkSmartPointer<vtkVolumeProperty> volumeProperty = vtkSmartPointer<vtkVolumeProperty>::New();
+    volumeProperty->SetColor(volumeColor);
+    volumeProperty->SetScalarOpacity(volumeScalarOpacity);
+    volumeProperty->SetGradientOpacity(volumeGradientOpacity);
+    volumeProperty->SetInterpolationTypeToLinear();
+    volumeProperty->ShadeOn();
+    volumeProperty->SetAmbient(0.3);
+    volumeProperty->SetDiffuse(0.8);
+    volumeProperty->SetSpecular(1.0);
+
 
     vtkSmartPointer<vtkVolume> volume = vtkSmartPointer<vtkVolume>::New();
-    volume->SetMapper(volM);
-    volume->SetProperty(volProp);
+    volume->SetMapper(volumeMapper);
+    volume->SetProperty(volumeProperty);
+
     renderer->AddViewProp(volume);
-    renderer->ResetCamera();
 
-    // Render composite. In default mode. For coverage.
-    //renderWindow->Render();
+    // Set a background color for the renderer
+    renderer->SetBackground(0.0, 0.0, 0.0);
 
-    // 3D texture mode. For coverage.
-#if !defined(VTK_LEGACY_REMOVE) && !defined(VTK_OPENGL2)
-    volM->SetRequestedRenderModeToRayCastAndTexture();
-#endif // VTK_LEGACY_REMOVE
-    renderWindow->Render();
+    renderWindow->SetSize(1000, 800);
 
-    volM->SetRequestedRenderModeToRayCast();
-    //renderWindow->Render();
-
-    renderWindowInteractor->Initialize();
-    renderWindowInteractor->Start();
+    // Interact with the data.
+    iren->Initialize();
+    iren->Start();
 }
 
 
