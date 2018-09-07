@@ -87,7 +87,7 @@ int Dicom2Mesh::doMesh()
     std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
     vmr->SetProgressCallback( m_vtkCallback );
 
-    if( m_params.setOriginToCenterOfMass )
+    if( m_params.enableOriginToCenterOfMass )
     {
         vtkVector3d trans = vmr->moveMeshToCOSCenter(mesh);
         cout << "Move mesh to the coordinate systems's center: Translation [" << trans.GetX() << "," << trans.GetY() << "," << trans.GetZ() << "]" << endl << endl;
@@ -115,12 +115,12 @@ int Dicom2Mesh::doMesh()
         }
     }
 
-    if( m_params.extracOnlyBigObjects )
+    if( m_params.enableObjectFiltering )
     {
-        if( m_params.nbrVerticesRatio < 0.0 || m_params.nbrVerticesRatio > 1.0 )
-            std::cout << "Filtering skipped due to invalid filter rate " << m_params.nbrVerticesRatio << " where a value of 0.0 - 1.0 is expected." << endl;
+        if( m_params.objectSizeRatio < 0.0 || m_params.objectSizeRatio > 1.0 )
+            std::cout << "Filtering skipped due to invalid filter rate " << m_params.objectSizeRatio << " where a value of 0.0 - 1.0 is expected." << endl;
         else
-            vmr->removeSmallObjects( mesh, m_params.nbrVerticesRatio );
+            vmr->removeSmallObjects( mesh, m_params.objectSizeRatio );
     }
 
     if( m_params.enableSmoothing )
@@ -131,7 +131,7 @@ int Dicom2Mesh::doMesh()
     //********************************//
 
     // check if obj or stl
-    if( m_params.enabledExportMeshFile )
+    if( m_params.outputFileAvailable )
     {
         std::string::size_type idx = m_params.outputFilePath.rfind('.');
         if( idx != std::string::npos )
@@ -165,9 +165,9 @@ int Dicom2Mesh::doMesh()
     std::chrono::steady_clock::time_point t_done = std::chrono::steady_clock::now();
     std::cout << std::endl << "Required computing time: " << std::chrono::duration_cast<std::chrono::seconds>(t_done - t_begin).count() << " seconds" << std::endl;
 
-    if( m_params.showIn3DView )
+    if( m_params.doVisualize )
     {
-        if( m_params.doVolumeRendering )
+        if( m_params.showAsVolume )
         {
             VTKVolumeVisualizer::displayVolume(volume);
         }
@@ -180,7 +180,7 @@ int Dicom2Mesh::doMesh()
     return 0;
 }
 
-bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2MeshParameters &param)
+bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dicom2MeshParameters &param)
 {
     for( int a = 0; a < argc; a++ )
     {
@@ -193,7 +193,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
             if( a < argc )
             {
                 param.pathToInputData = argv[a];
-                param.pathToDicomSet = true;
+                param.pathToInputAvailable = true;
             }
             else
             {
@@ -208,7 +208,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
             if( a < argc )
             {
                 param.outputFilePath = argv[a];
-                param.enabledExportMeshFile = true;
+                param.outputFileAvailable = true;
             }
             else
             {
@@ -253,15 +253,15 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
         }
         else if( cArg.compare("-e") == 0 )
         {
-            param.extracOnlyBigObjects = true;
+            param.enableObjectFiltering = true;
             // next argument is size ratio (float)
             a++;
             if( a < argc ) // default value is 0.1
-                param.nbrVerticesRatio = std::stod( std::string(argv[a]) );
+                param.objectSizeRatio = std::stod( std::string(argv[a]) );
         }
         else if( cArg.compare("-c") == 0 )
         {
-            param.setOriginToCenterOfMass = true;
+            param.enableOriginToCenterOfMass = true;
         }
         else if( cArg.compare("-s") == 0 )
         {
@@ -269,12 +269,12 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
         }
         else if( cArg.compare("-v") == 0 )
         {
-            param.showIn3DView = true;
+            param.doVisualize = true;
         }
         else if( cArg.compare("-vo") == 0 )
         {
-            param.showIn3DView = true;
-            param.doVolumeRendering = true;
+            param.doVisualize = true;
+            param.showAsVolume = true;
         }
         else if( cArg.compare("-z") == 0 )
         {
@@ -287,7 +287,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, char **argv, Dicom2Mesh
         }
     }
 
-    if( !param.pathToDicomSet )
+    if( !param.pathToInputAvailable )
     {
         cerr << "Path to DICOM directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
         cerr << "For help, run" << endl << "> dicom2mesh -h" << endl;
@@ -438,7 +438,7 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
         ret.append("disabled\n");
     }
     ret.append("Mesh centering: ");
-    if(params.setOriginToCenterOfMass)
+    if(params.enableOriginToCenterOfMass)
     {
         ret.append("enabled\n");
     }
@@ -447,9 +447,9 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
         ret.append("disabled\n");
     }
     ret.append("Mesh filtering: ");
-    if(params.extracOnlyBigObjects)
+    if(params.enableObjectFiltering)
     {
-        ret.append("enabled (size-ratio="); ret.append( std::to_string(params.nbrVerticesRatio )); ret.append(")\n");
+        ret.append("enabled (size-ratio="); ret.append( std::to_string(params.objectSizeRatio )); ret.append(")\n");
     }
     else
     {

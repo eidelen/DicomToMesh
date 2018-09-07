@@ -26,7 +26,7 @@
 int main(int argc, char *argv[])
 {
     Dicom2MeshParameters settings;
-    if( !Dicom2Mesh::parseCmdLineParameters(argc, argv, settings) )
+    if( !Dicom2Mesh::parseCmdLineParameters(argc, (const char**)( argv ), settings) )
         return -1;
 
     Dicom2Mesh* d2m = new Dicom2Mesh(settings);

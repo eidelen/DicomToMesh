@@ -33,20 +33,20 @@
 struct Dicom2MeshParameters
 {
     std::string pathToInputData;
-    bool pathToDicomSet = false;
-    bool enabledExportMeshFile = false;
-    bool setOriginToCenterOfMass = false;
+    bool pathToInputAvailable = false;
+    bool outputFileAvailable = false;
+    bool enableOriginToCenterOfMass = false;
     bool enableMeshReduction = false;
     bool enablePolygonLimitation = false;
-    bool extracOnlyBigObjects = false;
+    bool enableObjectFiltering = false;
     bool enableSmoothing = false;
-    bool showIn3DView = false;
-    bool doVolumeRendering = false;
+    bool doVisualize = false;
+    bool showAsVolume = false;
     bool enableCrop = false;
     char pad[3];
     int isoValue = 400; // Hard Tissue
     unsigned long polygonLimit = 100000;
-    double nbrVerticesRatio = 0.1;
+    double objectSizeRatio = 0.1;
     double reductionRate = 0.5;
     std::string outputFilePath = "mesh.stl";
 };
@@ -58,7 +58,7 @@ public:
     ~Dicom2Mesh();
 
     int doMesh();
-    static bool parseCmdLineParameters( const int &argc, char **argv, Dicom2MeshParameters &param );
+    static bool parseCmdLineParameters( const int &argc, const char **argv, Dicom2MeshParameters &param );
     static void showUsageText();
     static void showVersionText();
 
