@@ -131,7 +131,7 @@ int Dicom2Mesh::doMesh()
     //********************************//
 
     // check if obj or stl
-    if( m_params.outputFileAvailable )
+    if( m_params.pathToOutputAvailable )
     {
         std::string::size_type idx = m_params.outputFilePath.rfind('.');
         if( idx != std::string::npos )
@@ -208,7 +208,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             if( a < argc )
             {
                 param.outputFilePath = argv[a];
-                param.outputFileAvailable = true;
+                param.pathToOutputAvailable = true;
             }
             else
             {

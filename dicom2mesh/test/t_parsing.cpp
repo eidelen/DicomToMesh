@@ -19,7 +19,7 @@ TEST(ArgumentParser, InputPathAndDefault)
     ASSERT_FALSE(parsedInput.enableObjectFiltering);
     ASSERT_FALSE(parsedInput.enableOriginToCenterOfMass);
 
-    ASSERT_FALSE(parsedInput.outputFileAvailable);
+    ASSERT_FALSE(parsedInput.pathToOutputAvailable);
 }
 
 TEST(ArgumentParser, OutputPath)
@@ -30,7 +30,7 @@ TEST(ArgumentParser, OutputPath)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.outputFileAvailable);
+    ASSERT_TRUE(parsedInput.pathToOutputAvailable);
     ASSERT_STREQ(parsedInput.outputFilePath.c_str(), "output.obj");
 }
 

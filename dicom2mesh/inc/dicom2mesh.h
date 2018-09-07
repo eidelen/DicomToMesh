@@ -34,21 +34,29 @@ struct Dicom2MeshParameters
 {
     std::string pathToInputData;
     bool pathToInputAvailable = false;
-    bool outputFileAvailable = false;
+
+    std::string outputFilePath = "mesh.stl";
+    bool pathToOutputAvailable = false;
+
     bool enableOriginToCenterOfMass = false;
+
+    double reductionRate = 0.5;
     bool enableMeshReduction = false;
+
+    unsigned long polygonLimit = 100000;
     bool enablePolygonLimitation = false;
+
+    double objectSizeRatio = 0.1;
     bool enableObjectFiltering = false;
+
     bool enableSmoothing = false;
+
     bool doVisualize = false;
     bool showAsVolume = false;
+
     bool enableCrop = false;
-    char pad[3];
+
     int isoValue = 400; // Hard Tissue
-    unsigned long polygonLimit = 100000;
-    double objectSizeRatio = 0.1;
-    double reductionRate = 0.5;
-    std::string outputFilePath = "mesh.stl";
 };
 
 class Dicom2Mesh
