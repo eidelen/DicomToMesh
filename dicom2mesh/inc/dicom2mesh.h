@@ -30,6 +30,22 @@
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
 
+struct VolumeRenderingColoringEntry
+{
+    /*
+     * The color and transparency
+     */
+    char red = 255u;
+    char green = 255u;
+    char blue = 255u;
+    char alpha = 128u;
+
+    /*
+     * The voxel value, to which the color is applied
+     */
+    int voxelValue = 0;
+};
+
 struct Dicom2MeshParameters
 {
     std::string pathToInputData;
@@ -57,6 +73,8 @@ struct Dicom2MeshParameters
     bool enableCrop = false;
 
     int isoValue = 400; // Hard Tissue
+
+    std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
 };
 
 class Dicom2Mesh
