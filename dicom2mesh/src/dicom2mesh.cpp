@@ -32,6 +32,7 @@
 #include <memory>
 #include <fstream>
 #include <chrono>
+#include <regex>
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released
@@ -276,6 +277,32 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             param.doVisualize = true;
             param.showAsVolume = true;
         }
+        else if( cArg.at(0) == '(' )
+        {
+            // volume rendering color input till next ')'
+            std::string vArg = cArg;
+            bool goOn = true;
+            do
+            {
+                a++;
+
+                std::string part(argv[a]);
+                vArg.append( part );
+                goOn = part.back() != ')' && a < argc ;
+            }
+            while( goOn );
+
+            VolumeRenderingColoringEntry volE;
+            if( parseVolumeRenderingColorEntry(vArg, volE) )
+            {
+                param.volumenRenderingColoring.push_back(volE);
+            }
+            else
+            {
+                std::cerr << "Incomplete volume rendering color entry" << std::endl;
+                return false;
+            }
+        }
         else if( cArg.compare("-z") == 0 )
         {
             param.enableCrop = true;
@@ -404,7 +431,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
     return result;
 }
 
-std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params)
+std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params) const
 {
     std::string ret = "Dicom2Mesh Settings\n-------------------\n";
     ret.append("Input directory: "); ret.append(params.pathToInputData); ret.append("\n");
@@ -466,4 +493,54 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
     }
 
     return ret;
+}
+
+bool toColor( const std::string& text, unsigned char& val)
+{
+    bool successful = true;
+
+    int valInt = std::stoi(text);
+    if( valInt >= 0 && valInt < 256 )
+    {
+        val = static_cast<unsigned  char>(valInt);
+        successful = true;
+    }
+    else
+    {
+        std::cerr << valInt << " outside color range 0 - 255" << std::endl;
+        successful = false;
+    }
+
+    return successful;
+}
+
+bool Dicom2Mesh::parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry )
+{
+    // regex  \([ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+-|0-9]{1,})[ ]*\)
+    // examples: ( +1,200  , 3 ,4 ,5)   (6 , 7,8,9  ,-10 )
+
+    std::regex reg( "\\([ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+-|0-9]{1,})[ ]*\\)");
+    std::smatch parseResult;
+
+    if(! std::regex_match(text,parseResult,reg) )
+    {
+        std::cerr << "Invalid volume rendering color syntax" << std::endl;
+        return false;
+    }
+
+    if( parseResult.size() != 6 )
+    {
+        std::cerr << "Invalid number elements in volume rendering color entry" << std::endl;
+        return false;
+    }
+
+    if( toColor(parseResult[1], colorEntry.red) && toColor(parseResult[2], colorEntry.green) && toColor(parseResult[3], colorEntry.blue) && toColor(parseResult[4], colorEntry.alpha))
+    {
+        colorEntry.voxelValue = std::stoi(parseResult[5]);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

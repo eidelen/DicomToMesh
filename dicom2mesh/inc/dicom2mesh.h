@@ -35,10 +35,10 @@ struct VolumeRenderingColoringEntry
     /*
      * The color and transparency
      */
-    char red = 255u;
-    char green = 255u;
-    char blue = 255u;
-    char alpha = 128u;
+    unsigned char red = 255u;
+    unsigned char green = 255u;
+    unsigned char blue = 255u;
+    unsigned char alpha = 128u;
 
     /*
      * The voxel value, to which the color is applied
@@ -90,7 +90,8 @@ public:
 
 private:
     bool loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d );
-    std::string getParametersAsString(const Dicom2MeshParameters& params);
+    std::string getParametersAsString(const Dicom2MeshParameters& params) const;
+    static bool parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry );
 
 private:
     Dicom2MeshParameters m_params;
