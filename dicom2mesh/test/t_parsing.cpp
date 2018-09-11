@@ -121,17 +121,17 @@ TEST(ArgumentParser, VolVisualization)
 
     ASSERT_EQ(2,parsedInput.volumenRenderingColoring.size());
 
-    ASSERT_EQ(1, parsedInput.volumenRenderingColoring.at(0).red);
-    ASSERT_EQ(2, parsedInput.volumenRenderingColoring.at(0).green);
-    ASSERT_EQ(3, parsedInput.volumenRenderingColoring.at(0).blue);
-    ASSERT_EQ(4, parsedInput.volumenRenderingColoring.at(0).alpha);
-    ASSERT_EQ(-5, parsedInput.volumenRenderingColoring.at(0).voxelValue);
+    ASSERT_EQ(1, parsedInput.volumenRenderingColoring.at(0).m_red);
+    ASSERT_EQ(2, parsedInput.volumenRenderingColoring.at(0).m_green);
+    ASSERT_EQ(3, parsedInput.volumenRenderingColoring.at(0).m_blue);
+    ASSERT_EQ(4, parsedInput.volumenRenderingColoring.at(0).m_alpha);
+    ASSERT_EQ(-5, parsedInput.volumenRenderingColoring.at(0).m_voxelValue);
 
-    ASSERT_EQ(6, parsedInput.volumenRenderingColoring.at(1).red);
-    ASSERT_EQ(7, parsedInput.volumenRenderingColoring.at(1).green);
-    ASSERT_EQ(8, parsedInput.volumenRenderingColoring.at(1).blue);
-    ASSERT_EQ(9, parsedInput.volumenRenderingColoring.at(1).alpha);
-    ASSERT_EQ(10, parsedInput.volumenRenderingColoring.at(1).voxelValue);
+    ASSERT_EQ(6, parsedInput.volumenRenderingColoring.at(1).m_red);
+    ASSERT_EQ(7, parsedInput.volumenRenderingColoring.at(1).m_green);
+    ASSERT_EQ(8, parsedInput.volumenRenderingColoring.at(1).m_blue);
+    ASSERT_EQ(9, parsedInput.volumenRenderingColoring.at(1).m_alpha);
+    ASSERT_EQ(10, parsedInput.volumenRenderingColoring.at(1).m_voxelValue);
 }
 
 TEST(ArgumentParser, VolVisualizationInvalidColor)

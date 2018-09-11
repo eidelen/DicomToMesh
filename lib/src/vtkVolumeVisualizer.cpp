@@ -35,7 +35,7 @@
 // Code based on examples from:
 // https://www.vtk.org/Wiki/VTK/Examples/Cxx/VolumeRendering/SmartVolumeMapper
 // https://www.vtk.org/Wiki/VTK/Examples/Cxx/Medical/MedicalDemo4
-void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& imageData )
+void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry> colors )
 {
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -50,18 +50,25 @@ void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& im
     volumeMapper->SetInputData(imageData);
 
     // transfer function
-    vtkSmartPointer<vtkColorTransferFunction>volumeColor = vtkSmartPointer<vtkColorTransferFunction>::New();
-    volumeColor->AddRGBPoint(0,    0.1, 0.0, 0.1);
-    volumeColor->AddRGBPoint(40,   0.0, 0.0, 0.7);
-    volumeColor->AddRGBPoint(700,  0.8, 0.2, 0.2);
-    volumeColor->AddRGBPoint(2000, 0.6,0.6, 0.6);
-    volumeColor->AddRGBPoint(2001, 1.0, 1.0, 1.0);
+    if( colors.empty() )
+    {
+        // enable default coloring
+        colors.push_back( VolumeRenderingColoringEntry(200,10,10,0,-100) );
+        colors.push_back( VolumeRenderingColoringEntry(200,10,10,10,-99) );
+        colors.push_back( VolumeRenderingColoringEntry(200,10,10,10,10) );
+        colors.push_back( VolumeRenderingColoringEntry(50,10,180,70,11) );
+        colors.push_back( VolumeRenderingColoringEntry(20,10,240,100,500) );
+        colors.push_back( VolumeRenderingColoringEntry(160,160,160,60,501));
+        colors.push_back( VolumeRenderingColoringEntry(255,255,255,90,1500));
+    }
+
+    vtkSmartPointer<vtkColorTransferFunction> volumeColor = vtkSmartPointer<vtkColorTransferFunction>::New();
     vtkSmartPointer<vtkPiecewiseFunction> volumeScalarOpacity = vtkSmartPointer<vtkPiecewiseFunction>::New();
-    volumeScalarOpacity->AddPoint(0,    0.00);
-    volumeScalarOpacity->AddPoint(40,   0.2);
-    volumeScalarOpacity->AddPoint(700,  0.15);
-    volumeScalarOpacity->AddPoint(2000, 0.5);
-    volumeScalarOpacity->AddPoint(5000, 1.0);
+    for( VolumeRenderingColoringEntry e : colors )
+    {
+        volumeColor->AddRGBPoint( e.m_voxelValue, e.m_red/255.0, e.m_green/255.0, e.m_blue/255.0 );
+        volumeScalarOpacity->AddPoint(e.m_voxelValue, e.m_alpha/255.0);
+    }
 
     // The gradient opacity function is used to decrease the opacity
     // in the "flat" regions of the volume while maintaining the opacity
@@ -91,7 +98,7 @@ void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& im
     // Set a background color for the renderer
     renderer->SetBackground(0.0, 0.0, 0.0);
 
-    renderWindow->SetSize(1000, 800);
+    renderWindow->SetSize(1400, 1200);
 
     // Interact with the data.
     iren->Initialize();

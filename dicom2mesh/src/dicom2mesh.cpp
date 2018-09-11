@@ -170,7 +170,7 @@ int Dicom2Mesh::doMesh()
     {
         if( m_params.showAsVolume )
         {
-            VTKVolumeVisualizer::displayVolume(volume);
+            VTKVolumeVisualizer::displayVolume(volume, m_params.volumenRenderingColoring);
         }
         else
         {
@@ -534,9 +534,9 @@ bool Dicom2Mesh::parseVolumeRenderingColorEntry( const std::string& text, Volume
         return false;
     }
 
-    if( toColor(parseResult[1], colorEntry.red) && toColor(parseResult[2], colorEntry.green) && toColor(parseResult[3], colorEntry.blue) && toColor(parseResult[4], colorEntry.alpha))
+    if( toColor(parseResult[1], colorEntry.m_red) && toColor(parseResult[2], colorEntry.m_green) && toColor(parseResult[3], colorEntry.m_blue) && toColor(parseResult[4], colorEntry.m_alpha))
     {
-        colorEntry.voxelValue = std::stoi(parseResult[5]);
+        colorEntry.m_voxelValue = std::stoi(parseResult[5]);
         return true;
     }
     else

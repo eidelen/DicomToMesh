@@ -24,27 +24,13 @@
 #ifndef DICOM2MESH_H
 #define DICOM2MESH_H
 
+#include "vtkVolumeVisualizer.h"
+
 #include <string>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
-
-struct VolumeRenderingColoringEntry
-{
-    /*
-     * The color and transparency
-     */
-    unsigned char red = 255u;
-    unsigned char green = 255u;
-    unsigned char blue = 255u;
-    unsigned char alpha = 128u;
-
-    /*
-     * The voxel value, to which the color is applied
-     */
-    int voxelValue = 0;
-};
 
 struct Dicom2MeshParameters
 {

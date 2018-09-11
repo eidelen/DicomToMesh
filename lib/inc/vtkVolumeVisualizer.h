@@ -28,7 +28,30 @@
 
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
+#include <vector>
 
+class VolumeRenderingColoringEntry
+{
+public:
+
+    VolumeRenderingColoringEntry(){}
+    VolumeRenderingColoringEntry(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, int voxelValue) :
+    m_red(red), m_green(green), m_blue(blue), m_alpha(alpha), m_voxelValue(voxelValue)
+    {}
+
+    /*
+     * The color and transparency
+     */
+    unsigned char m_red = 255u;
+    unsigned char m_green = 255u;
+    unsigned char m_blue = 255u;
+    unsigned char m_alpha = 128u;
+
+    /*
+     * The voxel value, to which the color is applied
+     */
+    int m_voxelValue = 0;
+};
 
 class VTKVolumeVisualizer
 {
@@ -38,7 +61,7 @@ public:
      * Display mesh in a 3d view.
      * @param mesh Mesh to show.
      */
-    static MYLIB_EXPORT void displayVolume( const vtkSmartPointer<vtkImageData>& imageData );
+    static MYLIB_EXPORT void displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry> colors );
 };
 
 
