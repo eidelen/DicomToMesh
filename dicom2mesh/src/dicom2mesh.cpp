@@ -280,15 +280,17 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         else if( cArg.at(0) == '(' )
         {
             // volume rendering color input till next ')'
-            std::string vArg = cArg;
+            std::string vArg = "";
             bool goOn = true;
             do
             {
-                a++;
-
                 std::string part(argv[a]);
-                vArg.append( part );
-                goOn = part.back() != ')' && a < argc ;
+                vArg.append(part);
+
+                if( vArg.back() == ')' ||  a >= argc)
+                    goOn = false;
+                else
+                    a++;
             }
             while( goOn );
 
@@ -517,7 +519,7 @@ bool toColor( const std::string& text, unsigned char& val)
 bool Dicom2Mesh::parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry )
 {
     // regex  \([ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+-|0-9]{1,})[ ]*\)
-    // examples: ( +1,200  , 3 ,4 ,5)   (6 , 7,8,9  ,-10 )
+    // examples: ( +1,200  , 3 ,4 ,5)   (6 , 7,8,9  ,-10 ) (255,255,255,0,0)
 
     std::regex reg( "\\([ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+-|0-9]{1,})[ ]*\\)");
     std::smatch parseResult;
