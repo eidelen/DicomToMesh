@@ -29,6 +29,9 @@ By passing the command line option <code>-v</code> the resulting mesh is visuali
 
 <p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/mesh-visualization.png" width="50%"></p>
 
+The option <code>-vo</code> shows the input DICOM data in a volume renderer (vtkFixedPointVolumeRayCastMapper). The color map can be set with multiple parameters like <code>(Red,Green,Blue,Alpha,Iso-Value)</code>. As an example, the parameters <code>-vo (255,0,0,0,0) (255,0,0,60,700) (200,200,200,90,2000)</code> color voxels with values from 0-700 reddish and 700-2000 whitish. 
+
+<p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/volumerendering.png" width="50%"></p>
 
 # Installation
 
