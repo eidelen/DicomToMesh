@@ -98,7 +98,7 @@ void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& im
     // Set a background color for the renderer
     renderer->SetBackground(0.0, 0.0, 0.0);
 
-    renderWindow->SetSize(1400, 1200);
+    renderWindow->SetSize(1000, 800);
 
     // Interact with the data.
     iren->Initialize();
