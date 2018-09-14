@@ -360,6 +360,9 @@ void Dicom2Mesh::showUsageText()
     std::cout << "This creates a mesh and shows it in a 3d view." << std::endl;
     std::cout << "> dicom2mesh -i pathToDicomDirectory  -v" << std::endl << std::endl;
 
+    std::cout << "This shows the dicom data in a volume render [ (Red,Green,Blue,Alpha,Iso-Value) ]." << std::endl;
+    std::cout << "> dicom2mesh -i pathToDicomDirectory  -vo (255,0,0,0,0) (255,255,255,60,700) ..." << std::endl << std::endl;
+
     std::cout << "Alternatively a mesh file (obj, stl, ply) can be loaded directly, modified and exported again. This is handy to modify an existing mesh. Following example centers and saves a mesh as cba.stl." << std::endl;
     std::cout << "> dicom2mesh -i abc.obj -c -o cba.stl " << std::endl << std::endl;
 
