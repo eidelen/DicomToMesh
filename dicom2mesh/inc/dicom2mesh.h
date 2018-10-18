@@ -59,6 +59,8 @@ struct Dicom2MeshParameters
     bool enableCrop = false;
 
     int isoValue = 400; // Hard Tissue
+    bool useUpperIsoValue = false;
+    int  upperIsoValue = 400;
 
     std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
 };

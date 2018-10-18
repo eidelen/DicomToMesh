@@ -58,9 +58,12 @@ public:
      * Creates a mesh from out DICOM raw data.
      * @param imageData DICOM image data.
      * @param threshold Threshold for surface segmentation.
+     * @param useUpperThreshold Use upper threshold.
+     * @param upperThreshold Upper threshold for surface segmentation.
      * @return Resulting 3D mesh.
      */
-    vtkSmartPointer<vtkPolyData> dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold );
+    vtkSmartPointer<vtkPolyData> dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold,
+        bool useUpperThreshold, const int& upperThreshold );
 
     /**
      * Crop dicom images in terms of used slice ranges.

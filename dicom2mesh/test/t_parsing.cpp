@@ -45,6 +45,19 @@ TEST(ArgumentParser, Threshold)
     ASSERT_EQ(parsedInput.isoValue, 405);
 }
 
+TEST(ArgumentParser, ThresholdRange)
+{
+    int nInput = 6;
+    const char *input[6] = {"-i", "inputDir", "-t", "405", "-tu", "501"};
+
+    Dicom2MeshParameters parsedInput;
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+
+    ASSERT_EQ(parsedInput.isoValue, 405);
+    ASSERT_EQ(parsedInput.upperIsoValue, 501);
+    ASSERT_TRUE(parsedInput.useUpperIsoValue);
+}
+
 TEST(ArgumentParser, ThresholdNegative)
 {
     int nInput = 4;

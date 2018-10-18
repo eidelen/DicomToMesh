@@ -231,6 +231,21 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
                 return false;
             }
         }
+        else if( cArg.compare("-tu") == 0 )
+        {
+            // next argument is upper iso value (int)
+            a++;
+            if( a < argc )
+            {
+                param.upperIsoValue = std::stoi( std::string(argv[a]) );
+                param.useUpperIsoValue = true;
+            }
+            else
+            {
+                showUsageText();
+                return false;
+            }
+        }
         else if( cArg.compare("-h") == 0 )
         {
             showUsageText();
@@ -336,6 +351,9 @@ void Dicom2Mesh::showUsageText()
     std::cout << "This creates a mesh file called abc.obj by using a custom iso value of 700" << std::endl;
     std::cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.obj  -t 700 " << std::endl << std::endl;
 
+    std::cout << "This creates a mesh file by using a iso value range of 500 to 900" << std::endl;
+    std::cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.obj  -t 500 -tu 900 " << std::endl << std::endl;
+
     std::cout << "This option offers the possibility to crop the input dicom volume. The created mesh is called def.ply." << std::endl;
     std::cout << "> dicom2mesh -i pathToDicomDirectory  -z  -o def.ply" << std::endl << std::endl;
 
@@ -428,7 +446,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
             if( m_params.enableCrop )
                 vdr->cropDicom( volume );
 
-            mesh3d = vdr->dicomToMesh( volume, m_params.isoValue );
+            mesh3d = vdr->dicomToMesh( volume, m_params.isoValue, m_params.useUpperIsoValue, m_params.upperIsoValue );
             result = true;
         }
     }
@@ -441,7 +459,16 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
     std::string ret = "Dicom2Mesh Settings\n-------------------\n";
     ret.append("Input directory: "); ret.append(params.pathToInputData); ret.append("\n");
     ret.append("Output file path: "); ret.append(params.outputFilePath); ret.append("\n");
-    ret.append("Surface segmentation: "); ret.append( std::to_string(params.isoValue )); ret.append("\n");
+
+    ret.append("Surface segmentation: ");
+    ret.append(std::to_string(params.isoValue));
+    if( params.useUpperIsoValue )
+    {
+        ret.append(" to ");
+        ret.append(std::to_string(params.upperIsoValue));
+    }
+    ret.append("\n");
+
     ret.append("Mesh reduction: ");
     if(params.enableMeshReduction)
     {

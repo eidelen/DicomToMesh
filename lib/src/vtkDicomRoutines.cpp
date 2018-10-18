@@ -26,6 +26,7 @@
 #include <vtkDICOMImageReader.h>
 #include <vtkMarchingCubes.h>
 #include <vtkExtractVOI.h>
+#include <vtkImageThreshold.h>
 #include <iostream>
 
 using namespace std;
@@ -149,9 +150,25 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
 
 #endif // USEVTKDICOM
 
-vtkSmartPointer<vtkPolyData> VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold )
+vtkSmartPointer<vtkPolyData> VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold,
+                                                            bool useUpperThreshold = false, const int& upperThreshold = 0)
 {
-    cout << "Create surface mesh with iso value = " << threshold << endl;
+    if(useUpperThreshold)
+    {
+        cout << "Create surface mesh with iso value range = " << threshold << " to " << upperThreshold << endl;
+
+        vtkSmartPointer<vtkImageThreshold> imageThreshold = vtkSmartPointer<vtkImageThreshold>::New();
+        imageThreshold->SetInputData(imageData);
+        imageThreshold->ThresholdByUpper(upperThreshold);
+        imageThreshold->ReplaceInOn();
+        imageThreshold->SetInValue(threshold - 1); // mask voxels with a value lower than the lower threshold
+        imageThreshold->Update();
+        imageData->DeepCopy(imageThreshold->GetOutput());
+    }
+    else
+    {
+        cout << "Create surface mesh with iso value = " << threshold << endl;
+    }
 
     vtkSmartPointer<vtkMarchingCubes> surfaceExtractor = vtkSmartPointer<vtkMarchingCubes>::New();
     surfaceExtractor->ComputeNormalsOn();

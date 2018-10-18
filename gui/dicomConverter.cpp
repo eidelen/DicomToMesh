@@ -65,7 +65,7 @@ void DicomConverter::loadDicomImage( const QString& pathToDicom, int threshold )
     }
     else
     {
-        m_mesh = m_vdr->dicomToMesh( imgData, threshold);
+        m_mesh = m_vdr->dicomToMesh( imgData, threshold, false, 0);
 
         if( m_mesh->GetNumberOfCells() == 0 )
         {
