@@ -75,6 +75,9 @@ Building on Windows:
 
 Building on Windows is essentially the same as building under Linux and OSX. The project settings can be done with the cmake GUI. The versions we are using are VTK 7.0.0 together with Visual Studio 2015. The optional GUI we are building with QT 5.9.4. 
 
+Additionall build notes:
+- <a href="https://github.com/AOT-AG/DicomToMesh/issues/14#issuecomment-443224034" title="Smashicons">Building on OSX with vtk-dicom (Moritz Moeller)</a>
+
 # How to use Dicom2Mesh
 
 Command line arguments can be combined and passed in arbitrary order.
