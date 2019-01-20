@@ -23,6 +23,7 @@
 
 #include "dicom2mesh.h"
 #include "vtkMeshRoutines.h"
+#include "vtkDicomFactory.h"
 #include "vtkDicomRoutines.h"
 #include "vtkMeshVisualizer.h"
 #include "vtkVolumeVisualizer.h"
@@ -431,7 +432,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
     {
         // if not a mesh file, it is a dicom directroy
 
-        std::shared_ptr<VTKDicomRoutines> vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
+        std::shared_ptr<VTKDicomRoutines> vdr = VTKDicomFactory::getDicomRoutines();
         vdr->SetProgressCallback( m_vtkCallback );
 
 
