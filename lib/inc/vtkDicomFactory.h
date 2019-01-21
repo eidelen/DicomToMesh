@@ -25,16 +25,20 @@
 #define _vtkDicomFactory_H_
 
 #include "dllDefines.h"
-
-#include "vtkDicomRoutines.h"
-
 #include <memory>
+
+class VTKDicomRoutines;
 
 class MYLIB_EXPORT VTKDicomFactory
 {
 
 public:
 
+    /**
+     * Returns an instance to the Dicom routines. This is used because
+     * there can be different Dicom loading libraries used.
+     * @return Instance to Dicom routines.
+     */
     static std::shared_ptr<VTKDicomRoutines> getDicomRoutines();
 };
 

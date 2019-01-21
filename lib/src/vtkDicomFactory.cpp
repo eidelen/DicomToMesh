@@ -22,6 +22,7 @@
 *****************************************************************************/
 
 #include "vtkDicomFactory.h"
+#include "vtkDicomRoutines.h"
 
 #ifdef USEVTKDICOM
 #include "vtkDicomRoutinesExtended.h"
