@@ -45,6 +45,81 @@ void VTKDicomRoutines::SetProgressCallback( vtkSmartPointer<vtkCallbackCommand> 
     m_progressCallback = progressCallback;
 }
 
+
+#ifdef USEVTKDICOM // advanced vtk dicom library. to be enabled in cmake.
+
+#include "vtkDICOMDirectory.h"
+#include "vtkDICOMItem.h"
+#include "vtkStringArray.h"
+#include "vtkDICOMReader.h"
+
+vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
+{
+    // analyze dicom directory. there might be mulitple data
+    vtkSmartPointer<vtkDICOMDirectory> dicomDirectory = vtkSmartPointer<vtkDICOMDirectory>::New();
+    dicomDirectory->SetDirectoryName(pathToDicom.c_str());
+    dicomDirectory->SetScanDepth(1);
+    dicomDirectory->Update();
+
+    cout << "Read DICOM images located under " << pathToDicom << endl;
+    cout << "Nbr of patients = "<< dicomDirectory->GetNumberOfPatients() << ", ";
+    cout << "Nbr of studies = " << dicomDirectory->GetNumberOfStudies() << ", ";
+
+    const int& nbrOfSeries = dicomDirectory->GetNumberOfSeries();
+    cout << "Nbr of series = "<< nbrOfSeries << endl;
+    for( int s = 0; s < nbrOfSeries; s++ )
+    {
+        const vtkDICOMItem& dicomSeries_s = dicomDirectory->GetSeriesRecord( s );
+        vtkStringArray* files_s = dicomDirectory->GetFileNamesForSeries( s );
+        vtkIdType nbrOfSlices_s = files_s->GetNumberOfValues();
+
+        cout << "(" << s << ")  :  " << nbrOfSlices_s << " files, name = " << dicomSeries_s.Get(DC::SeriesDescription).AsString() << endl;
+    }
+
+
+    // choose a particular dicom serie
+    int s_nbr;
+    if( nbrOfSeries == 1 ) // only one
+    {
+        s_nbr = 0;
+    }
+    else if( nbrOfSeries > 1 ) // multiple dicom series
+    {
+        cout << "Which DICOM series you wish to load? ";
+        int scanRes = std::scanf("%d", &s_nbr);
+        if( scanRes == 1 && (s_nbr < 0 || s_nbr >= nbrOfSeries) )
+        {
+            cerr << "Wrong DICOM serie index" << endl;
+            return NULL;
+        }
+    }
+    else
+    {
+        cerr << "No DICOM data in directory" << endl;
+        return NULL;
+    }
+
+    // load dicom serie
+    const vtkDICOMItem& selected_serie = dicomDirectory->GetSeriesRecord( s_nbr );
+    cout << endl << "Load serie " << s_nbr << ", " << selected_serie.Get(DC::SeriesDescription).AsString() << endl;
+
+    vtkSmartPointer<vtkDICOMReader> reader = vtkSmartPointer<vtkDICOMReader>::New();
+    reader->SetFileNames( dicomDirectory->GetFileNamesForSeries( s_nbr ) );
+    if( m_progressCallback.Get() != NULL )
+    {
+        reader->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);
+    }
+    reader->Update();
+
+    vtkSmartPointer<vtkImageData> rawVolumeData = vtkSmartPointer<vtkImageData>::New();
+    rawVolumeData->DeepCopy(reader->GetOutput());
+
+    cout << endl << endl;
+    return rawVolumeData;
+}
+
+#else
+
 vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::string& pathToDicom )
 {
     cout << "Read DICOM images located under " << pathToDicom << endl;
@@ -72,6 +147,8 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
 
     return rawVolumeData;
 }
+
+#endif // USEVTKDICOM
 
 vtkSmartPointer<vtkPolyData> VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold,
                                                             bool useUpperThreshold = false, const int& upperThreshold = 0)

@@ -23,8 +23,6 @@
 
 #include "dicomConverter.h"
 
-#include "vtkDicomFactory.h"
-
 #include <vtkAlgorithm.h>
 #include <string>
 
@@ -36,7 +34,7 @@ DicomConverter::DicomConverter(DicomConverter_Listener* host)
     m_progressCB->SetCallback(progressCallback);
     m_progressCB->SetClientData(static_cast<void*>(m_host));
 
-    m_vdr = VTKDicomFactory::getDicomRoutines();
+    m_vdr = std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
     m_vdr->SetProgressCallback( m_progressCB );
 
     m_vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );

@@ -38,7 +38,7 @@ class MYLIB_EXPORT VTKDicomRoutines
 public:   
 
     VTKDicomRoutines();
-    virtual ~VTKDicomRoutines();
+    ~VTKDicomRoutines();
 
     /**
      * Sets the progress callback function.
@@ -52,7 +52,7 @@ public:
      * @param pathToDicom Path to the DICOM directory.
      * @return DICOM image data.
      */
-    virtual vtkSmartPointer<vtkImageData> loadDicomImage( const std::string& pathToDicom );
+    vtkSmartPointer<vtkImageData> loadDicomImage( const std::string& pathToDicom );
 
     /**
      * Creates a mesh from out DICOM raw data.
@@ -73,7 +73,7 @@ public:
     void cropDicom( vtkSmartPointer<vtkImageData> imageData );
 
 
-protected:
+private:
 
     vtkSmartPointer<vtkCallbackCommand> m_progressCallback;
 };
