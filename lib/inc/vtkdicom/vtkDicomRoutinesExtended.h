@@ -24,11 +24,9 @@
 #ifndef _vtkDicomRoutinesExtended_H_
 #define _vtkDicomRoutinesExtended_H_
 
-#include "dllDefines.h"
-
 #include "vtkDicomRoutines.h"
 
-class MYLIB_EXPORT VTKDicomRoutinesExtended: public VTKDicomRoutines
+class VTKDicomRoutinesExtended: public VTKDicomRoutines
 {
 
 public:

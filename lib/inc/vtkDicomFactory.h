@@ -24,12 +24,11 @@
 #ifndef _vtkDicomFactory_H_
 #define _vtkDicomFactory_H_
 
-#include "dllDefines.h"
 #include <memory>
 
 class VTKDicomRoutines;
 
-class MYLIB_EXPORT VTKDicomFactory
+class VTKDicomFactory
 {
 
 public:

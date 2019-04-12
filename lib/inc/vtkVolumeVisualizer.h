@@ -24,8 +24,6 @@
 #ifndef _vtkVolumeVisualizer_H_
 #define _vtkVolumeVisualizer_H_
 
-#include "dllDefines.h"
-
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
 #include <vector>
@@ -61,7 +59,7 @@ public:
      * Display mesh in a 3d view.
      * @param mesh Mesh to show.
      */
-    static MYLIB_EXPORT void displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry> colors );
+    static void displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry> colors );
 };
 
 
