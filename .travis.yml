@@ -1,0 +1,27 @@
+dist: bionic
+
+sudo: required
+
+language: cpp
+
+before_install:
+  - sudo apt-get install -y libgtest-dev libvtk6-dev cmake
+  - sudo wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz
+  - sudo tar xf release-1.7.0.tar.gz
+  - cd googletest-release-1.7.0
+  - sudo cmake -DBUILD_SHARED_LIBS=ON .
+  - sudo make
+  - sudo cp -a include/gtest /usr/include
+  - sudo cp -a libgtest_main.so libgtest.so /usr/lib/
+  - cd "${TRAVIS_BUILD_DIR}"
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON ..
+
+script:
+  - make
+  - cd ..
+  - ./build/lib/runLibTests
+  - ./build/dicom2mesh/runD2MTests
