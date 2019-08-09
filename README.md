@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/AOT-AG/DicomToMesh.svg?branch=master)](https://travis-ci.org/AOT-AG/DicomToMesh)
+
 # DicomToMesh
 
 DicomToMesh is a handy command line tool, which enables the user to automatically create a 3D mesh from a set of 2D DICOM images, a common image format used in medicine. The supported 3D mesh formats are STL, OBJ and PLY. DicomToMesh works on Linux, OSX and Windows.
