@@ -27,7 +27,10 @@
 #include <vtkMarchingCubes.h>
 #include <vtkExtractVOI.h>
 #include <vtkImageThreshold.h>
+#include <vtkPNGReader.h>
+#include <vtkStringArray.h>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -145,4 +148,51 @@ void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
 
         cout << endl << endl;
     }
+}
+
+bool VTKDicomRoutines::fileExists(const std::string& filePath)
+{
+    ifstream f(filePath.c_str());
+        return f.good();
+}
+
+vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadPngImages( const std::vector<std::string>& pngPaths,
+        double x_spacing, double y_spacing, double slice_spacing )
+{
+    vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
+    files->SetNumberOfValues(pngPaths.size());
+
+    // copy paths and check if files exist
+    for( size_t i = 0; i < pngPaths.size(); i++ )
+    {
+        const std::string& path = pngPaths.at(i);
+        if( !fileExists(path) )
+        {
+            cerr << "PNG file does not exist: " << path  << endl;
+            return NULL;
+        }
+
+        files->SetValue(i, path);
+    }
+
+    vtkSmartPointer<vtkPNGReader> pngReader = vtkSmartPointer<vtkPNGReader>::New();
+    pngReader->SetFileNames(files);
+    pngReader->SetDataSpacing(x_spacing, y_spacing, slice_spacing);
+    pngReader->SetDataOrigin(0, 0, 0);
+    pngReader->Update();
+
+    vtkSmartPointer<vtkImageData> rawVolumeData = vtkSmartPointer<vtkImageData>::New();
+    rawVolumeData->DeepCopy(pngReader->GetOutput());
+
+    // check if load was successful
+    int* dims = rawVolumeData->GetDimensions();
+    if( dims[0] < 1 || dims[1] < 1 || dims[2] < 1 )
+    {
+        cerr << "No PNG data in directory" << endl;
+        return NULL;
+    }
+
+    cout << endl << endl;
+
+    return rawVolumeData;
 }
