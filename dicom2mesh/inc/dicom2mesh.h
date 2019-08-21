@@ -27,6 +27,7 @@
 #include "vtkVolumeVisualizer.h"
 
 #include <string>
+#include <vector>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
@@ -63,6 +64,9 @@ struct Dicom2MeshParameters
     int  upperIsoValue = 400;
 
     std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
+
+    bool inputAsPngFileList = false;
+    std::vector<std::string> inputImageFiles;
 };
 
 class Dicom2Mesh
@@ -80,6 +84,7 @@ private:
     bool loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d );
     std::string getParametersAsString(const Dicom2MeshParameters& params) const;
     static bool parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry );
+    static std::vector<std::string> parseCommaSeparatedStr(const std::string& text);
 
 private:
     Dicom2MeshParameters m_params;

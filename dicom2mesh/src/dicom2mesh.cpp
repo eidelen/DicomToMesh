@@ -203,6 +203,10 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
                 return false;
             }
         }
+        if( cArg.compare("-ipng") == 0 )
+        {
+            param.inputAsPngFileList = true;
+        }
         else if( cArg.compare("-o") == 0 )
         {
             // next argument is file path to mesh output
@@ -318,6 +322,39 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 std::cerr << "Incomplete volume rendering color entry" << std::endl;
+                return false;
+            }
+        }
+        else if( cArg.at(0) == '[' )
+        {
+            // Concatenate multiple string arguments till next ]
+            std::string filesText = "";
+            bool goOn = true;
+            do
+            {
+                std::string part(argv[a]);
+                filesText.append(part);
+
+                if( filesText.back() == ']' ||  a >= argc)
+                    goOn = false;
+                else
+                    a++;
+            }
+            while( goOn );
+
+            // Extract [ content ]
+            size_t startPos = filesText.find('[');
+            size_t endPos = filesText.find(']');
+            std::string extFiles = filesText.substr(startPos+1, endPos - startPos);
+
+            std::vector<std::string> fileList = parseCommaSeparatedStr(extFiles);
+            if(fileList.size() > 0)
+            {
+                param.inputImageFiles = fileList;
+            }
+            else
+            {
+                std::cerr << "No image files specified" << std::endl;
                 return false;
             }
         }
@@ -576,4 +613,14 @@ bool Dicom2Mesh::parseVolumeRenderingColorEntry( const std::string& text, Volume
     {
         return false;
     }
+}
+
+std::vector<std::string> Dicom2Mesh::parseCommaSeparatedStr(const std::string& text)
+{
+    std::vector<std::string> strs;
+    std::string toParse = text;
+
+    //todo: implement
+
+    return strs;
 }
