@@ -620,7 +620,22 @@ std::vector<std::string> Dicom2Mesh::parseCommaSeparatedStr(const std::string& t
     std::vector<std::string> strs;
     std::string toParse = text;
 
-    //todo: implement
+    bool goOn = true;
+    while(goOn)
+    {
+        size_t nextDel = toParse.find(',');
+        if( nextDel == std::string::npos )
+        {
+            goOn = false;
+            strs.push_back(toParse); // just add the remaining string
+        }
+        else
+        {
+            std::string aPath = toParse.substr(0,nextDel);
+            strs.push_back(aPath);
+            toParse.erase(0, nextDel+1);
+        }
+    }
 
     return strs;
 }

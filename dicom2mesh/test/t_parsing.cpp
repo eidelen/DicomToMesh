@@ -226,7 +226,7 @@ TEST(ArgumentParser, ManyParamsDisabled)
 TEST(ArgumentParser, ParsePngInput)
 {
     int nInput = 4;
-    const char *input[4] = {"-ipng", "[abcd/efgh.png", ", hi/jkl.png", "] "};
+    const char *input[4] = {"-ipng", "[abcd/efgh.png", ", hi/jkl.png", "]"};
 
     Dicom2MeshParameters parsedInput;
     ASSERT_FALSE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
