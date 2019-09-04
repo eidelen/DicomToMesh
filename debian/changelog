@@ -1,6 +1,8 @@
-dicom2mesh (0.7-0ppa0) bionic; urgency=low
+dicom2mesh (0.8-0ppa0~bionic) bionic; urgency=low
 
-  * Initial dicom2mesh ppa release!
+  * Bionic version
+  * Upper segmentation threshold
+  * Volume rendering visualization
 
 
- -- Adrian Schneider <adrian.schneider.pr@gmail.com>  Thu, 05 May 2018 15:12:05 +0200
+ -- Adrian Schneider (eidelen) <adrian.schneider.pr@gmail.com>  Wed, 04 September 2019 07:20:05 +0200
