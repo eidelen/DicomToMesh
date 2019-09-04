@@ -1,4 +1,10 @@
-dist: bionic
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+    - os: linux
+      dist: disco
 
 sudo: required
 
