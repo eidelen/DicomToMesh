@@ -182,6 +182,15 @@ int Dicom2Mesh::doMesh()
     return 0;
 }
 
+// from https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
+std::string Dicom2Mesh::trim(const std::string& str)
+{
+    std::string trimedStr = str;
+    trimedStr.erase(0, trimedStr.find_first_not_of(' '));       //prefixing spaces
+    trimedStr.erase(trimedStr.find_last_not_of(' ')+1);         //surfixing spaces
+    return trimedStr;
+}
+
 bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dicom2MeshParameters &param)
 {
     for( int a = 0; a < argc; a++ )
@@ -202,6 +211,10 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
                 showUsageText();
                 return false;
             }
+        }
+        if( cArg.compare("-ipng") == 0 )
+        {
+            param.inputAsPngFileList = true;
         }
         else if( cArg.compare("-o") == 0 )
         {
@@ -321,6 +334,39 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
                 return false;
             }
         }
+        else if( cArg.at(0) == '[' )
+        {
+            // Concatenate multiple string arguments till next ]
+            std::string filesText = "";
+            bool goOn = true;
+            do
+            {
+                std::string part(argv[a]);
+                filesText.append(part);
+
+                if( filesText.back() == ']' ||  a >= argc)
+                    goOn = false;
+                else
+                    a++;
+            }
+            while( goOn );
+
+            // Extract [ content ]
+            size_t startPos = filesText.find('[');
+            size_t endPos = filesText.find(']');
+            std::string extFiles = filesText.substr(startPos+1, endPos - startPos - 1);
+
+            std::vector<std::string> fileList = parseCommaSeparatedStr(extFiles);
+            if(fileList.size() > 0)
+            {
+                param.inputImageFiles = fileList;
+            }
+            else
+            {
+                std::cerr << "No image files specified" << std::endl;
+                return false;
+            }
+        }
         else if( cArg.compare("-z") == 0 )
         {
             param.enableCrop = true;
@@ -332,9 +378,11 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         }
     }
 
-    if( !param.pathToInputAvailable )
+    if( !param.pathToInputAvailable && !param.inputAsPngFileList )
     {
-        cerr << "Path to DICOM directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
+        cerr << "Path to Dicom directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
+        cerr << "or" << endl;
+        cerr << "No input images defined" << endl << "> dicom2mesh -ipng [path1, path2, ...]" << endl;
         cerr << "For help, run" << endl << "> dicom2mesh -h" << endl;
         return false;
     }
@@ -385,6 +433,9 @@ void Dicom2Mesh::showUsageText()
     std::cout << "Alternatively a mesh file (obj, stl, ply) can be loaded directly, modified and exported again. This is handy to modify an existing mesh. Following example centers and saves a mesh as cba.stl." << std::endl;
     std::cout << "> dicom2mesh -i abc.obj -c -o cba.stl " << std::endl << std::endl;
 
+    std::cout << "A mesh can be also created based on a list of png-file slices as input." << std::endl;
+    std::cout << "> dicom2mesh -ipng [path1, path2, path3, ...] -c -o cba.stl " << std::endl << std::endl;
+
     std::cout << "Arguments can be combined." << std::endl << std::endl;
 }
 
@@ -430,13 +481,22 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
     }
     else
     {
-        // if not a mesh file, it is a dicom directroy
+        // if not a mesh file, it is a directory of images
 
         std::shared_ptr<VTKDicomRoutines> vdr = VTKDicomFactory::getDicomRoutines();
         vdr->SetProgressCallback( m_vtkCallback );
 
+        if( m_params.inputAsPngFileList )
+        {
+            // set of png images
+            volume = vdr->loadPngImages( m_params.inputImageFiles, 0.5, 1.0, 4.0);
+        }
+        else
+        {
+            // a dicom data set
+            volume = vdr->loadDicomImage(m_params.pathToInputData);
+        }
 
-        volume = vdr->loadDicomImage( m_params.pathToInputData );
         if( volume == NULL )
         {
             cerr << "No image data could be created. Maybe wrong directory?" << endl;
@@ -576,4 +636,29 @@ bool Dicom2Mesh::parseVolumeRenderingColorEntry( const std::string& text, Volume
     {
         return false;
     }
+}
+
+std::vector<std::string> Dicom2Mesh::parseCommaSeparatedStr(const std::string& text)
+{
+    std::vector<std::string> strs;
+    std::string toParse = text;
+
+    bool goOn = true;
+    while(goOn)
+    {
+        size_t nextDel = toParse.find(',');
+        if( nextDel == std::string::npos )
+        {
+            goOn = false;
+            strs.push_back(trim(toParse)); // just add the remaining string
+        }
+        else
+        {
+            std::string aPath = toParse.substr(0,nextDel);
+            strs.push_back(trim(aPath));
+            toParse.erase(0, nextDel+1);
+        }
+    }
+
+    return strs;
 }

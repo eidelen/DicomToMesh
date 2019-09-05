@@ -53,6 +53,17 @@ public:
     virtual vtkSmartPointer<vtkImageData> loadDicomImage( const std::string& pathToDicom );
 
     /**
+     * Load image data from a set of png images.
+     * @param pngPaths Png image paths
+     * @param x_spacing Spatial spacing in x direction
+     * @param y_spacing Spatial spacing in y direction
+     * @param slice_spacing Spatial spacing between slices
+     * @return Image data set
+     */
+    vtkSmartPointer<vtkImageData> loadPngImages( const std::vector<std::string>& pngPaths,
+            double x_spacing, double y_spacing, double slice_spacing );
+
+    /**
      * Creates a mesh from out DICOM raw data.
      * @param imageData DICOM image data.
      * @param threshold Threshold for surface segmentation.
@@ -70,6 +81,10 @@ public:
      */
     void cropDicom( vtkSmartPointer<vtkImageData> imageData );
 
+
+private:
+
+    bool fileExists(const std::string& filePath);
 
 protected:
 

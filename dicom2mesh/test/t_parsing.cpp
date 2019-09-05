@@ -223,4 +223,17 @@ TEST(ArgumentParser, ManyParamsDisabled)
     ASSERT_FALSE(parsedInput.pathToOutputAvailable);
 }
 
+TEST(ArgumentParser, ParsePngInput)
+{
+    int nInput = 4;
+    const char *input[4] = {"-ipng", "[abcd/efgh.png", ", hi/jkl.png", "]"};
+
+    Dicom2MeshParameters parsedInput;
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    ASSERT_TRUE(parsedInput.inputAsPngFileList);
+    ASSERT_EQ(parsedInput.inputImageFiles.size(),2);
+
+    ASSERT_STREQ( "abcd/efgh.png", parsedInput.inputImageFiles[0].c_str() );
+    ASSERT_STREQ( "hi/jkl.png", parsedInput.inputImageFiles[1].c_str() );
+}
 
