@@ -85,6 +85,7 @@ private:
     std::string getParametersAsString(const Dicom2MeshParameters& params) const;
     static bool parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry );
     static std::vector<std::string> parseCommaSeparatedStr(const std::string& text);
+    static std::string trim(const std::string& str);
 
 private:
     Dicom2MeshParameters m_params;
