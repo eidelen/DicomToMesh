@@ -441,7 +441,7 @@ void Dicom2Mesh::showUsageText()
 
 void Dicom2Mesh::showVersionText()
 {
-    std::cout << "dicom2Mesh version 0.7.0,   AOT AG - Switzerland" << std::endl;
+    std::cout << "dicom2Mesh version 0.8.0,   AOT AG - Switzerland" << std::endl;
 }
 
 
