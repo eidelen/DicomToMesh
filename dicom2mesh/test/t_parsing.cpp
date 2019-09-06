@@ -225,11 +225,10 @@ TEST(ArgumentParser, ManyParamsDisabled)
 
 TEST(ArgumentParser, ParsePngInput)
 {
-    int nInput = 4;
     const char *input[4] = {"-ipng", "[abcd/efgh.png", ", hi/jkl.png", "]"};
 
     Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(4, input, parsedInput));
     ASSERT_TRUE(parsedInput.inputAsPngFileList);
     ASSERT_EQ(parsedInput.inputImageFiles.size(),2);
 
@@ -237,3 +236,14 @@ TEST(ArgumentParser, ParsePngInput)
     ASSERT_STREQ( "hi/jkl.png", parsedInput.inputImageFiles[1].c_str() );
 }
 
+TEST(ArgumentParser, ParseSpacing)
+{
+    const char *input[6] = {"-i", "inputDir", "-sxyz", "1.5", "2.0 ",  " 3.0 "};
+
+    Dicom2MeshParameters parsedInput;
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(6, input, parsedInput));
+
+    ASSERT_FLOAT_EQ(parsedInput.x_spacing, 1.5);
+    ASSERT_FLOAT_EQ(parsedInput.y_spacing, 2.0);
+    ASSERT_FLOAT_EQ(parsedInput.z_spacing, 3.0);
+}

@@ -376,6 +376,16 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             showVersionText();
             return false;
         }
+        else if( cArg.compare("-sxyz") == 0 )
+        {
+            // next three arguments are spacings
+            if( (a+3) < argc)
+            {
+                param.x_spacing = std::stod(std::string(argv[++a]));
+                param.y_spacing = std::stod(std::string(argv[++a]));
+                param.z_spacing = std::stod(std::string(argv[++a]));
+            }
+        }
     }
 
     if( !param.pathToInputAvailable && !param.inputAsPngFileList )
@@ -433,8 +443,8 @@ void Dicom2Mesh::showUsageText()
     std::cout << "Alternatively a mesh file (obj, stl, ply) can be loaded directly, modified and exported again. This is handy to modify an existing mesh. Following example centers and saves a mesh as cba.stl." << std::endl;
     std::cout << "> dicom2mesh -i abc.obj -c -o cba.stl " << std::endl << std::endl;
 
-    std::cout << "A mesh can be also created based on a list of png-file slices as input." << std::endl;
-    std::cout << "> dicom2mesh -ipng [path1, path2, path3, ...] -c -o cba.stl " << std::endl << std::endl;
+    std::cout << "A mesh can be created based on a list of png-file slices as input. The three floats followed after -sxyz are the x/y/z-spacing." << std::endl;
+    std::cout << "> dicom2mesh -ipng [path1, path2, path3, ...] -sxyz 1.5 1.5 3.0  -c -o cba.stl " << std::endl << std::endl;
 
     std::cout << "Arguments can be combined." << std::endl << std::endl;
 }
@@ -489,7 +499,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
         if( m_params.inputAsPngFileList )
         {
             // set of png images
-            volume = vdr->loadPngImages( m_params.inputImageFiles, 0.5, 1.0, 4.0);
+            volume = vdr->loadPngImages( m_params.inputImageFiles, m_params.x_spacing, m_params.y_spacing, m_params.z_spacing );
         }
         else
         {

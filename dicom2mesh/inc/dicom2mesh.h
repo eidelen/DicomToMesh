@@ -67,6 +67,10 @@ struct Dicom2MeshParameters
 
     bool inputAsPngFileList = false;
     std::vector<std::string> inputImageFiles;
+
+    double x_spacing= 1.0;
+    double y_spacing= 1.0;
+    double z_spacing= 1.0;
 };
 
 class Dicom2Mesh
