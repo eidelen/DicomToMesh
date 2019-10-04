@@ -35,7 +35,7 @@
 // Code based on examples from:
 // https://www.vtk.org/Wiki/VTK/Examples/Cxx/VolumeRendering/SmartVolumeMapper
 // https://www.vtk.org/Wiki/VTK/Examples/Cxx/Medical/MedicalDemo4
-void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry> colors )
+void VTKVolumeVisualizer::displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry>& colors )
 {
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();

@@ -90,7 +90,7 @@ vtkVector3d VTKMeshRoutines::moveMeshToCOSCenter( vtkSmartPointer<vtkPolyData> m
     return retV;
 }
 
-void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const double& reduction )
+void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, double reduction )
 {
     long long numberOfCellsBefore = mesh->GetNumberOfCells();
     cout << "Mesh reduction by " << std::fixed << std::setprecision( 3 ) << reduction << endl;
@@ -113,7 +113,7 @@ void VTKMeshRoutines::meshReduction( vtkSmartPointer<vtkPolyData> mesh, const do
     cout << endl << endl;
 }
 
-void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, const double& ratio )
+void VTKMeshRoutines::removeSmallObjects( vtkSmartPointer<vtkPolyData> mesh, double ratio )
 {
     cout << "Remove small connected objects: Size ratio = " << std::fixed << std::setprecision( 3 ) << ratio << endl;
 

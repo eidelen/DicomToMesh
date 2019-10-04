@@ -59,7 +59,7 @@ public:
      * Display mesh in a 3d view.
      * @param mesh Mesh to show.
      */
-    static void displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry> colors );
+    static void displayVolume( const vtkSmartPointer<vtkImageData>& imageData, std::vector<VolumeRenderingColoringEntry>& colors );
 };
 
 
