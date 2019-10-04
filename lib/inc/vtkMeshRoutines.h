@@ -77,57 +77,6 @@ public:
     //Todo: Understand FeatureAngle and RelaxationFactor. Then add it as argument.
     void smoothMesh( vtkSmartPointer<vtkPolyData> mesh, unsigned int nbrOfSmoothingIterations );
 
-    /**
-     * Export the mesh in STL format.
-     * @param mesh Mesh to export.
-     * @param path Path to the exported stl file.
-     */
-    void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
-
-    /**
-     * Export the mesh in OBJ format.
-     * @param mesh Mesh to export.
-     * @param path Path to the exported obj file.
-     */
-    void exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
-
-    /**
-     * Opens a obj file and returns a vtkPolyData mesh.
-     * @param pathToObjFile Path to the obj file.
-     * @return Resulting 3D mesh.
-     */
-    vtkSmartPointer<vtkPolyData> importObjFile( const std::string& pathToObjFile );
-
-    /**
-     * Opens a stl file and returns a vtkPolyData mesh.
-     * @param pathToStlFile Path to the stl file.
-     * @return Resulting 3D mesh.
-     */
-    vtkSmartPointer<vtkPolyData> importStlFile( const std::string& pathToStlFile );
-
-    /**
-     * Opens a ply file and returns a vtkPolyData mesh.
-     * @param pathToPlyFile Path to the ply file.
-     * @return Resulting 3D mesh.
-     */
-    vtkSmartPointer<vtkPolyData> importPlyFile( const std::string& pathToPlyFile );
-
-    /**
-     * Export the mesh in PLY format.
-     * @param mesh Mesh to export.
-     * @param path Path to the exported ply file.
-     */
-    void exportAsPlyFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
-
-
-    /**
-     * Compute the vertex normals of a mesh.
-     * @param mesh The mesh, of which the vertex nomrals are computed.
-     * @param normals Contains normals at return.
-     */
-    static void computeVertexNormalsTrivial( const vtkSmartPointer<vtkPolyData>& mesh, std::vector<vtkVector3d>& normals );
-
-
 private:
 
     vtkSmartPointer<vtkCallbackCommand> m_progressCallback;

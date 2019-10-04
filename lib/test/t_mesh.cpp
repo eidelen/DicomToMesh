@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "vtkMeshRoutines.h"
+#include "vtkMeshData.h"
 
 TEST(Mesh, ConstructDestruct)
 {
@@ -12,7 +13,7 @@ TEST(Mesh, ConstructDestruct)
 
 TEST(Mesh, OpenOBJ)
 {
-    VTKMeshRoutines* vM = new VTKMeshRoutines();
+    VTKMeshData* vM = new VTKMeshData();
 
     vtkSmartPointer<vtkPolyData> mesh = vM->importObjFile( "lib/test/data/torus.obj" );
 
@@ -27,34 +28,38 @@ TEST(Mesh, OpenOBJ)
 
 TEST(Mesh, ReduceMesh)
 {
-    VTKMeshRoutines* vM = new VTKMeshRoutines();
+    VTKMeshData* vM = new VTKMeshData();
+    VTKMeshRoutines* vR = new VTKMeshRoutines();
 
     vtkSmartPointer<vtkPolyData> mesh = vM->importObjFile( "lib/test/data/torus.obj" );
     vtkIdType numberOfVertices = mesh->GetPoints()->GetNumberOfPoints();
 
     for(int k = 0; k < 10; k++ )
     {
-        vM->meshReduction(mesh, 0.1);
+        vR->meshReduction(mesh, 0.1);
         vtkIdType newNumberOfVertices = mesh->GetPoints()->GetNumberOfPoints();
         ASSERT_LT( newNumberOfVertices, numberOfVertices );
         numberOfVertices = newNumberOfVertices;
     }
 
     delete vM;
+    delete vR;
 }
 
 TEST(Mesh, CenterObject)
 {
-    VTKMeshRoutines* vM = new VTKMeshRoutines();
+    VTKMeshData* vM = new VTKMeshData();
+    VTKMeshRoutines* vR = new VTKMeshRoutines();
 
     vtkSmartPointer<vtkPolyData> mesh = vM->importObjFile( "lib/test/data/torus.obj" );
-    vtkVector3d trans = vM->moveMeshToCOSCenter(mesh);
+    vtkVector3d trans = vR->moveMeshToCOSCenter(mesh);
 
     ASSERT_NEAR(trans.GetX(), -1.0, 0.1);
     ASSERT_NEAR(trans.GetY(), -3.0, 0.1);
     ASSERT_NEAR(trans.GetZ(), +2.0, 0.1);
 
     delete vM;
+    delete vR;
 }
 
 // to be extended ...

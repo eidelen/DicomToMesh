@@ -41,6 +41,9 @@ DicomConverter::DicomConverter(DicomConverter_Listener* host)
 
     m_vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
     m_vmr->SetProgressCallback( m_progressCB );
+
+    m_vmd = std::shared_ptr<VTKMeshData>( new VTKMeshData() );
+    m_vmd->SetProgressCallback( m_progressCB );
 }
 
 void DicomConverter::progressCallback(vtkObject* caller, long unsigned int /*eventId*/, void* clientData, void* /*callData*/)
@@ -146,15 +149,15 @@ void DicomConverter::exportMesh(const QString &meshPath)
 
         if( extension == "obj" )
         {
-            m_vmr->exportAsObjFile(m_mesh, path);
+            m_vmd->exportAsObjFile(m_mesh, path);
         }
         else if( extension == "stl" )
         {
-            m_vmr->exportAsStlFile( m_mesh, path );
+            m_vmd->exportAsStlFile( m_mesh, path );
         }
         else if( extension == "ply" )
         {
-            m_vmr->exportAsPlyFile( m_mesh, path );
+            m_vmd->exportAsPlyFile( m_mesh, path );
         }
         else
         {

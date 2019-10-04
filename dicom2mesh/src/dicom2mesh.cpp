@@ -23,6 +23,7 @@
 
 #include "dicom2mesh.h"
 #include "vtkMeshRoutines.h"
+#include "vtkMeshData.h"
 #include "vtkDicomFactory.h"
 #include "vtkDicomRoutines.h"
 #include "vtkMeshVisualizer.h"
@@ -86,6 +87,8 @@ int Dicom2Mesh::doMesh()
     }
 
     //***** Mesh post-processing *****//
+    std::shared_ptr<VTKMeshData> vmd = std::shared_ptr<VTKMeshData>( new VTKMeshData() );
+    vmd->SetProgressCallback( m_vtkCallback );
     std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
     vmr->SetProgressCallback( m_vtkCallback );
 
@@ -141,11 +144,11 @@ int Dicom2Mesh::doMesh()
             std::string extension = m_params.outputFilePath.substr(idx+1);
 
             if( extension == "obj" )
-                vmr->exportAsObjFile( mesh, m_params.outputFilePath );
+                vmd->exportAsObjFile( mesh, m_params.outputFilePath );
             else if( extension == "stl" )
-                vmr->exportAsStlFile( mesh, m_params.outputFilePath );
+                vmd->exportAsStlFile( mesh, m_params.outputFilePath );
             else if( extension == "ply" )
-                vmr->exportAsPlyFile( mesh, m_params.outputFilePath );
+                vmd->exportAsPlyFile( mesh, m_params.outputFilePath );
             else
                 cerr << "Unknown file type" << endl;
 
@@ -471,22 +474,22 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
         loadPly = extension == "ply";
     }
 
-    std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
-    vmr->SetProgressCallback( m_vtkCallback );
+    std::shared_ptr<VTKMeshData> vmd = std::shared_ptr<VTKMeshData>( new VTKMeshData() );
+    vmd->SetProgressCallback( m_vtkCallback );
 
     if( loadObj )
     {
-        mesh3d =  vmr->importObjFile( m_params.pathToInputData );
+        mesh3d =  vmd->importObjFile( m_params.pathToInputData );
         result = true;
     }
     else if( loadStl )
     {
-        mesh3d = vmr->importStlFile( m_params.pathToInputData );
+        mesh3d = vmd->importStlFile( m_params.pathToInputData );
         result = true;
     }
     else if( loadPly )
     {
-        mesh3d = vmr->importPlyFile( m_params.pathToInputData );
+        mesh3d = vmd->importPlyFile( m_params.pathToInputData );
         result = true;
     }
     else

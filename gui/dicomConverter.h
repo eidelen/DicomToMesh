@@ -27,6 +27,7 @@
 
 #include "vtkDicomRoutines.h"
 #include "vtkMeshRoutines.h"
+#include "vtkMeshData.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -75,6 +76,7 @@ private:
     vtkSmartPointer<vtkPolyData> m_mesh;
     std::shared_ptr<VTKDicomRoutines> m_vdr;
     std::shared_ptr<VTKMeshRoutines> m_vmr;
+    std::shared_ptr<VTKMeshData> m_vmd;
 };
 
 #endif // QDICOM_CONVERTER_H
