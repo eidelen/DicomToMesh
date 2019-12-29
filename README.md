@@ -71,7 +71,7 @@ Now you are back in terminal and ready to build.
 ```
 > make
 ```
-In order to extend the supported DICOM formats, the libray vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
+In order to extend the supported DICOM formats, the library vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
 
 Building on Windows:
 
