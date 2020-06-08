@@ -30,8 +30,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 std::shared_ptr<VTKDicomRoutines> VTKDicomFactory::getDicomRoutines()
 {
 #ifdef USEVTKDICOM

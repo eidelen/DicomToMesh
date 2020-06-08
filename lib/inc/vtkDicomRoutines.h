@@ -71,8 +71,8 @@ public:
      * @param upperThreshold Upper threshold for surface segmentation.
      * @return Resulting 3D mesh.
      */
-    vtkSmartPointer<vtkPolyData> dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold,
-        bool useUpperThreshold, const int& upperThreshold );
+    vtkSmartPointer<vtkPolyData> dicomToMesh(vtkSmartPointer<vtkImageData> imageData, int threshold,
+                                             bool useUpperThreshold, int upperThreshold);
 
     /**
      * Crop dicom images in terms of used slice ranges.

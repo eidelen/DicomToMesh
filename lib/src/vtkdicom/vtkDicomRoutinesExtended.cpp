@@ -29,8 +29,6 @@
 #include "vtkStringArray.h"
 #include "vtkDICOMReader.h"
 
-using namespace std;
-
 VTKDicomRoutinesExtended::VTKDicomRoutinesExtended()
 {
 }
@@ -41,6 +39,8 @@ VTKDicomRoutinesExtended::~VTKDicomRoutinesExtended()
 
 vtkSmartPointer<vtkImageData> VTKDicomRoutinesExtended::loadDicomImage( const std::string& pathToDicom )
 {
+    using namespace std;
+
     // analyze dicom directory. there might be mulitple data
     vtkSmartPointer<vtkDICOMDirectory> dicomDirectory = vtkSmartPointer<vtkDICOMDirectory>::New();
     dicomDirectory->SetDirectoryName(pathToDicom.c_str());

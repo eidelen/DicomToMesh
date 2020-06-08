@@ -76,8 +76,8 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
     return rawVolumeData;
 }
 
-vtkSmartPointer<vtkPolyData> VTKDicomRoutines::dicomToMesh( vtkSmartPointer<vtkImageData> imageData, const int& threshold,
-                                                            bool useUpperThreshold = false, const int& upperThreshold = 0)
+vtkSmartPointer<vtkPolyData> VTKDicomRoutines::dicomToMesh(vtkSmartPointer<vtkImageData> imageData, int threshold,
+                                                           bool useUpperThreshold = false, int upperThreshold = 0)
 {
     if(useUpperThreshold)
     {
