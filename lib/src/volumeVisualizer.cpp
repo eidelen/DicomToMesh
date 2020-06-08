@@ -21,7 +21,7 @@
 **
 *****************************************************************************/
 
-#include "vtkVolumeVisualizer.h"
+#include "volumeVisualizer.h"
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>

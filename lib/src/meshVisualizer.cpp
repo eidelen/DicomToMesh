@@ -21,7 +21,7 @@
 **
 *****************************************************************************/
 
-#include "vtkMeshVisualizer.h"
+#include "meshVisualizer.h"
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>

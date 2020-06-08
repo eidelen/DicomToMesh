@@ -21,7 +21,7 @@
 **
 *****************************************************************************/
 
-#include "vtkMeshRoutines.h"
+#include "meshRoutines.h"
 
 #include <vtkCenterOfMass.h>
 #include <vtkTransform.h>

@@ -21,7 +21,7 @@
 **
 *****************************************************************************/
 
-#include "vtkDicomRoutinesExtended.h"
+#include "dicomRoutinesExtended.h"
 
 #include <iostream>
 #include "vtkDICOMDirectory.h"

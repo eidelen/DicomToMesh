@@ -21,7 +21,7 @@
 **
 *****************************************************************************/
 
-#include "vtkMeshData.h"
+#include "meshData.h"
 
 #include <vtkSTLWriter.h>
 #include <vtkPLYWriter.h>

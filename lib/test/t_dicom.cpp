@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "vtkDicomRoutines.h"
+#include "dicomRoutines.h"
 
 TEST(Dicom, LoadFromInexistentPng)
 {

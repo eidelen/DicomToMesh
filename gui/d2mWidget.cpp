@@ -24,7 +24,7 @@
 
 #include "d2mWidget.h"
 #include "ui_d2mWidget.h"
-#include "vtkMeshVisualizer.h"
+#include "meshVisualizer.h"
 
 #include <QFileDialog>
 

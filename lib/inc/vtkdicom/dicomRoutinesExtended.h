@@ -21,22 +21,26 @@
 **
 *****************************************************************************/
 
-#include "vtkDicomFactory.h"
-#include "vtkDicomRoutines.h"
+#ifndef _vtkDicomRoutinesExtended_H_
+#define _vtkDicomRoutinesExtended_H_
 
-#ifdef USEVTKDICOM
-#include "vtkDicomRoutinesExtended.h"
-#endif
+#include "dicomRoutines.h"
 
-#include <iostream>
-
-std::shared_ptr<VTKDicomRoutines> VTKDicomFactory::getDicomRoutines()
+class VTKDicomRoutinesExtended: public VTKDicomRoutines
 {
-#ifdef USEVTKDICOM
-    std::cout << "Using extended DICOM loader" << std::endl;
-    return std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutinesExtended() );
-#else
-    std::cout << "Using standard DICOM loader" << std::endl;
-    return std::shared_ptr<VTKDicomRoutines>( new VTKDicomRoutines() );
-#endif
-}
+
+public:
+
+    VTKDicomRoutinesExtended();
+    virtual ~VTKDicomRoutinesExtended();
+
+    /**
+     * Loads the DICOM images within a directory by using the vtk-dicom library.
+     * This library allows to read more Dicom formats than the standard vtk implementationl
+     * @param pathToDicom Path to the DICOM directory.
+     * @return DICOM image data.
+     */
+    vtkSmartPointer<vtkImageData> loadDicomImage( const std::string& pathToDicom ) override;
+};
+
+#endif // _vtkDicomRoutinesExtended_H_

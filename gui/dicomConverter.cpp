@@ -23,7 +23,7 @@
 
 #include "dicomConverter.h"
 
-#include "vtkDicomFactory.h"
+#include "dicomFactory.h"
 
 #include <vtkAlgorithm.h>
 #include <string>

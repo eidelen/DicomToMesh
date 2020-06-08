@@ -21,7 +21,7 @@
 **
 *****************************************************************************/
 
-#include "vtkDicomRoutines.h"
+#include "dicomRoutines.h"
 
 #include <vtkDICOMImageReader.h>
 #include <vtkMarchingCubes.h>

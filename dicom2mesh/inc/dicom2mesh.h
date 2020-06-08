@@ -24,7 +24,7 @@
 #ifndef DICOM2MESH_H
 #define DICOM2MESH_H
 
-#include "vtkVolumeVisualizer.h"
+#include "volumeVisualizer.h"
 
 #include <string>
 #include <vector>

@@ -22,12 +22,12 @@
 *****************************************************************************/
 
 #include "dicom2mesh.h"
-#include "vtkMeshRoutines.h"
-#include "vtkMeshData.h"
-#include "vtkDicomFactory.h"
-#include "vtkDicomRoutines.h"
-#include "vtkMeshVisualizer.h"
-#include "vtkVolumeVisualizer.h"
+#include "meshRoutines.h"
+#include "meshData.h"
+#include "dicomFactory.h"
+#include "dicomRoutines.h"
+#include "meshVisualizer.h"
+#include "volumeVisualizer.h"
 
 #include <vtkAlgorithm.h>
 #include <iostream>

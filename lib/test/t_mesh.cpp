@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "vtkMeshRoutines.h"
-#include "vtkMeshData.h"
+#include "meshRoutines.h"
+#include "meshData.h"
 
 TEST(Mesh, ConstructDestruct)
 {

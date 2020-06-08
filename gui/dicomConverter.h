@@ -25,9 +25,9 @@
 #ifndef QDICOM_CONVERTER_H
 #define QDICOM_CONVERTER_H
 
-#include "vtkDicomRoutines.h"
-#include "vtkMeshRoutines.h"
-#include "vtkMeshData.h"
+#include "dicomRoutines.h"
+#include "meshRoutines.h"
+#include "meshData.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
