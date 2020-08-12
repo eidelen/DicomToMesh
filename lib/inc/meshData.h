@@ -49,8 +49,9 @@ public:
      * Export the mesh in STL format.
      * @param mesh Mesh to export.
      * @param path Path to the exported stl file.
+     * @param useBinaryExport Defines if export is written in a binary format
      */
-    void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path );
+    void exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const std::string& path, bool useBinaryExport = false );
 
     /**
      * Export the mesh in OBJ format.

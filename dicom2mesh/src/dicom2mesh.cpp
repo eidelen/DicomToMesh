@@ -146,7 +146,7 @@ int Dicom2Mesh::doMesh()
             if( extension == "obj" )
                 vmd->exportAsObjFile( mesh, m_params.outputFilePath );
             else if( extension == "stl" )
-                vmd->exportAsStlFile( mesh, m_params.outputFilePath );
+                vmd->exportAsStlFile( mesh, m_params.outputFilePath, m_params.useBinaryExport );
             else if( extension == "ply" )
                 vmd->exportAsPlyFile( mesh, m_params.outputFilePath );
             else
@@ -233,6 +233,10 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
                 showUsageText();
                 return false;
             }
+        }
+        else if( cArg.compare("-b") == 0 )
+        {
+            param.useBinaryExport = true;
         }
         else if( cArg.compare("-t") == 0 )
         {
@@ -409,6 +413,9 @@ void Dicom2Mesh::showUsageText()
 
     std::cout << "Minimum example. This transforms a dicom data set into a 3d mesh file called mesh.stl by using a default iso value of 400 (shows bone)" << std::endl;
     std::cout << "> dicom2mesh -i pathToDicomDirectory -o mesh.stl" << std::endl << std::endl;
+
+    std::cout << "This creates a mesh file in a binary format called mesh.stl" << std::endl;
+    std::cout << "> dicom2mesh -i pathToDicomDirectory -b -o mesh.stl" << std::endl << std::endl;
 
     std::cout << "This creates a mesh file called abc.obj by using a custom iso value of 700" << std::endl;
     std::cout << "> dicom2mesh -i pathToDicomDirectory  -o abc.obj  -t 700 " << std::endl << std::endl;
