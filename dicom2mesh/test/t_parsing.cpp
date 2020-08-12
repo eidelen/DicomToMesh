@@ -247,3 +247,23 @@ TEST(ArgumentParser, ParseSpacing)
     ASSERT_FLOAT_EQ(parsedInput.y_spacing, 2.0);
     ASSERT_FLOAT_EQ(parsedInput.z_spacing, 3.0);
 }
+
+TEST(ArgumentParser, ParseBinaryExportOn)
+{
+    const char *input[6] = {"-i", "inputDir", "-b"};
+
+    Dicom2MeshParameters parsedInput;
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(3, input, parsedInput));
+
+    ASSERT_TRUE(parsedInput.useBinaryExport);
+}
+
+TEST(ArgumentParser, ParseBinaryExportOff)
+{
+    const char *input[6] = {"-i", "inputDir"};
+
+    Dicom2MeshParameters parsedInput;
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(2, input, parsedInput));
+
+    ASSERT_FALSE(parsedInput.useBinaryExport);
+}
