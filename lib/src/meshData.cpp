@@ -183,13 +183,20 @@ vtkSmartPointer<vtkPolyData> VTKMeshData::importObjFile( const std::string& path
     return mesh;
 }
 
-void VTKMeshData::exportAsStlFile( const vtkSmartPointer<vtkPolyData>& mesh, const string& path )
+void VTKMeshData::exportAsStlFile(const vtkSmartPointer<vtkPolyData>& mesh, const string& path , bool useBinaryExport)
 {
     cout << "Mesh export as stl file: " << path << endl;
     vtkSmartPointer<vtkSTLWriter> writer = vtkSTLWriter::New();
     writer->SetFileName( path.c_str() );
     writer->SetInputData( mesh );
-    writer->SetFileTypeToASCII();
+    if( useBinaryExport )
+    {
+        writer->SetFileTypeToBinary();
+    }
+    else
+    {
+        writer->SetFileTypeToASCII();
+    }
     if( m_progressCallback.Get() != NULL )
     {
         writer->AddObserver(vtkCommand::ProgressEvent, m_progressCallback);

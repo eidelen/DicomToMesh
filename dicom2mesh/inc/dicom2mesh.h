@@ -71,6 +71,8 @@ struct Dicom2MeshParameters
     double x_spacing= 1.0;
     double y_spacing= 1.0;
     double z_spacing= 1.0;
+
+    bool useBinaryExport = false;
 };
 
 class Dicom2Mesh
