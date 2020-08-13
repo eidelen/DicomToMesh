@@ -62,4 +62,25 @@ TEST(Mesh, CenterObject)
     delete vR;
 }
 
-// to be extended ...
+TEST(Mesh, TestSaveOpenFormats)
+{
+    VTKMeshData* vM = new VTKMeshData();
+
+    // open obj file
+    vtkSmartPointer<vtkPolyData> mesh = vM->importObjFile( "lib/test/data/torus.obj" );
+    ASSERT_GT( mesh->GetPoints()->GetNumberOfPoints(), 0 );
+
+    // export several different 3d formats
+    vM->exportAsObjFile(mesh, "objExport.obj");
+    vM->exportAsPlyFile(mesh, "plyExport.ply");
+    vM->exportAsStlFile(mesh, "stlExport.stl", false);
+    vM->exportAsStlFile(mesh, "stlBinaryExport.stl", true);
+
+    // import the different format
+    ASSERT_GT( vM->importObjFile("objExport.obj")->GetPoints()->GetNumberOfPoints(), 0);
+    ASSERT_GT( vM->importPlyFile("plyExport.ply")->GetPoints()->GetNumberOfPoints(), 0);
+    ASSERT_GT( vM->importStlFile("stlExport.stl")->GetPoints()->GetNumberOfPoints(), 0);
+    ASSERT_GT( vM->importStlFile("stlBinaryExport.stl")->GetPoints()->GetNumberOfPoints(), 0);
+
+    delete vM;
+}
