@@ -87,9 +87,9 @@ int Dicom2Mesh::doMesh()
     }
 
     //***** Mesh post-processing *****//
-    std::shared_ptr<VTKMeshData> vmd = std::shared_ptr<VTKMeshData>( new VTKMeshData() );
+    std::unique_ptr<VTKMeshData> vmd = std::unique_ptr<VTKMeshData>( new VTKMeshData() );
     vmd->SetProgressCallback( m_vtkCallback );
-    std::shared_ptr<VTKMeshRoutines> vmr = std::shared_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
+    std::unique_ptr<VTKMeshRoutines> vmr = std::unique_ptr<VTKMeshRoutines>( new VTKMeshRoutines() );
     vmr->SetProgressCallback( m_vtkCallback );
 
     if( m_params.enableOriginToCenterOfMass )
