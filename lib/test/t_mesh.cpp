@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <cstdio>
 #include "meshRoutines.h"
 #include "meshData.h"
 
@@ -81,6 +82,11 @@ TEST(Mesh, TestSaveOpenFormats)
     ASSERT_GT( vM->importPlyFile("plyExport.ply")->GetPoints()->GetNumberOfPoints(), 0);
     ASSERT_GT( vM->importStlFile("stlExport.stl")->GetPoints()->GetNumberOfPoints(), 0);
     ASSERT_GT( vM->importStlFile("stlBinaryExport.stl")->GetPoints()->GetNumberOfPoints(), 0);
+
+    remove("objExport.obj");
+    remove("plyExport.ply");
+    remove("stlExport.stl");
+    remove("stlBinaryExport.stl");
 
     delete vM;
 }
