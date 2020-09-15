@@ -24,8 +24,6 @@
 #ifndef DICOM2MESH_H
 #define DICOM2MESH_H
 
-#include "volumeVisualizer.h"
-
 #include <string>
 #include <vector>
 #include <vtkPolyData.h>
@@ -63,8 +61,6 @@ struct Dicom2MeshParameters
     bool useUpperIsoValue = false;
     int  upperIsoValue = 400;
 
-    std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
-
     bool inputAsPngFileList = false;
     std::vector<std::string> inputImageFiles;
 
@@ -89,7 +85,6 @@ public:
 private:
     bool loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d );
     std::string getParametersAsString(const Dicom2MeshParameters& params) const;
-    static bool parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry );
     static std::vector<std::string> parseCommaSeparatedStr(const std::string& text);
     static std::string trim(const std::string& str);
 

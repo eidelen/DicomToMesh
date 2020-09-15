@@ -24,7 +24,6 @@
 
 #include "d2mWidget.h"
 #include "ui_d2mWidget.h"
-#include "meshVisualizer.h"
 
 #include <QFileDialog>
 
@@ -248,7 +247,6 @@ void D2MWidget::export_done(bool ok)
     if( ok )
     {
         ui->infoLable->setText("Visualize");
-        VTKMeshVisualizer::displayMesh( m_converter->getMesh() );
         handleEndConversion();
     }
     else

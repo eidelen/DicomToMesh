@@ -26,8 +26,6 @@
 #include "meshData.h"
 #include "dicomFactory.h"
 #include "dicomRoutines.h"
-#include "meshVisualizer.h"
-#include "volumeVisualizer.h"
 
 #include <vtkAlgorithm.h>
 #include <iostream>
@@ -169,18 +167,6 @@ int Dicom2Mesh::doMesh()
 
     std::chrono::steady_clock::time_point t_done = std::chrono::steady_clock::now();
     std::cout << std::endl << "Required computing time: " << std::chrono::duration_cast<std::chrono::seconds>(t_done - t_begin).count() << " seconds" << std::endl;
-
-    if( m_params.doVisualize )
-    {
-        if( m_params.showAsVolume )
-        {
-            VTKVolumeVisualizer::displayVolume(volume, m_params.volumenRenderingColoring);
-        }
-        else
-        {
-            VTKMeshVisualizer::displayMesh(mesh);
-        }
-    }
 
     return 0;
 }
@@ -330,16 +316,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             }
             while( goOn );
 
-            VolumeRenderingColoringEntry volE;
-            if( parseVolumeRenderingColorEntry(vArg, volE) )
-            {
-                param.volumenRenderingColoring.push_back(volE);
-            }
-            else
-            {
-                std::cerr << "Incomplete volume rendering color entry" << std::endl;
-                return false;
-            }
         }
         else if( cArg.at(0) == '[' )
         {
@@ -625,37 +601,6 @@ bool toColor( const std::string& text, unsigned char& val)
     }
 
     return successful;
-}
-
-bool Dicom2Mesh::parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry )
-{
-    // regex  \([ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+-|0-9]{1,})[ ]*\)
-    // examples: ( +1,200  , 3 ,4 ,5)   (6 , 7,8,9  ,-10 ) (255,255,255,0,0)
-
-    std::regex reg( "\\([ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+|0-9]{1,})[ ]*,[ ]*([+-|0-9]{1,})[ ]*\\)");
-    std::smatch parseResult;
-
-    if(! std::regex_match(text,parseResult,reg) )
-    {
-        std::cerr << "Invalid volume rendering color syntax" << std::endl;
-        return false;
-    }
-
-    if( parseResult.size() != 6 )
-    {
-        std::cerr << "Invalid number elements in volume rendering color entry" << std::endl;
-        return false;
-    }
-
-    if( toColor(parseResult[1], colorEntry.m_red) && toColor(parseResult[2], colorEntry.m_green) && toColor(parseResult[3], colorEntry.m_blue) && toColor(parseResult[4], colorEntry.m_alpha))
-    {
-        colorEntry.m_voxelValue = std::stoi(parseResult[5]);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
 }
 
 std::vector<std::string> Dicom2Mesh::parseCommaSeparatedStr(const std::string& text)

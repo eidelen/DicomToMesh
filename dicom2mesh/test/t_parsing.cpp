@@ -120,54 +120,6 @@ TEST(ArgumentParser, Visualization)
     ASSERT_FALSE(parsedInput.showAsVolume);
 }
 
-
-TEST(ArgumentParser, VolVisualization)
-{
-    int nInput = 17;
-    const char *input[17] = {"-i", "inputDir", "-vo", "( ", "1,", "2  ,", " 3 ,", "4", " ,-5)", "(6 , ", "7,", "+8,", "9 ,", "10 ", ")", "(252,253,254,255,0)", "(100,101,102,103,104)" };
-
-    Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
-
-    ASSERT_TRUE(parsedInput.doVisualize);
-    ASSERT_TRUE(parsedInput.showAsVolume);
-
-    ASSERT_EQ(4,parsedInput.volumenRenderingColoring.size());
-
-    ASSERT_EQ(1, parsedInput.volumenRenderingColoring.at(0).m_red);
-    ASSERT_EQ(2, parsedInput.volumenRenderingColoring.at(0).m_green);
-    ASSERT_EQ(3, parsedInput.volumenRenderingColoring.at(0).m_blue);
-    ASSERT_EQ(4, parsedInput.volumenRenderingColoring.at(0).m_alpha);
-    ASSERT_EQ(-5, parsedInput.volumenRenderingColoring.at(0).m_voxelValue);
-
-    ASSERT_EQ(6, parsedInput.volumenRenderingColoring.at(1).m_red);
-    ASSERT_EQ(7, parsedInput.volumenRenderingColoring.at(1).m_green);
-    ASSERT_EQ(8, parsedInput.volumenRenderingColoring.at(1).m_blue);
-    ASSERT_EQ(9, parsedInput.volumenRenderingColoring.at(1).m_alpha);
-    ASSERT_EQ(10, parsedInput.volumenRenderingColoring.at(1).m_voxelValue);
-
-    ASSERT_EQ(252, parsedInput.volumenRenderingColoring.at(2).m_red);
-    ASSERT_EQ(253, parsedInput.volumenRenderingColoring.at(2).m_green);
-    ASSERT_EQ(254, parsedInput.volumenRenderingColoring.at(2).m_blue);
-    ASSERT_EQ(255, parsedInput.volumenRenderingColoring.at(2).m_alpha);
-    ASSERT_EQ(0, parsedInput.volumenRenderingColoring.at(2).m_voxelValue);
-
-    ASSERT_EQ(100, parsedInput.volumenRenderingColoring.at(3).m_red);
-    ASSERT_EQ(101, parsedInput.volumenRenderingColoring.at(3).m_green);
-    ASSERT_EQ(102, parsedInput.volumenRenderingColoring.at(3).m_blue);
-    ASSERT_EQ(103, parsedInput.volumenRenderingColoring.at(3).m_alpha);
-    ASSERT_EQ(104, parsedInput.volumenRenderingColoring.at(3).m_voxelValue);
-}
-
-TEST(ArgumentParser, VolVisualizationInvalidColor)
-{
-    int nInput = 9;
-    const char *input[9] = {"-i", "inputDir", "-vo", "( ", "257,", "2  ,", " 3 ,", "4", " ,-5)"};
-
-    Dicom2MeshParameters parsedInput;
-    ASSERT_FALSE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
-}
-
 TEST(ArgumentParser, ManyParamsEnabled)
 {
     int nInput = 12;
