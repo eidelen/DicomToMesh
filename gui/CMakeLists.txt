@@ -8,7 +8,6 @@ SET(CMAKE_AUTORCC ON)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
 
 SET( APP_SOURCES main.cpp d2mWidget.cpp dicomConverter.cpp rsc/dicom2meshgui.qrc)
 SET( APP_UIS d2mWidget.ui )

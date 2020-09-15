@@ -3,7 +3,6 @@
 project( dicom2mesh )
 
 find_package( VTK REQUIRED )
-include( ${VTK_USE_FILE} )
 
 include_directories( inc )
 add_executable( dicom2mesh src/main.cpp src/dicom2mesh.cpp )
