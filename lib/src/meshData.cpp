@@ -98,10 +98,12 @@ void VTKMeshData::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, con
 {
     cout << "Mesh export as obj file: " << path << endl;
 
-    string objContent("");
-    char* buffer = new char[256];
+    ofstream objFile;
+    objFile.open(path, ios::out);
 
-    objContent.append( "#dicom2mesh obj exporter \n");
+    objFile << std::fixed << std::setw(5) << std::setprecision(4);
+
+    objFile << "#dicom2mesh obj exporter" << std::endl;
 
     vtkSmartPointer<vtkPoints> vertices = mesh->GetPoints();
     vtkSmartPointer<vtkDataArray> verticesArray = vertices->GetData();
@@ -109,16 +111,13 @@ void VTKMeshData::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, con
     vtkIdType numberOfVertices = vertices->GetNumberOfPoints();
     vtkIdType  numberOfFaces = mesh->GetNumberOfCells();
 
-    objContent.append("g default \n");
+    objFile << "g default" << std::endl;
 
     // wrote vertices
     for( vtkIdType i = 0; i < numberOfVertices; i++ )
     {
-        sprintf( buffer, "v %f %f %f \n",
-                 verticesArray->GetComponent(i, 0),
-                 verticesArray->GetComponent(i, 1),
-                 verticesArray->GetComponent(i, 2) );
-        objContent.append(buffer);
+        objFile << "v " << verticesArray->GetComponent(i, 0) << " " << verticesArray->GetComponent(i, 1)
+        << " " << verticesArray->GetComponent(i, 2) << " " << std::endl;
     }
 
     // compute normals and write
@@ -127,39 +126,31 @@ void VTKMeshData::exportAsObjFile( const vtkSmartPointer<vtkPolyData>& mesh, con
     for( vtkIdType i = 0; i < numberOfVertices; i++ )
     {
         vtkVector3d n = normals.at(size_t(i));
-        sprintf( buffer, "vn %f %f %f \n", n.GetX(), n.GetY(), n.GetZ() );
-        objContent.append(buffer);
+        objFile << "vn " << n.GetX() << " " << n.GetY() << " " << n.GetZ() << " " << std::endl;
     }
 
-    objContent.append("\n");
+    objFile << std::endl;
 
     //faces
-    objContent.append("g polyDefault \n");
-    objContent.append("s off \n");
+    objFile << "g polyDefault" << std::endl;
+    objFile << "s off" << std::endl;
 
     for(long long i = 0; i < numberOfFaces; i++)
     {
         vtkSmartPointer<vtkIdList> face = vtkSmartPointer<vtkIdList>::New();
         mesh->GetCellPoints(i,face);
-        long long v0Idx = face->GetId(0); long long v1Idx = face->GetId(1); long long v2Idx = face->GetId(2);
+        long long v0Idx = face->GetId(0);
+        long long v1Idx = face->GetId(1);
+        long long v2Idx = face->GetId(2);
 
-        sprintf(buffer,"f %lld//%lld %lld//%lld %lld//%lld \n",
-                v0Idx+1, v0Idx+1,
-                v1Idx+1, v1Idx+1,
-                v2Idx+1, v2Idx+1);
-
-        objContent.append(buffer);
+        objFile << "f " << v0Idx+1 << "//" << v0Idx+1 << " " << v1Idx+1 << "//" << v1Idx+1 <<
+        " " << v2Idx+1 << "//" << v2Idx+1 << std::endl;
     }
 
-    objContent.append("\n\n#end of obj file\n");
+    objFile << std::endl << std::endl << "#end of obj file" << std::endl;
 
-    // write the whole buffer to the file
-    ofstream objFile;
-    objFile.open(path, ios::out);
-    objFile.write( objContent.c_str(), long(objContent.length()) );
     objFile.flush();
-
-    delete[] buffer;
+    objFile.close();
 
     cout << "Done" << endl << endl;
 }
