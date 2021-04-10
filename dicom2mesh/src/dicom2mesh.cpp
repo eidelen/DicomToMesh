@@ -98,20 +98,20 @@ int Dicom2Mesh::doMesh()
         cout << "Move mesh to the coordinate systems's center: Translation [" << trans.GetX() << "," << trans.GetY() << "," << trans.GetZ() << "]" << endl << endl;
     }
 
-    if( m_params.enableMeshReduction )
+    if( m_params.reductionRate )
     {
         // check reduction rate
-        if( m_params.reductionRate < 0.0 || m_params.reductionRate > 1.0 )
-            std::cout << "Reduction skipped due to invalid reduction rate " << m_params.reductionRate << " where a value of 0.0 - 1.0 is expected." << endl;
+        if( m_params.reductionRate.value() < 0.0 || m_params.reductionRate.value() > 1.0 )
+            std::cout << "Reduction skipped due to invalid reduction rate " << m_params.reductionRate.value() << " where a value of 0.0 - 1.0 is expected." << endl;
         else
-            vmr->meshReduction( mesh, m_params.reductionRate );
+            vmr->meshReduction( mesh, m_params.reductionRate.value() );
     }
 
-    if( m_params.enablePolygonLimitation )
+    if( m_params.polygonLimit )
     {
-        if( mesh->GetNumberOfCells() > vtkIdType(m_params.polygonLimit) )
+        if( mesh->GetNumberOfCells() > vtkIdType(m_params.polygonLimit.value()) )
         {
-            double reductionRate = 1.0 - (  (double(m_params.polygonLimit)) / (double(mesh->GetNumberOfCells()))) ;
+            double reductionRate = 1.0 - (  (double(m_params.polygonLimit.value())) / (double(mesh->GetNumberOfCells()))) ;
             vmr->meshReduction( mesh, reductionRate );
         }
         else
@@ -120,12 +120,12 @@ int Dicom2Mesh::doMesh()
         }
     }
 
-    if( m_params.enableObjectFiltering )
+    if( m_params.objectSizeRatio )
     {
-        if( m_params.objectSizeRatio < 0.0 || m_params.objectSizeRatio > 1.0 )
-            std::cout << "Filtering skipped due to invalid filter rate " << m_params.objectSizeRatio << " where a value of 0.0 - 1.0 is expected." << endl;
+        if( m_params.objectSizeRatio.value() < 0.0 || m_params.objectSizeRatio.value() > 1.0 )
+            std::cout << "Filtering skipped due to invalid filter rate " << m_params.objectSizeRatio.value() << " where a value of 0.0 - 1.0 is expected." << endl;
         else
-            vmr->removeSmallObjects( mesh, m_params.objectSizeRatio );
+            vmr->removeSmallObjects( mesh, m_params.objectSizeRatio.value() );
     }
 
     if( m_params.enableSmoothing )
@@ -135,26 +135,26 @@ int Dicom2Mesh::doMesh()
 
     //********************************//
 
-    // check if obj or stl
-    if( m_params.pathToOutputAvailable )
+    // check if obj, stl or ply was set
+    if( m_params.outputFilePath )
     {
-        std::string::size_type idx = m_params.outputFilePath.rfind('.');
+        std::string::size_type idx = m_params.outputFilePath.value().rfind('.');
         if( idx != std::string::npos )
         {
-            std::string extension = m_params.outputFilePath.substr(idx+1);
+            std::string extension = m_params.outputFilePath.value().substr(idx+1);
 
             if( extension == "obj" )
-                vmd->exportAsObjFile( mesh, m_params.outputFilePath );
+                vmd->exportAsObjFile( mesh, m_params.outputFilePath.value() );
             else if( extension == "stl" )
-                vmd->exportAsStlFile( mesh, m_params.outputFilePath, m_params.useBinaryExport );
+                vmd->exportAsStlFile( mesh, m_params.outputFilePath.value(), m_params.useBinaryExport );
             else if( extension == "ply" )
-                vmd->exportAsPlyFile( mesh, m_params.outputFilePath );
+                vmd->exportAsPlyFile( mesh, m_params.outputFilePath.value() );
             else
                 cerr << "Unknown file type" << endl;
 
 
             // safe mesh parameters in info file
-            std::string infoFilePath = m_params.outputFilePath.substr(0,idx+1).append("info");
+            std::string infoFilePath = m_params.outputFilePath.value().substr(0,idx+1).append("info");
             std::ofstream infoFile;
             infoFile.open(infoFilePath);
             infoFile << getParametersAsString(m_params);
@@ -207,7 +207,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             if( a < argc )
             {
                 param.pathToInputData = argv[a];
-                param.pathToInputAvailable = true;
             }
             else
             {
@@ -217,7 +216,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         }
         if( cArg.compare("-ipng") == 0 )
         {
-            param.inputAsPngFileList = true;
+            param.inputImageFiles = {};
         }
         else if( cArg.compare("-o") == 0 )
         {
@@ -226,7 +225,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             if( a < argc )
             {
                 param.outputFilePath = argv[a];
-                param.pathToOutputAvailable = true;
             }
             else
             {
@@ -259,7 +257,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             if( a < argc )
             {
                 param.upperIsoValue = std::stoi( std::string(argv[a]) );
-                param.useUpperIsoValue = true;
             }
             else
             {
@@ -274,7 +271,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         }
         else if( cArg.compare("-r") == 0 )
         {
-            param.enableMeshReduction = true;
             // next argument is reduction (float)
             a++;
             if( a < argc ) // default value is 0.5
@@ -282,7 +278,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         }
         else if( cArg.compare("-p") == 0 )
         {
-            param.enablePolygonLimitation = true;
             // next argument is polygon limit
             a++;
             if( a < argc ) // default value is 100000
@@ -290,7 +285,6 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         }
         else if( cArg.compare("-e") == 0 )
         {
-            param.enableObjectFiltering = true;
             // next argument is size ratio (float)
             a++;
             if( a < argc ) // default value is 0.1
@@ -395,7 +389,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         }
     }
 
-    if( !param.pathToInputAvailable && !param.inputAsPngFileList )
+    if( !param.pathToInputData && !param.inputImageFiles )
     {
         cerr << "Path to Dicom directory missing" << endl << "> dicom2mesh -i pathToDicom" << endl;
         cerr << "or" << endl;
@@ -472,10 +466,10 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
     bool loadObj = false; bool loadStl = false; bool loadPly = false;
 
     // check if input is a mesh file
-    std::string::size_type idx = m_params.pathToInputData.rfind('.');
+    std::string::size_type idx = m_params.pathToInputData.value_or("").rfind('.');
     if( idx != std::string::npos )
     {
-        std::string extension = m_params.pathToInputData.substr(idx+1);
+        std::string extension = m_params.pathToInputData.value_or("").substr(idx+1);
         loadObj = extension == "obj";
         loadStl = extension == "stl";
         loadPly = extension == "ply";
@@ -486,17 +480,17 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
 
     if( loadObj )
     {
-        mesh3d =  vmd->importObjFile( m_params.pathToInputData );
+        mesh3d =  vmd->importObjFile( m_params.pathToInputData.value_or("") );
         result = true;
     }
     else if( loadStl )
     {
-        mesh3d = vmd->importStlFile( m_params.pathToInputData );
+        mesh3d = vmd->importStlFile( m_params.pathToInputData.value_or("") );
         result = true;
     }
     else if( loadPly )
     {
-        mesh3d = vmd->importPlyFile( m_params.pathToInputData );
+        mesh3d = vmd->importPlyFile( m_params.pathToInputData.value_or("") );
         result = true;
     }
     else
@@ -506,15 +500,15 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
         std::shared_ptr<VTKDicomRoutines> vdr = VTKDicomFactory::getDicomRoutines();
         vdr->SetProgressCallback( m_vtkCallback );
 
-        if( m_params.inputAsPngFileList )
+        if( m_params.inputImageFiles )
         {
             // set of png images
-            volume = vdr->loadPngImages( m_params.inputImageFiles, m_params.x_spacing, m_params.y_spacing, m_params.z_spacing );
+            volume = vdr->loadPngImages( m_params.inputImageFiles.value(), m_params.x_spacing, m_params.y_spacing, m_params.z_spacing );
         }
         else
         {
             // a dicom data set
-            volume = vdr->loadDicomImage(m_params.pathToInputData);
+            volume = vdr->loadDicomImage(m_params.pathToInputData.value_or(""));
         }
 
         if( volume == NULL )
@@ -527,7 +521,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
             if( m_params.enableCrop )
                 vdr->cropDicom( volume );
 
-            mesh3d = vdr->dicomToMesh( volume, m_params.isoValue, m_params.useUpperIsoValue, m_params.upperIsoValue );
+            mesh3d = vdr->dicomToMesh( volume, m_params.isoValue, m_params.upperIsoValue.has_value(), m_params.upperIsoValue.value_or(0) );
             result = true;
         }
     }
@@ -538,31 +532,31 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
 std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params) const
 {
     std::string ret = "Dicom2Mesh Settings\n-------------------\n";
-    ret.append("Input directory: "); ret.append(params.pathToInputData); ret.append("\n");
-    ret.append("Output file path: "); ret.append(params.outputFilePath); ret.append("\n");
+    ret.append("Input directory: "); ret.append(params.pathToInputData.value_or("None")); ret.append("\n");
+    ret.append("Output file path: "); ret.append(params.outputFilePath.value_or("None")); ret.append("\n");
 
     ret.append("Surface segmentation: ");
     ret.append(std::to_string(params.isoValue));
-    if( params.useUpperIsoValue )
+    if( params.upperIsoValue )
     {
         ret.append(" to ");
-        ret.append(std::to_string(params.upperIsoValue));
+        ret.append(std::to_string(params.upperIsoValue.value()));
     }
     ret.append("\n");
 
     ret.append("Mesh reduction: ");
-    if(params.enableMeshReduction)
+    if(params.reductionRate)
     {
-        ret.append("enabled (rate="); ret.append( std::to_string(params.reductionRate )); ret.append(")\n");
+        ret.append("enabled (rate="); ret.append( std::to_string(params.reductionRate.value() )); ret.append(")\n");
     }
     else
     {
         ret.append("disabled\n");
     }
     ret.append("Mesh polygon limitation: ");
-    if(params.enablePolygonLimitation)
+    if(params.polygonLimit)
     {
-        ret.append("enabled (nbr="); ret.append( std::to_string(params.polygonLimit )); ret.append(")\n");
+        ret.append("enabled (nbr="); ret.append( std::to_string(params.polygonLimit.value() )); ret.append(")\n");
     }
     else
     {
@@ -587,9 +581,9 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
         ret.append("disabled\n");
     }
     ret.append("Mesh filtering: ");
-    if(params.enableObjectFiltering)
+    if(params.objectSizeRatio)
     {
-        ret.append("enabled (size-ratio="); ret.append( std::to_string(params.objectSizeRatio )); ret.append(")\n");
+        ret.append("enabled (size-ratio="); ret.append( std::to_string(params.objectSizeRatio.value() )); ret.append(")\n");
     }
     else
     {

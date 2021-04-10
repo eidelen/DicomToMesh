@@ -30,7 +30,7 @@ include_directories( ${DICOM_TO_MESH_INC_DIRS} )
 ADD_LIBRARY(dicom2meshlib STATIC ${DICOM_TO_MESH_LIB_INC} ${DICOM_TO_MESH_LIB_SRC})
 target_link_libraries(dicom2meshlib ${DICOM_TO_MESH_LIB_LIBS})
 target_include_directories(dicom2meshlib INTERFACE ${DICOM_TO_MESH_INC_DIRS})
-target_compile_features(dicom2meshlib PRIVATE cxx_range_for)
+target_compile_features(dicom2meshlib PRIVATE cxx_std_17)
 target_compile_options( dicom2meshlib PRIVATE -Wall -pedantic -Wextra -Wno-extra-semi )
 
 if(UNIX)
@@ -55,7 +55,7 @@ IF(${TESTDICOM2MESHLIB})
 
     add_executable(runLibTests ${D2M_LIB_TESTS_INC} ${D2M_LIB_TESTS_SRC})
     target_link_libraries(runLibTests ${GTEST_LIBRARIES} dicom2meshlib )
-    target_compile_features( runLibTests PRIVATE cxx_range_for )
+    target_compile_features( runLibTests PRIVATE cxx_std_17 )
     target_compile_options( runLibTests PRIVATE -Wall -Wno-extra-semi )
 ENDIF()
 

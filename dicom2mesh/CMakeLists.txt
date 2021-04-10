@@ -7,9 +7,9 @@ include( ${VTK_USE_FILE} )
 
 include_directories( inc )
 add_executable( dicom2mesh src/main.cpp src/dicom2mesh.cpp )
-target_link_libraries( dicom2mesh dicom2meshlib ${VTK_LIBRARIES}  )
-target_compile_features( dicom2mesh PRIVATE cxx_range_for )
+target_link_libraries( dicom2mesh dicom2meshlib ${VTK_LIBRARIES} )
 target_compile_options( dicom2mesh PRIVATE -Wall -pedantic -Wextra -Wno-extra-semi )
+target_compile_features( dicom2mesh PRIVATE cxx_std_17 )
 
 
 # Test the library
@@ -24,7 +24,7 @@ IF(${TESTDICOM2MESH})
 
     add_executable( runD2MTests src/dicom2mesh.cpp ${D2M_TESTS_INC} ${D2M_TESTS_SRC} )
     target_link_libraries( runD2MTests ${GTEST_LIBRARIES} dicom2meshlib )
-    target_compile_features( runD2MTests PRIVATE cxx_range_for )
+    target_compile_features( runD2MTests PRIVATE cxx_std_17 )
     target_compile_options( runD2MTests PRIVATE -Wall -Wno-extra-semi )
 ENDIF()
 

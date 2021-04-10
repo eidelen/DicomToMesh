@@ -9,17 +9,17 @@ TEST(ArgumentParser, InputPathAndDefault)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.pathToInputAvailable);
-    ASSERT_STREQ(parsedInput.pathToInputData.c_str(),"inputDir");
+    ASSERT_TRUE(parsedInput.pathToInputData);
+    ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(),"inputDir");
 
-    ASSERT_FALSE(parsedInput.enableMeshReduction);
+    ASSERT_FALSE(parsedInput.reductionRate);
     ASSERT_FALSE(parsedInput.enableCrop);
-    ASSERT_FALSE(parsedInput.enablePolygonLimitation);
+    ASSERT_FALSE(parsedInput.polygonLimit);
     ASSERT_FALSE(parsedInput.enableSmoothing);
-    ASSERT_FALSE(parsedInput.enableObjectFiltering);
+    ASSERT_FALSE(parsedInput.objectSizeRatio);
     ASSERT_FALSE(parsedInput.enableOriginToCenterOfMass);
 
-    ASSERT_FALSE(parsedInput.pathToOutputAvailable);
+    ASSERT_FALSE(parsedInput.outputFilePath);
 }
 
 TEST(ArgumentParser, OutputPath)
@@ -30,8 +30,8 @@ TEST(ArgumentParser, OutputPath)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.pathToOutputAvailable);
-    ASSERT_STREQ(parsedInput.outputFilePath.c_str(), "output.obj");
+    ASSERT_TRUE(parsedInput.outputFilePath);
+    ASSERT_STREQ(parsedInput.outputFilePath.value().c_str(), "output.obj");
 }
 
 TEST(ArgumentParser, Threshold)
@@ -55,7 +55,7 @@ TEST(ArgumentParser, ThresholdRange)
 
     ASSERT_EQ(parsedInput.isoValue, 405);
     ASSERT_EQ(parsedInput.upperIsoValue, 501);
-    ASSERT_TRUE(parsedInput.useUpperIsoValue);
+    ASSERT_TRUE(parsedInput.upperIsoValue);
 }
 
 TEST(ArgumentParser, ThresholdNegative)
@@ -77,8 +77,8 @@ TEST(ArgumentParser, Reduction)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.enableMeshReduction);
-    ASSERT_FLOAT_EQ(parsedInput.reductionRate, 0.43);
+    ASSERT_TRUE(parsedInput.reductionRate);
+    ASSERT_FLOAT_EQ(parsedInput.reductionRate.value(), 0.43);
 }
 
 TEST(ArgumentParser, SmoothingAndFilter)
@@ -91,8 +91,8 @@ TEST(ArgumentParser, SmoothingAndFilter)
 
     ASSERT_TRUE(parsedInput.enableSmoothing);
 
-    ASSERT_TRUE(parsedInput.enableObjectFiltering);
-    ASSERT_FLOAT_EQ(parsedInput.objectSizeRatio, 0.1234);
+    ASSERT_TRUE(parsedInput.objectSizeRatio);
+    ASSERT_FLOAT_EQ(parsedInput.objectSizeRatio.value(), 0.1234);
 }
 
 TEST(ArgumentParser, CenterAndCrop)
@@ -106,7 +106,6 @@ TEST(ArgumentParser, CenterAndCrop)
     ASSERT_TRUE(parsedInput.enableOriginToCenterOfMass);
     ASSERT_TRUE(parsedInput.enableCrop);
 }
-
 
 TEST(ArgumentParser, Visualization)
 {
@@ -176,8 +175,8 @@ TEST(ArgumentParser, ManyParamsEnabled)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.pathToInputAvailable);
-    ASSERT_STREQ(parsedInput.pathToInputData.c_str(),"inputDir");
+    ASSERT_TRUE(parsedInput.pathToInputData);
+    ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(), "inputDir");
 
     ASSERT_TRUE(parsedInput.doVisualize);
     ASSERT_FALSE(parsedInput.showAsVolume);
@@ -187,14 +186,14 @@ TEST(ArgumentParser, ManyParamsEnabled)
 
     ASSERT_TRUE(parsedInput.enableSmoothing);
 
-    ASSERT_TRUE(parsedInput.enableObjectFiltering);
-    ASSERT_FLOAT_EQ(parsedInput.objectSizeRatio, 0.1234);
+    ASSERT_TRUE(parsedInput.objectSizeRatio);
+    ASSERT_FLOAT_EQ(parsedInput.objectSizeRatio.value(), 0.1234);
 
-    ASSERT_TRUE(parsedInput.enableMeshReduction);
-    ASSERT_FLOAT_EQ(parsedInput.reductionRate, 0.43);
+    ASSERT_TRUE(parsedInput.reductionRate);
+    ASSERT_FLOAT_EQ(parsedInput.reductionRate.value(), 0.43);
 
-    ASSERT_TRUE(parsedInput.pathToOutputAvailable);
-    ASSERT_STREQ(parsedInput.outputFilePath.c_str(), "output.obj");
+    ASSERT_TRUE(parsedInput.outputFilePath);
+    ASSERT_STREQ(parsedInput.outputFilePath.value().c_str(), "output.obj");
 }
 
 TEST(ArgumentParser, ManyParamsDisabled)
@@ -205,8 +204,8 @@ TEST(ArgumentParser, ManyParamsDisabled)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.pathToInputAvailable);
-    ASSERT_STREQ(parsedInput.pathToInputData.c_str(),"inputDir");
+    ASSERT_TRUE(parsedInput.pathToInputData);
+    ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(),"inputDir");
 
     ASSERT_FALSE(parsedInput.doVisualize);
     ASSERT_FALSE(parsedInput.showAsVolume);
@@ -216,11 +215,11 @@ TEST(ArgumentParser, ManyParamsDisabled)
 
     ASSERT_FALSE(parsedInput.enableSmoothing);
 
-    ASSERT_FALSE(parsedInput.enableObjectFiltering);
+    ASSERT_FALSE(parsedInput.objectSizeRatio);
 
-    ASSERT_FALSE(parsedInput.enableMeshReduction);
+    ASSERT_FALSE(parsedInput.reductionRate);
 
-    ASSERT_FALSE(parsedInput.pathToOutputAvailable);
+    ASSERT_FALSE(parsedInput.outputFilePath);
 }
 
 TEST(ArgumentParser, ParsePngInput)
@@ -229,11 +228,11 @@ TEST(ArgumentParser, ParsePngInput)
 
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(4, input, parsedInput));
-    ASSERT_TRUE(parsedInput.inputAsPngFileList);
-    ASSERT_EQ(parsedInput.inputImageFiles.size(),2);
+    ASSERT_TRUE(parsedInput.inputImageFiles);
+    ASSERT_EQ(parsedInput.inputImageFiles.value().size(),2);
 
-    ASSERT_STREQ( "abcd/efgh.png", parsedInput.inputImageFiles[0].c_str() );
-    ASSERT_STREQ( "hi/jkl.png", parsedInput.inputImageFiles[1].c_str() );
+    ASSERT_STREQ( "abcd/efgh.png", parsedInput.inputImageFiles.value()[0].c_str() );
+    ASSERT_STREQ( "hi/jkl.png", parsedInput.inputImageFiles.value()[1].c_str() );
 }
 
 TEST(ArgumentParser, ParseSpacing)

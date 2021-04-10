@@ -22,7 +22,6 @@ Dicom2MeshParameters getPresetImageSettings()
     Dicom2MeshParameters settings;
     settings.inputImageFiles = {"lib/test/data/imgset/0.png", "lib/test/data/imgset/1.png",
                                 "lib/test/data/imgset/2.png"};
-    settings.inputAsPngFileList = true;
     return settings;
 }
 
@@ -32,7 +31,6 @@ TEST(D2M, InvalidMesh)
 
     Dicom2MeshParameters settings = getPresetImageSettings();
     settings.outputFilePath = fname;
-    settings.pathToOutputAvailable = true;
     settings.isoValue = 400; // to high iso value to create a mesh
 
     Dicom2Mesh* d2m = new Dicom2Mesh(settings);
@@ -51,7 +49,6 @@ TEST(D2M, MakeSimpleMesh)
     {
         Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fn;
-        settings.pathToOutputAvailable = true;
         settings.isoValue = 100;
 
         Dicom2Mesh* d2m = new Dicom2Mesh(settings);
@@ -73,7 +70,6 @@ TEST(D2M, MakeCenterMesh)
     {
         Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fn;
-        settings.pathToOutputAvailable = true;
         settings.enableOriginToCenterOfMass = true;
         settings.isoValue = 100;
 
@@ -96,7 +92,6 @@ TEST(D2M, MakeSmoothedMesh)
     {
         Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fn;
-        settings.pathToOutputAvailable = true;
         settings.enableSmoothing = true;
         settings.isoValue = 100;
 
@@ -122,9 +117,7 @@ TEST(D2M, TestReduce)
     {
         Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fname;
-        settings.pathToOutputAvailable = true;
         settings.isoValue = 100;
-        settings.enableMeshReduction = true;
         settings.reductionRate = r;
 
         Dicom2Mesh* d2m = new Dicom2Mesh(settings);

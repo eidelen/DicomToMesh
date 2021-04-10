@@ -28,6 +28,7 @@
 
 #include <string>
 #include <vector>
+#include <optional>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
 #include <vtkSmartPointer.h>
@@ -35,22 +36,13 @@
 
 struct Dicom2MeshParameters
 {
-    std::string pathToInputData;
-    bool pathToInputAvailable = false;
-
-    std::string outputFilePath = "mesh.stl";
-    bool pathToOutputAvailable = false;
+    std::optional<std::string> pathToInputData;
+    std::optional<std::string> outputFilePath;
 
     bool enableOriginToCenterOfMass = false;
-
-    double reductionRate = 0.5;
-    bool enableMeshReduction = false;
-
-    unsigned long polygonLimit = 100000;
-    bool enablePolygonLimitation = false;
-
-    double objectSizeRatio = 0.1;
-    bool enableObjectFiltering = false;
+    std::optional<double> reductionRate;
+    std::optional<unsigned long> polygonLimit;
+    std::optional<double> objectSizeRatio;
 
     bool enableSmoothing = false;
 
@@ -60,13 +52,11 @@ struct Dicom2MeshParameters
     bool enableCrop = false;
 
     int isoValue = 400; // Hard Tissue
-    bool useUpperIsoValue = false;
-    int  upperIsoValue = 400;
+    std::optional<int>  upperIsoValue;
 
     std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
 
-    bool inputAsPngFileList = false;
-    std::vector<std::string> inputImageFiles;
+    std::optional<std::vector<std::string>> inputImageFiles;
 
     double x_spacing= 1.0;
     double y_spacing= 1.0;
