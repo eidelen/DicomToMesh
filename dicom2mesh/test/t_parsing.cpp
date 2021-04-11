@@ -12,7 +12,7 @@ TEST(ArgumentParser, InputPathAndDefault)
     ASSERT_TRUE(parsedInput.pathToInputData.has_value());
     ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(),"inputDir");
 
-    ASSERT_FALSE(parsedInput.reductionRate);
+    ASSERT_FALSE(parsedInput.reductionRate.has_value());
     ASSERT_FALSE(parsedInput.enableCrop);
     ASSERT_FALSE(parsedInput.polygonLimit);
     ASSERT_FALSE(parsedInput.enableSmoothing);
@@ -77,7 +77,7 @@ TEST(ArgumentParser, Reduction)
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
-    ASSERT_TRUE(parsedInput.reductionRate);
+    ASSERT_TRUE(parsedInput.reductionRate.has_value());
     ASSERT_FLOAT_EQ(parsedInput.reductionRate.value(), 0.43);
 }
 
@@ -189,7 +189,7 @@ TEST(ArgumentParser, ManyParamsEnabled)
     ASSERT_TRUE(parsedInput.objectSizeRatio.has_value());
     ASSERT_FLOAT_EQ(parsedInput.objectSizeRatio.value(), 0.1234);
 
-    ASSERT_TRUE(parsedInput.reductionRate);
+    ASSERT_TRUE(parsedInput.reductionRate.has_value());
     ASSERT_FLOAT_EQ(parsedInput.reductionRate.value(), 0.43);
 
     ASSERT_TRUE(parsedInput.outputFilePath.has_value());
@@ -217,7 +217,7 @@ TEST(ArgumentParser, ManyParamsDisabled)
 
     ASSERT_FALSE(parsedInput.objectSizeRatio.has_value());
 
-    ASSERT_FALSE(parsedInput.reductionRate);
+    ASSERT_FALSE(parsedInput.reductionRate.has_value());
 
     ASSERT_FALSE(parsedInput.outputFilePath.has_value());
 }
@@ -228,7 +228,7 @@ TEST(ArgumentParser, ParsePngInput)
 
     Dicom2MeshParameters parsedInput;
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(4, input, parsedInput));
-    ASSERT_TRUE(parsedInput.inputImageFiles);
+    ASSERT_TRUE(parsedInput.inputImageFiles.has_value());
     ASSERT_EQ(parsedInput.inputImageFiles.value().size(),2);
 
     ASSERT_STREQ( "abcd/efgh.png", parsedInput.inputImageFiles.value()[0].c_str() );
