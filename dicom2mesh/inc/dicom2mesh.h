@@ -34,39 +34,30 @@
 #include <vtkSmartPointer.h>
 #include <vtkCallbackCommand.h>
 
-struct Dicom2MeshParameters
-{
-    std::optional<std::string> pathToInputData;
-    std::optional<std::string> outputFilePath;
-
-    bool enableOriginToCenterOfMass = false;
-    std::optional<double> reductionRate;
-    std::optional<unsigned long> polygonLimit;
-    std::optional<double> objectSizeRatio;
-
-    bool enableSmoothing = false;
-
-    bool doVisualize = false;
-    bool showAsVolume = false;
-
-    bool enableCrop = false;
-
-    int isoValue = 400; // Hard Tissue
-    std::optional<int>  upperIsoValue;
-
-    std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
-
-    std::optional<std::vector<std::string>> inputImageFiles;
-
-    double x_spacing= 1.0;
-    double y_spacing= 1.0;
-    double z_spacing= 1.0;
-
-    bool useBinaryExport = false;
-};
-
 class Dicom2Mesh
 {
+public:
+    struct Dicom2MeshParameters
+    {
+        std::optional<std::string> pathToInputData;
+        std::optional<std::vector<std::string>> inputImageFiles;
+        std::vector<double> xyzSpacing = {1.0, 1.0, 1.0};
+        bool enableCrop = false;
+        std::optional<std::string> outputFilePath;
+        bool useBinaryExport = false;
+        std::optional<double> reductionRate;
+        std::optional<unsigned long> polygonLimit;
+        std::optional<double> objectSizeRatio;
+        bool enableOriginToCenterOfMass = false;
+        bool enableSmoothing = false;
+        int isoValue = 400; // Hard Tissue
+        std::optional<int>  upperIsoValue;
+
+        bool doVisualize = false;
+        bool showAsVolume = false;
+        std::vector<VolumeRenderingColoringEntry> volumenRenderingColoring;
+    };
+
 public:
     Dicom2Mesh(const Dicom2MeshParameters& params);
     ~Dicom2Mesh();

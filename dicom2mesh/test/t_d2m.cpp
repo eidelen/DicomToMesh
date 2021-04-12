@@ -17,9 +17,9 @@ std::ifstream::pos_type filesize(const std::string& filePath)
     return in.tellg();
 }
 
-Dicom2MeshParameters getPresetImageSettings()
+Dicom2Mesh::Dicom2MeshParameters getPresetImageSettings()
 {
-    Dicom2MeshParameters settings;
+    Dicom2Mesh::Dicom2MeshParameters settings;
     settings.inputImageFiles = {"lib/test/data/imgset/0.png", "lib/test/data/imgset/1.png",
                                 "lib/test/data/imgset/2.png"};
     return settings;
@@ -29,7 +29,7 @@ TEST(D2M, InvalidMesh)
 {
     std::string fname = "testObj.obj";
 
-    Dicom2MeshParameters settings = getPresetImageSettings();
+    Dicom2Mesh::Dicom2MeshParameters settings = getPresetImageSettings();
     settings.outputFilePath = fname;
     settings.isoValue = 400; // to high iso value to create a mesh
 
@@ -47,7 +47,7 @@ TEST(D2M, MakeSimpleMesh)
 
     for( auto fn: fnames )
     {
-        Dicom2MeshParameters settings = getPresetImageSettings();
+        Dicom2Mesh::Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fn;
         settings.isoValue = 100;
 
@@ -68,7 +68,7 @@ TEST(D2M, MakeCenterMesh)
 
     for( auto fn: fnames )
     {
-        Dicom2MeshParameters settings = getPresetImageSettings();
+        Dicom2Mesh::Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fn;
         settings.enableOriginToCenterOfMass = true;
         settings.isoValue = 100;
@@ -90,7 +90,7 @@ TEST(D2M, MakeSmoothedMesh)
 
     for( auto fn: fnames )
     {
-        Dicom2MeshParameters settings = getPresetImageSettings();
+        Dicom2Mesh::Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fn;
         settings.enableSmoothing = true;
         settings.isoValue = 100;
@@ -115,7 +115,7 @@ TEST(D2M, TestReduce)
 
     for( double r: reduce )
     {
-        Dicom2MeshParameters settings = getPresetImageSettings();
+        Dicom2Mesh::Dicom2MeshParameters settings = getPresetImageSettings();
         settings.outputFilePath = fname;
         settings.isoValue = 100;
         settings.reductionRate = r;

@@ -382,9 +382,9 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             // next three arguments are spacings
             if( (a+3) < argc)
             {
-                param.x_spacing = std::stod(std::string(argv[++a]));
-                param.y_spacing = std::stod(std::string(argv[++a]));
-                param.z_spacing = std::stod(std::string(argv[++a]));
+                param.xyzSpacing[0] = std::stod(std::string(argv[++a]));
+                param.xyzSpacing[1] = std::stod(std::string(argv[++a]));
+                param.xyzSpacing[2] = std::stod(std::string(argv[++a]));
             }
         }
     }
@@ -503,7 +503,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
         if( m_params.inputImageFiles )
         {
             // set of png images
-            volume = vdr->loadPngImages( m_params.inputImageFiles.value(), m_params.x_spacing, m_params.y_spacing, m_params.z_spacing );
+            volume = vdr->loadPngImages( m_params.inputImageFiles.value(), m_params.xyzSpacing[0], m_params.xyzSpacing[1], m_params.xyzSpacing[2] );
         }
         else
         {
@@ -537,7 +537,7 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
 
     ret.append("Surface segmentation: ");
     ret.append(std::to_string(params.isoValue));
-    if( params.upperIsoValue )
+    if( params.upperIsoValue.has_value() )
     {
         ret.append(" to ");
         ret.append(std::to_string(params.upperIsoValue.value()));
@@ -563,23 +563,11 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
         ret.append("disabled\n");
     }
     ret.append("Mesh smoothing: ");
-    if(params.enableSmoothing)
-    {
-        ret.append("enabled\n");
-    }
-    else
-    {
-        ret.append("disabled\n");
-    }
+    ret.append( params.enableSmoothing ? "enabled\n" : "disabled\n" );
+
     ret.append("Mesh centering: ");
-    if(params.enableOriginToCenterOfMass)
-    {
-        ret.append("enabled\n");
-    }
-    else
-    {
-        ret.append("disabled\n");
-    }
+    ret.append(params.enableOriginToCenterOfMass ? "enabled\n" : "disabled\n" );
+
     ret.append("Mesh filtering: ");
     if(params.objectSizeRatio)
     {
@@ -589,15 +577,9 @@ std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params
     {
         ret.append("disabled\n");
     }
+
     ret.append("Volume cropping: ");
-    if(params.enableCrop)
-    {
-        ret.append("enabled\n");
-    }
-    else
-    {
-        ret.append("disabled\n");
-    }
+    ret.append(params.enableCrop ? "enabled\n" : "disabled\n");
 
     return ret;
 }
@@ -664,12 +646,12 @@ std::vector<std::string> Dicom2Mesh::parseCommaSeparatedStr(const std::string& t
         if( nextDel == std::string::npos )
         {
             goOn = false;
-            strs.push_back(trim(toParse)); // just add the remaining string
+            strs.emplace_back(trim(toParse)); // just add the remaining string
         }
         else
         {
             std::string aPath = toParse.substr(0,nextDel);
-            strs.push_back(trim(aPath));
+            strs.emplace_back(trim(aPath));
             toParse.erase(0, nextDel+1);
         }
     }
