@@ -41,7 +41,7 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutinesExtended::loadDicomImage( const st
 {
     using namespace std;
 
-    // analyze dicom directory. there might be mulitple data
+    // analyze dicom directory. there might be multiple data
     vtkSmartPointer<vtkDICOMDirectory> dicomDirectory = vtkSmartPointer<vtkDICOMDirectory>::New();
     dicomDirectory->SetDirectoryName(pathToDicom.c_str());
     dicomDirectory->SetScanDepth(1);

@@ -205,7 +205,7 @@ void D2MWidget::filter_done(bool ok)
             ui->infoLable->setText("Smoothing mesh");
             emit doSmoothing();
 
-            // after smooting, smoothing_done is called
+            // after smoothing, smoothing_done is called
         }
         else
         {
@@ -229,7 +229,7 @@ void D2MWidget::smoothing_done(bool ok)
             ui->infoLable->setText("Export mesh file");
             emit doExport(m_mesh_path);
 
-            // after exporting, export_done cis alled
+            // after exporting, export_done cis called
         }
         else
         {
