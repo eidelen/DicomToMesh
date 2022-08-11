@@ -4,7 +4,7 @@
 
 DicomToMesh is a handy command line tool, which enables the user to automatically create a 3D mesh from a set of 2D DICOM images, a common image format used in medicine. The supported 3D mesh formats are STL, OBJ and PLY. DicomToMesh works on Linux, OSX and Windows.
 
-<p align="center"><img alt="dicom2mesh" src="http://eidelen.diffuse.ch/dicomtomesh.png" width="80%"></p>
+<p align="center"><img alt="dicom2mesh" src="docs/img/dicomtomesh.png" width="80%"></p>
 
 # Mesh Creation
 
@@ -14,26 +14,26 @@ The 3D surface mesh is computed by the marching cubes algorithm. As an input, th
 
 **Mesh reduction:** The mesh of a medical DICOM image can easily exceed 1 GB of data. Reducing the number of polygons, therefore, is a crucial feature. Reduction can be enabled by the option <code>-r X</code> where X is a floating-point value between 0.0 and 1.0. 
 
-<p align="center"><img alt="reduction" src="http://eidelen.diffuse.ch/mesh-reduction.png" width="60%"></p>
+<p align="center"><img alt="reduction" src="docs/img/mesh-reduction.png" width="60%"></p>
 
 **Mesh smoothing:** Acquired medical images contain often heavy noise. This is visible in the extracted 3D surface. Smoothing the mesh leads often to a better result. Smoothing can be enabled with the argument <code>-s</code>.
 
-<p align="center"><img alt="smoothing" src="http://eidelen.diffuse.ch/mesh-smoothed.png" width="60%"></p>
+<p align="center"><img alt="smoothing" src="docs/img/mesh-smoothed.png" width="60%"></p>
 
 **Remove small objects:** The resulting 3D mesh contains often parts which are not of interest, such as for example the screws of the table on which a CT scan of a patient was acquired. With DicomToMesh, you can remove objects below a certain size by adding the option <code>-e X</code> where X is a floating-point value between 0.0 and 1.0. <code>X</code> is a size threshold relative to the connected object with the most vertices. It is easy understandable with an example: The biggest connected object of the mesh has 1000 vertices. Then <code>-e 0.25</code> removes all connected objects with less than 250 vertices.    
 
-<p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/mesh-filter.png" width="80%"></p>
+<p align="center"><img alt="filter" src="docs/img/mesh-filter.png" width="80%"></p>
 
 
 # Visualisation 
 
 By passing the command line option <code>-v</code> the resulting mesh is visualised in a 3D environment. By double clicking the mesh's  surface, the corresponding 3D coordinate is printed to the shell.
 
-<p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/mesh-visualization.png" width="50%"></p>
+<p align="center"><img alt="filter" src="docs/img/mesh-visualization.png" width="50%"></p>
 
 The option <code>-vo</code> shows the input DICOM data in a volume renderer (vtkFixedPointVolumeRayCastMapper). The color map can be set with multiple parameters like <code>(Red,Green,Blue,Alpha,Iso-Value)</code>. As an example, the parameters <code>-vo (255,0,0,0,0) (255,0,0,60,700) (200,200,200,90,2000)</code> color voxels with values from 0-700 reddish and 700-2000 whitish. 
 
-<p align="center"><img alt="filter" src="http://eidelen.diffuse.ch/volumerendering.png" width="50%"></p>
+<p align="center"><img alt="filter" src="docs/img/volumerendering.png" width="50%"></p>
 
 # Installation
 
@@ -102,7 +102,7 @@ Dicom2Mesh can be built with a small GUI on top.
 This showed up to be helpful for users without command line experience.
 However, the control possibilities are limited compared to the command line version.
 
-<p align="center"><img alt="dicom2mesh_gui" src="http://eidelen.diffuse.ch/dicomtomesh_gui2.png" width="75%"></p>
+<p align="center"><img alt="dicom2mesh_gui" src="docs/img/dicomtomesh_gui2.png" width="75%"></p>
 
 In order to build the Dicom2Mesh GUI, please set the cmake flag <code>BUILD_GUI=ON</code> when configuring the project.
 The GUI requires QT.
@@ -115,4 +115,4 @@ DicomToMesh is a small in-house product of AOT AG (http://www.aot.swiss). Since 
 
 Have fun :)
 
-<p align="right"><img alt="filter" src="http://eidelen.diffuse.ch/aot.jpg" width="30%"></p>
+<p align="right"><img alt="filter" src="docs/img/aot.jpg" width="30%"></p>
