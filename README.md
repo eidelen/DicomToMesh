@@ -115,4 +115,3 @@ DicomToMesh is a small in-house product of AOT AG (http://www.aot.swiss). Since 
 
 Have fun :)
 
-<p align="right"><img alt="filter" src="docs/img/aot.jpg" width="30%"></p>
