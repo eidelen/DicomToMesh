@@ -11,7 +11,7 @@ ENDIF("${VTK_MAJOR_VERSION}" LESS 9)
 include_directories( inc )
 add_executable( dicom2mesh src/main.cpp src/dicom2mesh.cpp )
 target_link_libraries( dicom2mesh dicom2meshlib ${VTK_LIBRARIES} )
-target_compile_options( dicom2mesh PRIVATE -Wall -pedantic -Wextra -Wno-extra-semi )
+target_compile_options( dicom2mesh PRIVATE -Wall -Wno-extra-semi )
 target_compile_features( dicom2mesh PRIVATE cxx_std_17 )
 
 
