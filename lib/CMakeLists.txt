@@ -35,7 +35,7 @@ ADD_LIBRARY(dicom2meshlib STATIC ${DICOM_TO_MESH_LIB_INC} ${DICOM_TO_MESH_LIB_SR
 target_link_libraries(dicom2meshlib ${DICOM_TO_MESH_LIB_LIBS})
 target_include_directories(dicom2meshlib INTERFACE ${DICOM_TO_MESH_INC_DIRS})
 target_compile_features(dicom2meshlib PRIVATE cxx_std_17)
-target_compile_options( dicom2meshlib PRIVATE -Wall -pedantic -Wextra -Wno-extra-semi )
+target_compile_options( dicom2meshlib PRIVATE -Wall -Wno-extra-semi )
 
 if(UNIX)
     install(
