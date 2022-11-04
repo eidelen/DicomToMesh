@@ -7,7 +7,7 @@
 
 bool fexists(const std::string& filePath)
 {
-    ifstream f(filePath.c_str());
+    std::ifstream f(filePath.c_str());
     return f.good();
 }
 

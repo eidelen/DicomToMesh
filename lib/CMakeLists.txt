@@ -3,7 +3,11 @@
 project( dicom2meshlib )
 
 find_package( VTK REQUIRED )
-include( ${VTK_USE_FILE} )
+
+IF("${VTK_MAJOR_VERSION}" LESS 9)
+    include( ${VTK_USE_FILE} )
+ENDIF("${VTK_MAJOR_VERSION}" LESS 9)
+
 set(DICOM_TO_MESH_LIB_LIBS ${VTK_LIBRARIES})
 
 FILE(GLOB  DICOM_TO_MESH_LIB_INC       inc/*.h)

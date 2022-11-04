@@ -3,7 +3,10 @@
 project( dicom2mesh )
 
 find_package( VTK REQUIRED )
-include( ${VTK_USE_FILE} )
+
+IF("${VTK_MAJOR_VERSION}" LESS 9)
+    include( ${VTK_USE_FILE} )
+ENDIF("${VTK_MAJOR_VERSION}" LESS 9)
 
 include_directories( inc )
 add_executable( dicom2mesh src/main.cpp src/dicom2mesh.cpp )
