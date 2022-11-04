@@ -1,0 +1,22 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ master ]
+
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install all packages and build gtest 
+      run: sudo apt-get install -y libgtest-dev libvtk6-dev cmake libproj-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && ls -a && cd lib && sudo cp *.a /usr/lib
+    - name: configure
+      run: mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON ..
+    - name: build d2m
+      run: cd build && make
+    - name: Run Test
+      run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
