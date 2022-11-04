@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Install gtest manually
-      run: sudo apt-get install -y libgtest-dev libeigen3-dev cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && ls -a && cd lib && sudo cp *.a /usr/lib
+    - name: Install packages and build gtest
+      run: sudo apt-get install -y libgtest-dev libvtk6-dev cmake libproj-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && ls -a && cd lib && sudo cp *.a /usr/lib
     - name: configure
-      run: cd cpp && mkdir build && cd build && cmake -DTESTPSFLIB=ON ..
-    - name: make
-      run: cd cpp/build && make
+      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON ..
+    - name: make d2m
+      run: cd build && make
     - name: Run Test
-      run: cd cpp/build && ./runPsfLibTests
+      run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
