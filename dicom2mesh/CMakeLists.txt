@@ -26,7 +26,7 @@ IF(${TESTDICOM2MESH})
     FILE(GLOB_RECURSE  D2M_TESTS_SRC       test/*.cpp)
 
     add_executable( runD2MTests src/dicom2mesh.cpp ${D2M_TESTS_INC} ${D2M_TESTS_SRC} )
-    target_link_libraries( runD2MTests ${GTEST_LIBRARIES} dicom2meshlib )
+    target_link_libraries( runD2MTests ${GTEST_LIBRARIES} dicom2meshlib pthread)
     target_compile_features( runD2MTests PRIVATE cxx_std_17 )
     target_compile_options( runD2MTests PRIVATE -Wall -Wno-extra-semi )
 ENDIF()
