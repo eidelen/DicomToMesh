@@ -13,9 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install packages 
-      run: sudo apt-get install -y libvtk6-dev cmake libproj-dev
+      run: sudo apt-get install -y libvtk6-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
     - name: configure
-      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON ..
+      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON ..
     - name: make d2m
       run: cd build && make
     - name: Run Test
