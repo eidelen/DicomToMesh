@@ -3,7 +3,11 @@
 project( dicom2meshlib )
 
 find_package( VTK REQUIRED )
-include( ${VTK_USE_FILE} )
+
+IF("${VTK_MAJOR_VERSION}" LESS 9)
+    include( ${VTK_USE_FILE} )
+ENDIF("${VTK_MAJOR_VERSION}" LESS 9)
+
 set(DICOM_TO_MESH_LIB_LIBS ${VTK_LIBRARIES})
 
 FILE(GLOB  DICOM_TO_MESH_LIB_INC       inc/*.h)
@@ -31,7 +35,7 @@ ADD_LIBRARY(dicom2meshlib STATIC ${DICOM_TO_MESH_LIB_INC} ${DICOM_TO_MESH_LIB_SR
 target_link_libraries(dicom2meshlib ${DICOM_TO_MESH_LIB_LIBS})
 target_include_directories(dicom2meshlib INTERFACE ${DICOM_TO_MESH_INC_DIRS})
 target_compile_features(dicom2meshlib PRIVATE cxx_std_17)
-target_compile_options( dicom2meshlib PRIVATE -Wall -pedantic -Wextra -Wno-extra-semi )
+target_compile_options( dicom2meshlib PRIVATE -Wall -Wno-extra-semi )
 
 if(UNIX)
     install(
@@ -47,14 +51,23 @@ endif(UNIX)
 option(TESTDICOM2MESHLIB "Test library" OFF)
 IF(${TESTDICOM2MESHLIB})
     MESSAGE(STATUS "Test library activated")
-    find_package(GTest REQUIRED)
-    include_directories(${GTEST_INCLUDE_DIRS})
+
+    # Download and build gtest
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        # Specify the commit you depend on and update it regularly.
+        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 
     FILE(GLOB_RECURSE  D2M_LIB_TESTS_INC       test/*.h)
     FILE(GLOB_RECURSE  D2M_LIB_TESTS_SRC       test/*.cpp)
 
     add_executable(runLibTests ${D2M_LIB_TESTS_INC} ${D2M_LIB_TESTS_SRC})
-    target_link_libraries(runLibTests ${GTEST_LIBRARIES} dicom2meshlib )
+    target_link_libraries(runLibTests dicom2meshlib gtest_main)
     target_compile_features( runLibTests PRIVATE cxx_std_17 )
     target_compile_options( runLibTests PRIVATE -Wall -Wno-extra-semi )
 ENDIF()

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/AOT-AG/DicomToMesh.svg?branch=master)](https://travis-ci.org/AOT-AG/DicomToMesh)
+![d2m build status](https://github.com/AOT-AG/DicomToMesh/actions/workflows/cpp.yml/badge.svg)
 
 # DicomToMesh
 
