@@ -1,4 +1,4 @@
-![vtk6 build status](https://github.com/AOT-AG/DicomToMesh/actions/workflows/cppVTK6.yml/badge.svg) ![vtk8 build status](https://github.com/AOT-AG/DicomToMesh/actions/workflows/cppVTK8.yml/badge.svg) ![VTK9 build status](https://github.com/AOT-AG/DicomToMesh/actions/workflows/cppVTK9.yml/badge.svg)
+![vtk6 build status](https://github.com/AOT-AG/DicomToMesh/actions/workflows/cppVTK6.yml/badge.svg) ![VTK9 build status](https://github.com/AOT-AG/DicomToMesh/actions/workflows/cppVTK9.yml/badge.svg)
 
 # DicomToMesh
 
