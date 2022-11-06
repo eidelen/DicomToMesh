@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v1
+    - uses: openrndr/setup-opengl@v1.1
     - name: Install packages 
       run: sudo apt-get install -y libgl-dev libvtk9-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
     - name: configure
