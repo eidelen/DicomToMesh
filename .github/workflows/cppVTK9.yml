@@ -1,11 +1,6 @@
-name: C++ CI
+name: VTK9 C++ CI
 
-on:
-  push:
-    branches: [ vtk9 ]
-
-  pull_request:
-    branches: [ vtk9 ]
+on: [push, pull_request]
 
 jobs:
   build:
