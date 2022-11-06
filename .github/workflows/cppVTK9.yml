@@ -9,14 +9,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: openrndr/setup-opengl@v1.1
     - name: Install packages 
-      run: sudo apt-get install -y libgl-dev libvtk9-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+      run: sudo apt-get install -y build-essential cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+    - name: Build VTK9
+      run: mkdir vtk9 && cd vtk9 && git clone https://github.com/Kitware/VTK.git && cd VTK && git checkout v9.2.2 && mkdir build && cd build && cmake .. && make
     - name: configure
-      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON ..
+      run:  mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON ..
     - name: make d2m
       run: cd build && make
     - name: Run Test
