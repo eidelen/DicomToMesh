@@ -2,10 +2,10 @@ name: C++ CI
 
 on:
   push:
-    branches: [ vtk9 ]
+    branches: [ master ]
 
   pull_request:
-    branches: [ vtk9 ]
+    branches: [ master ]
 
 jobs:
   build:
