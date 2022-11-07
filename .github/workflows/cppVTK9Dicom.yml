@@ -12,7 +12,7 @@ jobs:
     - name: Build VTK9
       run: mkdir vtk9 && cd vtk9 && git clone https://github.com/Kitware/VTK.git && cd VTK && git checkout v9.2.2 && mkdir build && cd build && cmake .. && make
     - name: Build VTK-Dicom
-      run: git clone https://github.com/dgobbi/vtk-dicom.git && cd vtk-dicom && mkdir build && cd build && cmake -DVTK_DIR="../../vtk9/VTK/build" .. && make
+      run: git clone https://github.com/dgobbi/vtk-dicom.git && cd vtk-dicom && mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" .. && make
 
     - name: Configure Simple
       run:  mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=OFF ..
