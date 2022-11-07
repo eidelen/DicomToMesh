@@ -25,7 +25,7 @@ jobs:
       run: rm -rf build
 
     - name: Configure VTKDicom
-      run:  mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=ON ..
+      run:  mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=ON -DDICOM_DIR="../vtk-dicom/build" ..
     - name: Build D2M VTKDicom
       run: cd build && make
     - name: Run Test VTKDicom
