@@ -48,7 +48,7 @@ On OSX and Windows it is required to build DicomToMesh yourself.
 
 # Building
 
-The software is written in C++11 and uses VTK 7.0. CMake is used as build-system.
+The software is written in modern C++ on top of the powerful VTK library and is using CMake as a build-system.
 
 Building DicomToMesh on Linux and OSX:
 ```
