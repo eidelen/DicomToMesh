@@ -1,0 +1,30 @@
+name: VTK6 C++ CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install packages 
+      run: sudo apt-get install -y libvtk6-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+    - name: Build VTK-Dicom
+      run: git clone https://github.com/dgobbi/vtk-dicom.git && cd vtk-dicom && mkdir build && cd build && cmake .. && make
+
+    - name: Configure Simple
+      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON ..
+    - name: Build D2M Simple
+      run: cd build && make
+    - name: Run Test Simple
+      run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
+
+    - name: Clean
+      run: rm -rf build
+   
+    - name: Configure VTKDicom
+      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=ON ..
+    - name: Build D2M VTKDicom
+      run: cd build && make
+    - name: Run Test VTKDicom
+      run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
