@@ -24,10 +24,10 @@
 #include "dicomRoutinesExtended.h"
 
 #include <iostream>
-#include "vtkDICOMDirectory.h"
-#include "vtkDICOMItem.h"
-#include "vtkStringArray.h"
-#include "vtkDICOMReader.h"
+#include <vtkDICOMDirectory.h>
+#include <vtkDICOMItem.h>
+#include <vtkStringArray.h>
+#include <vtkDICOMReader.h>
 
 VTKDicomRoutinesExtended::VTKDicomRoutinesExtended()
 {
