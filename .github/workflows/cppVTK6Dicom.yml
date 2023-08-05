@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install packages 
-      run: sudo apt-get install -y libvtk6-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+      run: sudo apt-get update && sudo apt-get install -y libvtk6-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
     - name: Build VTK-Dicom
       run: git clone https://github.com/dgobbi/vtk-dicom.git && cd vtk-dicom && mkdir build && cd build && cmake .. && make
 
