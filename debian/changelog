@@ -1,8 +1,9 @@
-dicom2mesh (0.8-0ppa0~disco) disco; urgency=low
+dicom2mesh (0.812-0ppa0~jammy) jammy; urgency=low
 
-  * Disco version
+  * Jammy version
   * Upper segmentation threshold
   * Volume rendering visualization
+  * VTK9
 
 
- -- Adrian Schneider (eidelen) <adrian.schneider.pr@gmail.com>  Wed, 04 September 2019 09:21:16 +0200
+ -- Adrian Schneider (eidelen) <adrian.schneider.pr@gmail.com>  Sun, 06 Aug 2023 22:02:16 +0200

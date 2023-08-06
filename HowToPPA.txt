@@ -1,9 +1,15 @@
 How to update ppa package (apt-get install ...)
 
+0) Prepare
+gpg --gen-key   # make a key
+gpg --keyserver keyserver.ubuntu.com --send-keys XXXXXXXXX  # add the key to the key server
+add the key also to launchpad
+
 1) Update the version in file changelog
 
 2) Create package
-tar -acf dicom2mesh_0.1.orig.tar.gz DicomToMesh; cd DicomToMesh; debuild -S -sa; cd ..;
+tar -acf dicom2mesh_0.1.orig.tar.gz DicomToMesh; cd DicomToMesh; debuild -S -sa -kXXXXXX; cd ..;
+... where XXXXX is the key id
 
 3) Upload to server
 dput ppa:eidelen/d2m dicom2mesh_0.1-0ppa0_source.changes
