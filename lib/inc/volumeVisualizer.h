@@ -32,23 +32,21 @@ class VolumeRenderingColoringEntry
 {
 public:
 
-    VolumeRenderingColoringEntry(){}
-    VolumeRenderingColoringEntry(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, int voxelValue) :
-    m_red(red), m_green(green), m_blue(blue), m_alpha(alpha), m_voxelValue(voxelValue)
-    {}
+    VolumeRenderingColoringEntry();
+    VolumeRenderingColoringEntry(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, int voxelValue);
 
     /*
      * The color and transparency
      */
-    unsigned char m_red = 255u;
-    unsigned char m_green = 255u;
-    unsigned char m_blue = 255u;
-    unsigned char m_alpha = 128u;
+    unsigned char m_red;
+    unsigned char m_green;
+    unsigned char m_blue;
+    unsigned char m_alpha;
 
     /*
      * The voxel value, to which the color is applied
      */
-    int m_voxelValue = 0;
+    int m_voxelValue;
 };
 
 class VTKVolumeVisualizer

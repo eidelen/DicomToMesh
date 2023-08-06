@@ -32,6 +32,16 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 
+VolumeRenderingColoringEntry::VolumeRenderingColoringEntry() : VolumeRenderingColoringEntry(255u, 255u, 255u, 128u, 0)
+{
+}
+
+VolumeRenderingColoringEntry::VolumeRenderingColoringEntry(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, int voxelValue) :
+m_red(red), m_green(green), m_blue(blue), m_alpha(alpha), m_voxelValue(voxelValue)
+{
+}
+
+
 // Code based on examples from:
 // https://www.vtk.org/Wiki/VTK/Examples/Cxx/VolumeRendering/SmartVolumeMapper
 // https://www.vtk.org/Wiki/VTK/Examples/Cxx/Medical/MedicalDemo4

@@ -21,6 +21,13 @@
 **
 *****************************************************************************/
 
+#include <vtkAlgorithm.h>
+#include <iostream>
+#include <memory>
+#include <fstream>
+#include <chrono>
+#include <regex>
+
 #include "dicom2mesh.h"
 #include "meshRoutines.h"
 #include "meshData.h"
@@ -28,13 +35,6 @@
 #include "dicomRoutines.h"
 #include "meshVisualizer.h"
 #include "volumeVisualizer.h"
-
-#include <vtkAlgorithm.h>
-#include <iostream>
-#include <memory>
-#include <fstream>
-#include <chrono>
-#include <regex>
 
 // Note: In order to safe memory, smart-pointers were not used for certain
 //       objects. This has the advantage that memory blocks can be released

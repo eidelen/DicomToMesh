@@ -62,6 +62,42 @@ TEST(D2M, MakeSimpleMesh)
     }
 }
 
+TEST(D2M, ImportSimpleMesh)
+{
+    std::vector<std::string> fnames{"testObj.obj", "testPly.ply", "testStl.stl"};
+
+    for( auto fn: fnames )
+    {
+        // create file fn
+        Dicom2Mesh::Dicom2MeshParameters settings = getPresetImageSettings();
+        settings.outputFilePath = fn;
+        settings.isoValue = 100;
+        Dicom2Mesh* d2m = new Dicom2Mesh(settings);
+        int retCode = d2m->doMesh();
+        delete d2m;
+
+        ASSERT_EQ(retCode, 0);
+        ASSERT_GT(filesize(fn), 0);
+        ASSERT_TRUE(fexists(fn));
+
+        // now import it again and safe as, whatever, obj
+        std::string exportFilePath = "importtest.obj";
+        Dicom2Mesh::Dicom2MeshParameters importSettings;
+        importSettings.pathToInputData = fn;
+        importSettings.outputFilePath = exportFilePath;
+        Dicom2Mesh* d2mImport = new Dicom2Mesh(importSettings);
+        retCode = d2mImport->doMesh();
+        delete d2mImport;
+        ASSERT_EQ(retCode, 0);
+        ASSERT_GT(filesize(exportFilePath), 0);
+        ASSERT_TRUE(fexists(exportFilePath));
+
+
+        remove(fn.c_str());
+        remove(exportFilePath.c_str());
+    }
+}
+
 TEST(D2M, MakeCenterMesh)
 {
     std::vector<std::string> fnames{"testObj.obj", "testPly.ply", "testStl.stl"};
