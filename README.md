@@ -71,7 +71,10 @@ Now you are back in terminal and ready to build.
 ```
 > make
 ```
-In order to extend the supported DICOM formats, the library vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom).
+In order to extend the supported DICOM formats, the library vtk-dicom <code>USE_VTK_DICOM</code> can be optionally enabled (see https://github.com/dgobbi/vtk-dicom). If you use VTK 6, 7 or 8, you have to build vtk-dicom separately. From on VTK 9, vtk-dicom is part of the vtk project - you can enable the corresponding module when building VTK with
+```
+> cmake .. -DVTK_MODULE_ENABLE_VTK_DICOM=YES -DVTK_MODULE_ENABLE_VTK_vtkDICOM=YES
+```
 
 Building on Windows:
 
@@ -111,7 +114,7 @@ The icons in the gui were made by <a href="https://www.flaticon.com/authors/smas
 
 # Contributors
 
-DicomToMesh is a small in-house product of AOT AG (http://www.aot.swiss). Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
+DicomToMesh is a in-house product of AOT AG. Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
 
 Have fun :)
 
