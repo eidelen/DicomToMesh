@@ -81,10 +81,10 @@ public:
      */
     void cropDicom( vtkSmartPointer<vtkImageData> imageData );
 
-
 private:
 
-    bool fileExists(const std::string& filePath);
+    bool checkDataLoaded( vtkSmartPointer<vtkImageData> imageData );
+
 
 protected:
 

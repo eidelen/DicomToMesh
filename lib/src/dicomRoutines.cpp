@@ -31,6 +31,7 @@
 #include <vtkStringArray.h>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 using namespace std;
 
@@ -64,8 +65,7 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
     rawVolumeData->DeepCopy(reader->GetOutput());
 
     // check if load was successful
-    int* dims = rawVolumeData->GetDimensions();
-    if( dims[0] < 1 || dims[1] < 1 || dims[2] < 1 )
+    if( checkDataLoaded(rawVolumeData) )
     {
         cerr << "No DICOM data in directory" << endl;
         return NULL;
@@ -150,23 +150,17 @@ void VTKDicomRoutines::cropDicom( vtkSmartPointer<vtkImageData> imageData )
     }
 }
 
-bool VTKDicomRoutines::fileExists(const std::string& filePath)
-{
-    ifstream f(filePath.c_str());
-        return f.good();
-}
-
 vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadPngImages( const std::vector<std::string>& pngPaths,
         double x_spacing, double y_spacing, double slice_spacing )
 {
     vtkSmartPointer<vtkStringArray> files = vtkSmartPointer<vtkStringArray>::New();
     files->SetNumberOfValues(pngPaths.size());
 
-    // copy paths and check if files exist
+    // copy existing file paths
     for( size_t i = 0; i < pngPaths.size(); i++ )
     {
         const std::string& path = pngPaths.at(i);
-        if( !fileExists(path) )
+        if( !std::filesystem::exists(std::filesystem::path(path)) )
         {
             cerr << "PNG file does not exist: " << path  << endl;
             return NULL;
@@ -185,8 +179,7 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadPngImages( const std::vector
     rawVolumeData->DeepCopy(pngReader->GetOutput());
 
     // check if load was successful
-    int* dims = rawVolumeData->GetDimensions();
-    if( dims[0] < 1 || dims[1] < 1 || dims[2] < 1 )
+    if( !checkDataLoaded(rawVolumeData) )
     {
         cerr << "No PNG data in directory" << endl;
         return NULL;
@@ -195,4 +188,10 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadPngImages( const std::vector
     cout << endl << endl;
 
     return rawVolumeData;
+}
+
+bool VTKDicomRoutines::checkDataLoaded( vtkSmartPointer<vtkImageData> imageData )
+{
+    int* dims = imageData->GetDimensions();
+    return dims[0] > 0  && dims[1] > 0  &&  dims[2] > 0;
 }
