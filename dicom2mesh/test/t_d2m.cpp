@@ -1,15 +1,9 @@
 #include <gtest/gtest.h>
 #include "dicom2mesh.h"
 
-#include <fstream>
+#include <filesystem>
 #include <cstdio>
 #include <limits>
-
-bool fexists(const std::string& filePath)
-{
-    std::ifstream f(filePath.c_str());
-    return f.good();
-}
 
 std::ifstream::pos_type filesize(const std::string& filePath)
 {
@@ -38,7 +32,7 @@ TEST(D2M, InvalidMesh)
     delete d2m;
 
     ASSERT_NE(retCode, 0);
-    ASSERT_FALSE(fexists(fname));
+    ASSERT_FALSE(std::filesystem::exists(std::filesystem::path(fname)));
 }
 
 TEST(D2M, MakeSimpleMesh)
@@ -57,7 +51,7 @@ TEST(D2M, MakeSimpleMesh)
 
         ASSERT_EQ(retCode, 0);
         ASSERT_GT(filesize(fn), 0);
-        ASSERT_TRUE(fexists(fn));
+        ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(fn)));
         remove(fn.c_str());
     }
 }
@@ -78,7 +72,7 @@ TEST(D2M, ImportSimpleMesh)
 
         ASSERT_EQ(retCode, 0);
         ASSERT_GT(filesize(fn), 0);
-        ASSERT_TRUE(fexists(fn));
+        ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(fn)));
 
         // now import it again and safe as, whatever, obj
         std::string exportFilePath = "importtest.obj";
@@ -90,7 +84,7 @@ TEST(D2M, ImportSimpleMesh)
         delete d2mImport;
         ASSERT_EQ(retCode, 0);
         ASSERT_GT(filesize(exportFilePath), 0);
-        ASSERT_TRUE(fexists(exportFilePath));
+        ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(exportFilePath)));
 
 
         remove(fn.c_str());
@@ -115,7 +109,7 @@ TEST(D2M, MakeCenterMesh)
 
         ASSERT_EQ(retCode, 0);
         ASSERT_GT(filesize(fn), 0);
-        ASSERT_TRUE(fexists(fn));
+        ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(fn)));
         remove(fn.c_str());
     }
 }
@@ -137,7 +131,7 @@ TEST(D2M, MakeSmoothedMesh)
 
         ASSERT_EQ(retCode, 0);
         ASSERT_GT(filesize(fn), 0);
-        ASSERT_TRUE(fexists(fn));
+        ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(fn)));
         remove(fn.c_str());
     }
 }
@@ -161,7 +155,7 @@ TEST(D2M, TestReduce)
         delete d2m;
 
         ASSERT_EQ(retCode, 0);
-        ASSERT_TRUE(fexists(fname));
+        ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(fname)));
 
         // check that file size decreases
         size_t fs = filesize(fname);

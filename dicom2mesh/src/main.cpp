@@ -21,6 +21,7 @@
 **
 *****************************************************************************/
 
+#include <memory>
 #include "dicom2mesh.h"
 
 int main(int argc, char *argv[])
@@ -29,10 +30,6 @@ int main(int argc, char *argv[])
     if( !Dicom2Mesh::parseCmdLineParameters(argc, (const char**)( argv ), settings) )
         return -1;
 
-    Dicom2Mesh* d2m = new Dicom2Mesh(settings);
-    int retCode = d2m->doMesh();
-
-    delete d2m;
-
-    return retCode;
+    auto d2m = std::shared_ptr<Dicom2Mesh>(new Dicom2Mesh(settings));
+    return d2m->doMesh();
 }
