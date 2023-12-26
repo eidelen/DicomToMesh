@@ -46,6 +46,21 @@ Ubuntu 18.04
 
 On OSX and Windows it is required to build DicomToMesh yourself. 
 
+### Using via Docker
+
+There is a [docker file](docker/Dockerfile) ready for use. If you have docker installed you can use the generated image without installing anything locally.
+
+#### Usage
+
+```bash
+# build image and tag it as `dicom2mesh`
+docker build docker -t dicom2mesh
+# use generated image to build an stl file
+docker run -v `pwd`/my/dicom/files/:/data dicom2mesh -i /data -t 557 -o /data/mesh.stl
+```
+
+Your mesh will be created alongside your dicom images and named `mesh.stl`
+
 # Building
 
 The software is written in modern C++ on top of the powerful VTK library and is using CMake as a build-system.
