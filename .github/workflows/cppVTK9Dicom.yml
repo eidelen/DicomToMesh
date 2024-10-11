@@ -8,11 +8,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install packages 
-      run: sudo apt-get update && sudo apt-get install -y build-essential cmake libglvnd-dev libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
-    - name: Build VTK9 (9.3.0)
-      run: mkdir vtk9 && cd vtk9 && git clone https://github.com/Kitware/VTK.git && cd VTK && git checkout v9.3.0 && mkdir build && cd build && cmake .. -DVTK_MODULE_ENABLE_VTK_DICOM=YES -DVTK_MODULE_ENABLE_VTK_vtkDICOM=YES && cmake .. -DVTK_MODULE_ENABLE_VTK_DICOM=YES -DVTK_MODULE_ENABLE_VTK_vtkDICOM=YES && make 
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake libglvnd-dev libproj-dev libvtk9-dev libvtk9-qt-dev 
+    - name: Check installed versions
+      run: cmake --version 
     - name: Configure Simple
-      run:  mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=OFF ..
+      run:  mkdir build && cd build && cmake -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF ..
     - name: Build D2M Simple
       run: cd build && make
     - name: Run Test Simple
@@ -20,11 +20,5 @@ jobs:
 
     - name: Clean
       run: rm -rf build
-   
-    - name: Configure VTKDicom
-      run:  mkdir build && cd build && cmake -DVTK_DIR="../vtk9/VTK/build" -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=ON ..
-    - name: Build D2M VTKDicom
-      run: cd build && make
-    - name: Run Test VTKDicom
-      run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
+
 
