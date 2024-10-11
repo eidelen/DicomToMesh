@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install packages 
-      run: sudo apt-get update && sudo apt-get install -y libvtk6-dev cmake libproj-dev qt6-base-dev qt6-base-dev-tools
+      run: sudo apt-get update && sudo apt-get install -y libvtk6-dev cmake libproj-dev 
     - name: Check installed versions
       run: cmake --version
     - name: Build VTK-Dicom Library
