@@ -54,8 +54,8 @@ TEST(ArgumentParser, ThresholdRange)
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
 
     ASSERT_EQ(parsedInput.isoValue, 405);
-    ASSERT_EQ(parsedInput.upperIsoValue.value(), 501);
     ASSERT_TRUE(parsedInput.upperIsoValue.has_value());
+    ASSERT_EQ(parsedInput.upperIsoValue.value(), 501);
 }
 
 TEST(ArgumentParser, ThresholdNegative)
@@ -265,4 +265,15 @@ TEST(ArgumentParser, ParseBinaryExportOff)
     ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(2, input, parsedInput));
 
     ASSERT_FALSE(parsedInput.useBinaryExport);
+}
+
+TEST(ArgumentParser, PolygonLimitEnable)
+{
+    const char *input[6] = {"-i", "inputDir", "-p", "12345"};
+
+    Dicom2Mesh::Dicom2MeshParameters parsedInput;
+    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(4, input, parsedInput));
+
+    ASSERT_TRUE(parsedInput.polygonLimit.has_value());
+    ASSERT_EQ(parsedInput.polygonLimit, 12345);
 }

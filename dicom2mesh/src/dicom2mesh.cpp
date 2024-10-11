@@ -214,7 +214,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
                 return false;
             }
         }
-        if( cArg.compare("-ipng") == 0 )
+        else if( cArg.compare("-ipng") == 0 )
         {
             param.inputImageFiles = {};
         }
