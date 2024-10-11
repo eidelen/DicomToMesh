@@ -1,0 +1,20 @@
+name: GUI Qt6
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install packages 
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake libglvnd-dev libproj-dev libvtk9-dev libvtk9-qt-dev qt6-base-dev qt6-base-dev-tools
+    - name: Check installed versions
+      run: cmake --version 
+    - name: Configure Simple
+      run:  mkdir build && cd build && cmake -DTESTDICOM2MESH=OFF -DTESTDICOM2MESHLIB=OFF -DBUILD_GUI=ON -DUSE_VTK_DICOM=OFF ..
+    - name: Build D2M Simple
+      run: cd build && make
+
+
+
