@@ -8,12 +8,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install packages 
-      run: sudo apt-get update && sudo apt-get install -y libvtk6-dev cmake libproj-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
-    - name: Build VTK-Dicom
+      run: sudo apt-get update && sudo apt-get install -y libvtk6-dev cmake libproj-dev qt6-base-dev qt6-base-dev-tools
+    - name: Check installed versions
+      run: cmake --version
+    - name: Build VTK-Dicom Library
       run: git clone https://github.com/dgobbi/vtk-dicom.git && cd vtk-dicom && mkdir build && cd build && cmake .. && make
-
     - name: Configure Simple
-      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON ..
+      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DUSE_VTK_DICOM=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON ..
     - name: Build D2M Simple
       run: cd build && make
     - name: Run Test Simple
@@ -22,9 +23,9 @@ jobs:
     - name: Clean
       run: rm -rf build
    
-    - name: Configure VTKDicom
-      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DBUILD_GUI=ON -DUSE_VTK_DICOM=ON ..
-    - name: Build D2M VTKDicom
+    - name: Configure VTK_DICOM
+      run:  mkdir build && cd build && cmake -DBUILD_GUI=OFF -DTESTDICOM2MESH=ON -DTESTDICOM2MESHLIB=ON -DUSE_VTK_DICOM=ON ..
+    - name: Build D2M VTK_DICOM
       run: cd build && make
-    - name: Run Test VTKDicom
+    - name: Run Test VTK_DICOM
       run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
