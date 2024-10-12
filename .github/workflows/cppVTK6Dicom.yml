@@ -19,6 +19,14 @@ jobs:
       run: cd build && make
     - name: Run Test Simple
       run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
+    - name: Run Smoke Test Dicom2Mesh
+      run: |
+          if ./build/dicom2mesh/dicom2mesh -h | grep -q "How to use dicom2Mesh:"; then
+              echo "Smoke test passed: Application started successfully."
+          else
+              echo "Smoke test failed: Expected output not found."
+              exit 1
+          fi
 
     - name: Clean
       run: rm -rf build
@@ -29,3 +37,11 @@ jobs:
       run: cd build && make
     - name: Run Test VTK_DICOM
       run: ./build/lib/runLibTests && ./build/dicom2mesh/runD2MTests
+    - name: Run Smoke Test VTK_DICOM Dicom2Mesh
+      run: |
+          if ./build/dicom2mesh/dicom2mesh -h | grep -q "How to use dicom2Mesh:"; then
+              echo "Smoke test passed: Application started successfully."
+          else
+              echo "Smoke test failed: Expected output not found."
+              exit 1
+          fi

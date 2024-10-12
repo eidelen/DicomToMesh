@@ -3,11 +3,12 @@
 
 TEST(ArgumentParser, InputPathAndDefault)
 {
-    int nInput = 2;
-    const char* input[2] = { "-i", "inputDir"};
+    constexpr int nInput = 2;
+    const char* input[nInput] = { "-i", "inputDir"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.pathToInputData.has_value());
     ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(),"inputDir");
@@ -24,11 +25,12 @@ TEST(ArgumentParser, InputPathAndDefault)
 
 TEST(ArgumentParser, OutputPath)
 {
-    int nInput = 4;
-    const char *input[4] = {"-i", "inputDir", "-o", "output.obj"};
+    constexpr int nInput = 4;
+    const char *input[nInput] = {"-i", "inputDir", "-o", "output.obj"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.outputFilePath.has_value());
     ASSERT_STREQ(parsedInput.outputFilePath.value().c_str(), "output.obj");
@@ -36,22 +38,24 @@ TEST(ArgumentParser, OutputPath)
 
 TEST(ArgumentParser, Threshold)
 {
-    int nInput = 4;
-    const char *input[4] = {"-i", "inputDir", "-t", "405"};
+    constexpr int nInput = 4;
+    const char *input[nInput] = {"-i", "inputDir", "-t", "405"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_EQ(parsedInput.isoValue, 405);
 }
 
 TEST(ArgumentParser, ThresholdRange)
 {
-    int nInput = 6;
-    const char *input[6] = {"-i", "inputDir", "-t", "405", "-tu", "501"};
+    constexpr int nInput = 6;
+    const char *input[nInput] = {"-i", "inputDir", "-t", "405", "-tu", "501"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_EQ(parsedInput.isoValue, 405);
     ASSERT_TRUE(parsedInput.upperIsoValue.has_value());
@@ -60,22 +64,24 @@ TEST(ArgumentParser, ThresholdRange)
 
 TEST(ArgumentParser, ThresholdNegative)
 {
-    int nInput = 4;
-    const char *input[4] = {"-i", "inputDir", "-t", "-24"};
+    constexpr int nInput = 4;
+    const char *input[nInput] = {"-i", "inputDir", "-t", "-24"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_EQ(parsedInput.isoValue, -24);
 }
 
 TEST(ArgumentParser, Reduction)
 {
-    int nInput = 4;
-    const char *input[4] = {"-i", "inputDir", "-r", "0.43"};
+    constexpr int nInput = 4;
+    const char *input[nInput] = {"-i", "inputDir", "-r", "0.43"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.reductionRate.has_value());
     ASSERT_FLOAT_EQ(parsedInput.reductionRate.value(), 0.43);
@@ -83,11 +89,12 @@ TEST(ArgumentParser, Reduction)
 
 TEST(ArgumentParser, SmoothingAndFilter)
 {
-    int nInput = 5;
-    const char *input[5] = {"-i", "inputDir", "-s", "-e", "0.1234"};
+    constexpr int nInput = 5;
+    const char *input[nInput] = {"-i", "inputDir", "-s", "-e", "0.1234"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.enableSmoothing);
 
@@ -97,11 +104,12 @@ TEST(ArgumentParser, SmoothingAndFilter)
 
 TEST(ArgumentParser, CenterAndCrop)
 {
-    int nInput = 4;
-    const char *input[4] = {"-i", "inputDir", "-c", "-z"};
+    constexpr int nInput = 4;
+    const char *input[nInput] = {"-i", "inputDir", "-c", "-z"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.enableOriginToCenterOfMass);
     ASSERT_TRUE(parsedInput.enableCrop);
@@ -109,11 +117,12 @@ TEST(ArgumentParser, CenterAndCrop)
 
 TEST(ArgumentParser, Visualization)
 {
-    int nInput = 3;
-    const char *input[3] = {"-i", "inputDir", "-v"};
+    constexpr int nInput = 3;
+    const char *input[nInput] = {"-i", "inputDir", "-v"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.doVisualize);
     ASSERT_FALSE(parsedInput.showAsVolume);
@@ -122,11 +131,12 @@ TEST(ArgumentParser, Visualization)
 
 TEST(ArgumentParser, VolVisualization)
 {
-    int nInput = 17;
-    const char *input[17] = {"-i", "inputDir", "-vo", "( ", "1,", "2  ,", " 3 ,", "4", " ,-5)", "(6 , ", "7,", "+8,", "9 ,", "10 ", ")", "(252,253,254,255,0)", "(100,101,102,103,104)" };
+    constexpr int nInput = 17;
+    const char *input[nInput] = {"-i", "inputDir", "-vo", "( ", "1,", "2  ,", " 3 ,", "4", " ,-5)", "(6 , ", "7,", "+8,", "9 ,", "10 ", ")", "(252,253,254,255,0)", "(100,101,102,103,104)" };
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.doVisualize);
     ASSERT_TRUE(parsedInput.showAsVolume);
@@ -160,20 +170,22 @@ TEST(ArgumentParser, VolVisualization)
 
 TEST(ArgumentParser, VolVisualizationInvalidColor)
 {
-    int nInput = 9;
-    const char *input[9] = {"-i", "inputDir", "-vo", "( ", "257,", "2  ,", " 3 ,", "4", " ,-5)"};
+    constexpr int nInput = 9;
+    const char *input[nInput] = {"-i", "inputDir", "-vo", "( ", "257,", "2  ,", " 3 ,", "4", " ,-5)"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_FALSE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_FALSE(okPars);
 }
 
 TEST(ArgumentParser, ManyParamsEnabled)
 {
-    int nInput = 12;
-    const char *input[12] = {"-i", "inputDir", "-c", "-z", "-v", "-s", "-e", "0.1234", "-r", "0.43","-o", "output.obj"};
+    constexpr int nInput = 12;
+    const char *input[nInput] = {"-i", "inputDir", "-c", "-z", "-v", "-s", "-e", "0.1234", "-r", "0.43","-o", "output.obj"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.pathToInputData.has_value());
     ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(), "inputDir");
@@ -198,11 +210,12 @@ TEST(ArgumentParser, ManyParamsEnabled)
 
 TEST(ArgumentParser, ManyParamsDisabled)
 {
-    int nInput = 2;
-    const char *input[2] = {"-i", "inputDir"};
+    constexpr int nInput = 2;
+    const char *input[nInput] = {"-i", "inputDir"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(nInput, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.pathToInputData.has_value());
     ASSERT_STREQ(parsedInput.pathToInputData.value().c_str(),"inputDir");
@@ -226,8 +239,10 @@ TEST(ArgumentParser, ParsePngInput)
 {
     const char *input[4] = {"-ipng", "[abcd/efgh.png", ", hi/jkl.png", "]"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(4, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(4, input);
+
+    ASSERT_TRUE(okPars);
+
     ASSERT_TRUE(parsedInput.inputImageFiles.has_value());
     ASSERT_EQ(parsedInput.inputImageFiles.value().size(),2);
 
@@ -237,10 +252,12 @@ TEST(ArgumentParser, ParsePngInput)
 
 TEST(ArgumentParser, ParseSpacing)
 {
-    const char *input[6] = {"-i", "inputDir", "-sxyz", "1.5", "2.0 ",  " 3.0 "};
+    constexpr int nInput = 6;
+    const char *input[nInput] = {"-i", "inputDir", "-sxyz", "1.5", "2.0 ",  " 3.0 "};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(6, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_FLOAT_EQ(parsedInput.xyzSpacing[0], 1.5);
     ASSERT_FLOAT_EQ(parsedInput.xyzSpacing[1], 2.0);
@@ -249,30 +266,36 @@ TEST(ArgumentParser, ParseSpacing)
 
 TEST(ArgumentParser, ParseBinaryExportOn)
 {
-    const char *input[6] = {"-i", "inputDir", "-b"};
+    constexpr int nInput = 3;
+    const char *input[nInput] = {"-i", "inputDir", "-b"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(3, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.useBinaryExport);
 }
 
 TEST(ArgumentParser, ParseBinaryExportOff)
 {
-    const char *input[6] = {"-i", "inputDir"};
+    constexpr int nInput = 2;
+    const char *input[nInput] = {"-i", "inputDir"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(2, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_FALSE(parsedInput.useBinaryExport);
 }
 
 TEST(ArgumentParser, PolygonLimitEnable)
 {
-    const char *input[6] = {"-i", "inputDir", "-p", "12345"};
+    constexpr int nInput = 4;
+    const char *input[nInput] = {"-i", "inputDir", "-p", "12345"};
 
-    Dicom2Mesh::Dicom2MeshParameters parsedInput;
-    ASSERT_TRUE(Dicom2Mesh::parseCmdLineParameters(4, input, parsedInput));
+    auto[okPars, parsedInput] = Dicom2Mesh::parseCmdLineParameters(nInput, input);
+
+    ASSERT_TRUE(okPars);
 
     ASSERT_TRUE(parsedInput.polygonLimit.has_value());
     ASSERT_EQ(parsedInput.polygonLimit, 12345);

@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2017 Adrian Schneider, AOT AG
+** Copyright (c) 2017 Adrian Schneider, https://github.com/eidelen/DicomToMesh
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and associated documentation files (the "Software"),
@@ -26,8 +26,8 @@
 
 int main(int argc, char *argv[])
 {
-    Dicom2Mesh::Dicom2MeshParameters settings;
-    if( !Dicom2Mesh::parseCmdLineParameters(argc, (const char**)( argv ), settings) )
+    auto[parseOk, settings] = Dicom2Mesh::parseCmdLineParameters(argc, (const char**)( argv ));
+    if( !parseOk )
         return -1;
 
     auto d2m = std::shared_ptr<Dicom2Mesh>(new Dicom2Mesh(settings));

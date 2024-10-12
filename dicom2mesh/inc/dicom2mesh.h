@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2017 Adrian Schneider, AOT AG
+** Copyright (c) 2017 Adrian Schneider, https://github.com/eidelen
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and associated documentation files (the "Software"),
@@ -63,12 +63,12 @@ public:
     ~Dicom2Mesh();
 
     int doMesh();
-    static bool parseCmdLineParameters( const int &argc, const char **argv, Dicom2MeshParameters &param );
+    static std::tuple<bool, Dicom2MeshParameters> parseCmdLineParameters( const int &argc, const char **argv);
     static void showUsageText();
     static void showVersionText();
 
 private:
-    bool loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d );
+    std::tuple<bool, vtkSmartPointer<vtkPolyData>, vtkSmartPointer<vtkImageData>> loadInputData();
     std::string getParametersAsString(const Dicom2MeshParameters& params) const;
     static bool parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry );
     static std::vector<std::string> parseCommaSeparatedStr(const std::string& text);

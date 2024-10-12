@@ -129,7 +129,7 @@ The icons in the gui were made by <a href="https://www.flaticon.com/authors/smas
 
 # Contributors
 
-DicomToMesh is a in-house product of AOT AG. Since it is based on several open-source examples, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
+DicomToMesh was an in-house product of AOT AG, a former robotic medtech startup from Basel. Since the software is based on several open-source projects and multiple Stack Overflow entries, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
 
 Have fun :)
 
