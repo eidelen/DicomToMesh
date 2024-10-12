@@ -26,8 +26,8 @@
 
 int main(int argc, char *argv[])
 {
-    Dicom2Mesh::Dicom2MeshParameters settings;
-    if( !Dicom2Mesh::parseCmdLineParameters(argc, (const char**)( argv ), settings) )
+    auto[parseOk, settings] = Dicom2Mesh::parseCmdLineParameters(argc, (const char**)( argv ));
+    if( !parseOk )
         return -1;
 
     auto d2m = std::shared_ptr<Dicom2Mesh>(new Dicom2Mesh(settings));

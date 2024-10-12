@@ -173,10 +173,12 @@ int Dicom2Mesh::doMesh()
     {
         if( m_params.showAsVolume )
         {
+            std::cout << "Show volume..." << std::endl;
             VTKVolumeVisualizer::displayVolume(volume, m_params.volumenRenderingColoring);
         }
         else
         {
+            std::cout << "Show mesh..." << std::endl;
             VTKMeshVisualizer::displayMesh(mesh);
         }
     }
@@ -193,8 +195,9 @@ std::string Dicom2Mesh::trim(const std::string& str)
     return trimedStr;
 }
 
-bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dicom2MeshParameters &param)
+std::tuple<bool, Dicom2Mesh::Dicom2MeshParameters> Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv)
 {
+    Dicom2Mesh::Dicom2MeshParameters param;
     for( int a = 0; a < argc; a++ )
     {
         std::string cArg( argv[a] );
@@ -210,7 +213,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 showUsageText();
-                return false;
+                return {false, param};
             }
         }
         else if( cArg.compare("-ipng") == 0 )
@@ -228,7 +231,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 showUsageText();
-                return false;
+                return {false, param};
             }
         }
         else if( cArg.compare("-b") == 0 )
@@ -246,7 +249,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 showUsageText();
-                return false;
+                return {false, param};
             }
         }
         else if( cArg.compare("-tu") == 0 )
@@ -260,13 +263,13 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 showUsageText();
-                return false;
+                return {false, param};
             }
         }
         else if( cArg.compare("-h") == 0 )
         {
             showUsageText();
-            return false;
+            return {false, param};
         }
         else if( cArg.compare("-r") == 0 )
         {
@@ -331,7 +334,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 std::cerr << "Incomplete volume rendering color entry" << std::endl;
-                return false;
+                return {false, param};
             }
         }
         else if( cArg.at(0) == '[' )
@@ -364,7 +367,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
             else
             {
                 std::cerr << "No image files specified" << std::endl;
-                return false;
+                return {false, param};
             }
         }
         else if( cArg.compare("-z") == 0 )
@@ -374,7 +377,7 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         else if( cArg.compare("--version") == 0 )
         {
             showVersionText();
-            return false;
+            return {false, param};
         }
         else if( cArg.compare("-sxyz") == 0 )
         {
@@ -394,10 +397,10 @@ bool Dicom2Mesh::parseCmdLineParameters(const int &argc, const char **argv, Dico
         cerr << "or" << endl;
         cerr << "No input images defined" << endl << "> dicom2mesh -ipng [path1, path2, ...]" << endl;
         cerr << "For help, run" << endl << "> dicom2mesh -h" << endl;
-        return false;
+        return {false, param};
     }
 
-    return true;
+    return {true, param};
 }
 
 void Dicom2Mesh::showUsageText()

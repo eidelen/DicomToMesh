@@ -63,7 +63,7 @@ public:
     ~Dicom2Mesh();
 
     int doMesh();
-    static bool parseCmdLineParameters( const int &argc, const char **argv, Dicom2MeshParameters &param );
+    static std::tuple<bool, Dicom2MeshParameters> parseCmdLineParameters( const int &argc, const char **argv);
     static void showUsageText();
     static void showVersionText();
 
