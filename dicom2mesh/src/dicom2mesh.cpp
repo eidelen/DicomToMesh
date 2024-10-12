@@ -73,10 +73,9 @@ int Dicom2Mesh::doMesh()
     std::cout << std::endl << getParametersAsString(m_params) << std::endl;
     //******************************//
 
-    //******** Read DICOM *********//
-    vtkSmartPointer<vtkPolyData> mesh;
-    vtkSmartPointer<vtkImageData> volume;
-    if( !loadInputData( volume, mesh) )
+    //******** Read DICOM or Mesh *********//
+    auto[loadDataOk, mesh, volume] = loadInputData();
+    if( !loadDataOk )
         return -1;
     //******************************//
 
@@ -458,9 +457,10 @@ void Dicom2Mesh::showVersionText()
     std::cout << "dicom2Mesh version 0.8.0, https://github.com/eidelen/DicomToMesh" << std::endl;
 }
 
-
-bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d )
+std::tuple<bool, vtkSmartPointer<vtkPolyData>, vtkSmartPointer<vtkImageData>> Dicom2Mesh::loadInputData()
 {
+    vtkSmartPointer<vtkPolyData> mesh3d;
+    vtkSmartPointer<vtkImageData> volume;
     bool result = false;
 
     bool loadObj = false; bool loadStl = false; bool loadPly = false;
@@ -526,7 +526,7 @@ bool Dicom2Mesh::loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartP
         }
     }
 
-    return result;
+    return {result, mesh3d, volume};
 }
 
 std::string Dicom2Mesh::getParametersAsString(const Dicom2MeshParameters& params) const

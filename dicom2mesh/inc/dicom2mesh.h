@@ -68,7 +68,7 @@ public:
     static void showVersionText();
 
 private:
-    bool loadInputData( vtkSmartPointer<vtkImageData>& volume, vtkSmartPointer<vtkPolyData>& mesh3d );
+    std::tuple<bool, vtkSmartPointer<vtkPolyData>, vtkSmartPointer<vtkImageData>> loadInputData();
     std::string getParametersAsString(const Dicom2MeshParameters& params) const;
     static bool parseVolumeRenderingColorEntry( const std::string& text, VolumeRenderingColoringEntry& colorEntry );
     static std::vector<std::string> parseCommaSeparatedStr(const std::string& text);

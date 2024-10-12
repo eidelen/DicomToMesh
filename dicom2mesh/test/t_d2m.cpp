@@ -86,7 +86,6 @@ TEST(D2M, ImportSimpleMesh)
         ASSERT_GT(filesize(exportFilePath), 0);
         ASSERT_TRUE(std::filesystem::exists(std::filesystem::path(exportFilePath)));
 
-
         remove(fn.c_str());
         remove(exportFilePath.c_str());
     }
