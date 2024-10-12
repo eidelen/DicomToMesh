@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dicom2Mesh - AOT AG</string>
+   <string>Dicom2Mesh</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="0">
