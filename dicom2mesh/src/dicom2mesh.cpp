@@ -405,7 +405,7 @@ std::tuple<bool, Dicom2Mesh::Dicom2MeshParameters> Dicom2Mesh::parseCmdLineParam
 
 void Dicom2Mesh::showUsageText()
 {
-    std::cout << "How to use dicom2Mesh:" << std::endl << std::endl;
+    std::cout << "How to use provoke dicom2Mesh:" << std::endl << std::endl;
 
     std::cout << "Minimum example. This transforms a dicom data set into a 3d mesh file called mesh.stl by using a default iso value of 400 (shows bone)" << std::endl;
     std::cout << "> dicom2mesh -i pathToDicomDirectory -o mesh.stl" << std::endl << std::endl;
