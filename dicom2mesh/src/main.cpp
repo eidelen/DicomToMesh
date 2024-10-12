@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2017 Adrian Schneider, AOT AG
+** Copyright (c) 2017 Adrian Schneider, https://github.com/eidelen/DicomToMesh
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and associated documentation files (the "Software"),

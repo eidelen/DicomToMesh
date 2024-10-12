@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2017 Adrian Schneider, AOT AG
+** Copyright (c) 2017 Adrian Schneider, https://github.com/eidelen
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and associated documentation files (the "Software"),
@@ -455,7 +455,7 @@ void Dicom2Mesh::showUsageText()
 
 void Dicom2Mesh::showVersionText()
 {
-    std::cout << "dicom2Mesh version 0.8.0,   AOT AG - Switzerland" << std::endl;
+    std::cout << "dicom2Mesh version 0.8.0, https://github.com/eidelen/DicomToMesh" << std::endl;
 }
 
 
