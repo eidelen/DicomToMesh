@@ -65,7 +65,7 @@ vtkSmartPointer<vtkImageData> VTKDicomRoutines::loadDicomImage( const std::strin
     rawVolumeData->DeepCopy(reader->GetOutput());
 
     // check if load was successful
-    if( checkDataLoaded(rawVolumeData) )
+    if( !checkDataLoaded(rawVolumeData) )
     {
         cerr << "No DICOM data in directory" << endl;
         return NULL;
