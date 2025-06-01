@@ -127,6 +127,17 @@ The GUI requires QT.
 
 The icons in the gui were made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>. The license is <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
 
+# Issues
+
+## Unsupported DICOM Image Format
+There exists many different DICOM Image formats and it happens often that Dicom2Mesh is unable to understand these data. 
+With the following bash command, you can try to preprocess your DICOM images first before applying Dicom2Mesh.
+```
+for f in original-dicoms/*.dcm; do
+    gdcmconv --raw "$f" "raw-dicoms/$(basename "$f")"
+done  
+```
+
 # Contributors
 
 DicomToMesh was an in-house product of AOT AG, a former robotic medtech startup from Basel. Since the software is based on several open-source projects and multiple Stack Overflow entries, we decided to make our code public as well. We hope somebody can use parts of it. Participants are most welcome.
