@@ -1,9 +1,20 @@
 How to update ppa package (apt-get install ...)
 
 0) Prepare
-gpg --gen-key   # make a key
+gpg --gen-key   # make a key and use launchpad email address
 gpg --keyserver keyserver.ubuntu.com --send-keys XXXXXXXXX  # add the key to the key server
 add the key also to launchpad
+
+0.1) The keys XXXXXXX
+You can get local keys with > gpg --list-keys --keyid-format short.
+The key XXXXXXXX are the last 8 hex values of your generated key.... see
+```
+pub   ed25519/A1AA5854 2025-06-10 [SC] [expires: 2028-06-09]
+      4F5DB1AD5586BC25FFB5F22CCF6BFA4BA1AA5854
+uid         [ultimate] Adrian Schneider <adrian.schneider.pr@gmail.com>
+sub   cv25519/B33CA6CE 2025-06-10 [E] [expires: 2028-06-09]
+```
+... where A1AA5854 is your key.
 
 1) Update the version in file changelog
 
