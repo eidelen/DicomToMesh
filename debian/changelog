@@ -1,3 +1,9 @@
+dicom2mesh (0.813-0ppa0~nobleubuntu1) noble; urgency=medium
+
+  * Some little fixes 
+
+ -- Adrian Schneider <adrian.schneider.pr@gmail.com>  Tue, 10 Jun 2025 15:31:19 +0200
+
 dicom2mesh (0.812-0ppa0~jammy) jammy; urgency=low
 
   * Jammy version
