@@ -20,7 +20,7 @@ sub   cv25519/B33CA6CE 2025-06-10 [E] [expires: 2028-06-09]
 
 2) Create package
 tar -acf dicom2mesh_0.1.orig.tar.gz DicomToMesh; cd DicomToMesh; debuild -S -sa -kXXXXXX; cd ..;
-... where XXXXX is the key id
+... where XXXXX is the FULL key id
 
 3) Upload to server
 dput ppa:eidelen/d2m dicom2mesh_0.1-0ppa0_source.changes
