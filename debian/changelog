@@ -1,8 +1,8 @@
-dicom2mesh (0.813-0ppa0~nobleubuntu1) noble; urgency=medium
+dicom2mesh (0.818-0ppa0~noble) noble; urgency=low
 
-  * Some little fixes 
+  * Try to fix linking error libjawt
 
- -- Adrian Schneider <adrian.schneider.pr@gmail.com>  Tue, 10 Jun 2025 15:31:19 +0200
+ -- Adrian Schneider (eidelen) <adrian.schneider.pr@gmail.com>  Wed, 11 Jun 2025 18:41:19 +0200
 
 dicom2mesh (0.812-0ppa0~jammy) jammy; urgency=low
 
@@ -13,3 +13,4 @@ dicom2mesh (0.812-0ppa0~jammy) jammy; urgency=low
 
 
  -- Adrian Schneider (eidelen) <adrian.schneider.pr@gmail.com>  Sun, 06 Aug 2023 22:02:16 +0200
+

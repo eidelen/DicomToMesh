@@ -2,11 +2,11 @@ Source: dicom2mesh
 Section: devel
 Priority: optional
 Maintainer: Adrian Schneider <adrian.schneider.pr@gmail.com>
-Build-Depends: cmake, build-essential, libvtk9-dev, qtbase5-dev, libqt5opengl5-dev
+Build-Depends: debhelper-compat (= 13), cmake, build-essential, libvtk9-dev, qtbase5-dev, libqt5opengl5-dev, default-jdk
 Homepage: https://github.com/eidelen/DicomToMesh
 
 Package: dicom2mesh
 Architecture: any
-Depends: vtk9, qtbase5-dev, libqt5opengl5-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}, vtk9, qtbase5-dev, libqt5opengl5-dev, default-jre
 Description: DICOM to 3D mesh
  Dicom2Mesh is a command line tool to create 3D surface meshs from a set of 2D DICOM images. The supported 3D mesh formats are STL, OBJ and PLY. Several mesh processing routines can be applied.
