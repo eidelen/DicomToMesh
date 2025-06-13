@@ -1,0 +1,15 @@
+name: PPA Installation
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install PPA and Run a Test 
+      run: sudo chmod +x dicom2mesh/test/test-ppa-dicom2mesh.sh && ./dicom2mesh/test/test-ppa-dicom2mesh.sh 
+    - name: Clean
+      run: rm *.stl
+
+
