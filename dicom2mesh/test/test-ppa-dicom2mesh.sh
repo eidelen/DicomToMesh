@@ -13,6 +13,8 @@ sudo apt-get update -qq
 sudo apt-get install -y --no-install-recommends software-properties-common
 sudo add-apt-repository -y "$PPA"
 
+sudo apt-get install -y build-essential cmake libglvnd-dev libproj-dev libvtk9-dev libvtk9-qt-dev qt5-qmake qtbase5-dev-tools
+
 # Step 2: Install dicom2mesh
 echo "Installing $PACKAGE"
 sudo apt-get update -qq
