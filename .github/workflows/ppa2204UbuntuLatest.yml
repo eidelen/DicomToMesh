@@ -1,0 +1,15 @@
+name: PPA (Ubuntu 22.04)
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install PPA and Run a Test on Ubuntu 22.04 
+      run: sudo chmod +x dicom2mesh/test/test-ppa-dicom2mesh.sh && ./dicom2mesh/test/test-ppa-dicom2mesh.sh 
+    - name: Clean
+      run: rm *.stl
+
+

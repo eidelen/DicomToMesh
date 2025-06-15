@@ -1,4 +1,4 @@
-![VTK9 + Dicom build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9Dicom.yml/badge.svg) ![GUI Qt5 build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9DicomGUI.yml/badge.svg) ![PPA Package status](https://github.com/eidelen/DicomToMesh/actions/workflows/ppaUbuntuLatest.yml/badge.svg)
+![VTK9 + Dicom build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9Dicom.yml/badge.svg) ![GUI Qt5 build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9DicomGUI.yml/badge.svg) ![PPA Ubuntu 24.04 status](https://github.com/eidelen/DicomToMesh/actions/workflows/ppaUbuntuLatest.yml/badge.svg) ![PPA Ubuntu 22.04 status](https://github.com/eidelen/DicomToMesh/actions/workflows/ppa2204UbuntuLatest.yml/badge.svg)
 
 # DicomToMesh
 
