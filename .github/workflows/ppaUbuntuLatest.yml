@@ -4,12 +4,20 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+
     steps:
-    - uses: actions/checkout@v1
-    - name: Install PPA and Run a Test 
-      run: sudo chmod +x dicom2mesh/test/test-ppa-dicom2mesh.sh && ./dicom2mesh/test/test-ppa-dicom2mesh.sh 
-    - name: Clean
-      run: rm *.stl
+      - uses: actions/checkout@v4
+
+      - name: Install PPA and Run a Test
+        run: |
+          sudo chmod +x dicom2mesh/test/test-ppa-dicom2mesh.sh
+          ./dicom2mesh/test/test-ppa-dicom2mesh.sh
+
+      - name: Clean
+        run: rm -f *.stl
 
 
