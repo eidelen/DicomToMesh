@@ -1,5 +1,6 @@
-dicom2mesh (0.820-0ppa0~noble) noble; urgency=low
+dicom2mesh (0.822-0ppa0~jammy) jammy; urgency=low
 
+  * Downgrade cmake version for jammy
   * Try to fix linking error libjawt
   * Fix more linking errors
 
