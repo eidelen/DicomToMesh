@@ -1,4 +1,4 @@
-dicom2mesh (0.820-0ppa0~noble) noble; urgency=low
+dicom2mesh (0.823-0ppa0~oracular) oracular; urgency=low
 
   * Try to fix linking error libjawt
   * Fix more linking errors
