@@ -37,13 +37,13 @@ The option <code>-vo</code> shows the input DICOM data in a volume renderer (vtk
 
 # Installation
 
-Ubuntu 24.04, 18.04
+Ubuntu 24.04, 22.04, 18.04
 ```
 > sudo add-apt-repository ppa:eidelen/d2m
 > sudo apt-get update
 > sudo apt-get install dicom2mesh
 ```
-Note: Running dicom2mesh on Ubuntu 24.04 may throw an error about missing shared libraries.
+Note: Running dicom2mesh from PPA installation may throw an error about missing shared libraries.
 If that happens, please let me know — I’ll update the RPATH configuration accordingly.
 Also, if there are any Launchpad or PPA experts among you, I’d really appreciate your support!
 
