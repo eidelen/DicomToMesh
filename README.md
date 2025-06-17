@@ -1,4 +1,4 @@
-![VTK9 + Dicom build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9Dicom.yml/badge.svg) ![GUI Qt5 build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9DicomGUI.yml/badge.svg) ![PPA Ubuntu 24.04 status](https://github.com/eidelen/DicomToMesh/actions/workflows/ppaUbuntuLatest.yml/badge.svg) ![PPA Ubuntu 22.04 status](https://github.com/eidelen/DicomToMesh/actions/workflows/ppa2204UbuntuLatest.yml/badge.svg)
+![VTK9 + Dicom build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9Dicom.yml/badge.svg) ![GUI Qt5 build status](https://github.com/eidelen/DicomToMesh/actions/workflows/cppVTK9DicomGUI.yml/badge.svg) ![PPA Installations Ubuntu status](https://github.com/eidelen/DicomToMesh/actions/workflows/ppaUbuntuLatest.yml/badge.svg) 
 
 # DicomToMesh
 
@@ -37,7 +37,7 @@ The option <code>-vo</code> shows the input DICOM data in a volume renderer (vtk
 
 # Installation
 
-Ubuntu 24.04, 22.04, 18.04
+Ubuntu 25.04, 24.04, 22.04, 18.04
 ```
 > sudo add-apt-repository ppa:eidelen/d2m
 > sudo apt-get update

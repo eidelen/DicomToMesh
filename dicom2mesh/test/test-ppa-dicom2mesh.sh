@@ -25,11 +25,16 @@ echo "Running dicom2mesh..."
 dicom2mesh -i "$INPUT_FILE" -o "$OUTPUT_FILE"  # <-- You will adjust this command line as needed
 
 # Step 4: Check output
-if [ -f "$OUTPUT_FILE" ]; then
-    echo "✅ Output file '$OUTPUT_FILE' was successfully generated."
+if [ -s "$OUTPUT_FILE" ]; then
+    echo "✅ Output file '$OUTPUT_FILE' exists and is not empty."
+    ls -lh "$OUTPUT_FILE"
     exit 0
+elif [ -f "$OUTPUT_FILE" ]; then
+    echo "❌ Output file '$OUTPUT_FILE' exists but is empty."
+    exit 1
 else
     echo "❌ Output file '$OUTPUT_FILE' was not found."
     exit 1
 fi
+
 
