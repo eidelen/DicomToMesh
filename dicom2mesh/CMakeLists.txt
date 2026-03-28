@@ -20,16 +20,16 @@ option(TESTDICOM2MESH "Test Dicom2Mesh" OFF)
 IF(${TESTDICOM2MESH})
     MESSAGE(STATUS "Test dicom2mesh activated")
 
-    # Download and build gtest
-    include(FetchContent)
-    FetchContent_Declare(
-        googletest
-        # Specify the commit you depend on and update it regularly.
-        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-    )
-    # For Windows: Prevent overriding the parent project's compiler/linker settings
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
+    if(NOT TARGET gtest_main)
+        include(FetchContent)
+        FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+        )
+        # For Windows: Prevent overriding the parent project's compiler/linker settings
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(googletest)
+    endif()
 
     FILE(GLOB_RECURSE  D2M_TESTS_INC       test/*.h)
     FILE(GLOB_RECURSE  D2M_TESTS_SRC       test/*.cpp)
